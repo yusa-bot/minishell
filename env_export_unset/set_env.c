@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:29:18 by rinka             #+#    #+#             */
-/*   Updated: 2025/08/10 00:49:13 by rinka            ###   ########.fr       */
+/*   Updated: 2025/08/10 23:48:35 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ t_env *set_env(char **envp)
 	i = 0;
 	while (envp[i])
 	{
-		key = strndup(envp[i], ft_strchr(envp[i], '=') - envp[i]);
+		key = ft_strndup(envp[i], ft_strchr(envp[i], '=') - envp[i]);
 		if (key == NULL)
 		{
 			ft_lstclear(&lst);
@@ -49,22 +49,42 @@ t_env *set_env(char **envp)
 
 
 // void	ft_add_export(t_env *env_lst, char)
+#include <fcntl.h>
 
-// int main(int argc, char **argv, char **envp)
-// {
-// 	t_env *env_lst;
-// 	(void)argc;
-// 	(void)argv;
+int main(int argc, char **argv, char **envp)//"export TEST=/test/pathでテスト"
+{
+	t_env *env_lst;
+	(void)argc;
 
-// 	env_lst = NULL;
-// 	env_lst = set_env(envp);
-	
-// 	ft_put_envs(env_lst, 1);
-// 	write(1, "\n", 1);
-// 	ft_put_exports(env_lst, 1);
-// 	write(1, "\n", 1);
-// 	ft_unset(&env_lst, "TEST");//"export TEST=/test/pathでテスト"
-// 	ft_put_envs(env_lst, 1);
-// 	write(1, "\n", 1);
-// 	ft_put_exports(env_lst, 1);
-// }
+	env_lst = NULL;
+	env_lst = set_env(envp);
+
+	int env_fd = open(argv[1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (env_fd == -1)
+	{
+		return (1);
+	}
+
+	//unset前
+	ft_put_envs(env_lst, env_fd);
+	write(env_fd, "\n", 1);
+	ft_put_exports(env_lst, env_fd);
+	write(env_fd, "\n", 1);
+
+	int unset_fd = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (unset_fd == -1)
+	{
+		return (1);
+	}
+
+		//TEST=/test/pathをunset
+	ft_unset(&env_lst, "TEST");
+
+	//unset後
+	ft_put_envs(env_lst, unset_fd);
+	write(unset_fd, "\n", 1);
+	ft_put_exports(env_lst, unset_fd);
+
+	//t_envのfree
+	ft_lstclear(&env_lst);
+}

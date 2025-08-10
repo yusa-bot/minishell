@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:30:45 by rinka             #+#    #+#             */
-/*   Updated: 2025/08/10 00:33:04 by rinka            ###   ########.fr       */
+/*   Updated: 2025/08/10 23:37:17 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,19 +22,21 @@ void	ft_lstdelone(t_env *lst)
 	}
 }
 
-void	ft_lstclear(t_env **lst)//使ってない
+void	ft_lstclear(t_env **lst)
 {
-	t_env	*tmp;
+	t_env	*current;
+	t_env	*nextnode;
 
 	if (!lst || !*lst)
 		return ;
-	tmp = *lst;
-	while (tmp)
+	current = *lst;
+	while (current)
 	{
-		tmp = (*lst)->next;
-		ft_lstdelone(*lst);
-		*lst = tmp;
+		nextnode = current->next;
+		ft_lstdelone(current);
+		current = nextnode;
 	}
+	*lst = NULL;
 }
 
 t_env *ft_lstlast(t_env *lst)

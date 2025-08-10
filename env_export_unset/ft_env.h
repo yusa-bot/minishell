@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:30:53 by rinka             #+#    #+#             */
-/*   Updated: 2025/08/10 00:30:56 by rinka            ###   ########.fr       */
+/*   Updated: 2025/08/10 23:48:40 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include <unistd.h>
 # include <stdlib.h>
-# include <string.h>//strndup
+# include "../libft/libft.h"
 
 typedef struct s_env {
 	 char *key;
@@ -26,10 +26,7 @@ typedef struct s_env {
 
 //ft_utils.c
 int	ft_strcmp(const char *s1, const char *s2);
-char	*ft_strchr(const char *s, int c);//libft使う
-size_t	ft_strlen(const char *s);//libft使う
-char	*ft_strdup(const char *s1);//libft使う
-void	ft_putstr_fd(char *s, int fd);//libftつかう
+char	*ft_strndup(const char *s, size_t n);
 
 //ft_lst_utils.c
 void	ft_lstdelone(t_env *lst);
