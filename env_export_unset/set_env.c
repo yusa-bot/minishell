@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:29:18 by rinka             #+#    #+#             */
-/*   Updated: 2025/08/10 23:48:35 by rinka            ###   ########.fr       */
+/*   Updated: 2025/08/11 14:56:51 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,20 +26,20 @@ t_env *set_env(char **envp)
 		key = ft_strndup(envp[i], ft_strchr(envp[i], '=') - envp[i]);
 		if (key == NULL)
 		{
-			ft_lstclear(&lst);
+			ft_envlst_clear(&lst);
 			return (NULL);
 		}
 		value = ft_strdup(ft_strchr(envp[i], '=') + 1);
 		if (key == NULL)
 		{
 			free (key);
-			ft_lstclear(&lst);
+			ft_envlst_clear(&lst);
 			return (NULL);
 		}
-		ft_lstadd_back(&lst,ft_lstnew(key, value, 1));//初期はすべてexportなのでflagたてる
+		ft_envlst_add_back(&lst,ft_envlst_new(key, value, 1));//初期はすべてexportなのでflagたてる
 		if (key == NULL)
 		{
-			ft_lstclear(&lst);
+			ft_envlst_clear(&lst);
 			return (NULL);
 		}
 		i++;
@@ -86,5 +86,5 @@ int main(int argc, char **argv, char **envp)//"export TEST=/test/pathでテス�
 	ft_put_exports(env_lst, unset_fd);
 
 	//t_envのfree
-	ft_lstclear(&env_lst);
+	ft_envlst_clear(&env_lst);
 }

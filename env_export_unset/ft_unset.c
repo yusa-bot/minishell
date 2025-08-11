@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:31:10 by rinka             #+#    #+#             */
-/*   Updated: 2025/08/10 00:36:43 by rinka            ###   ########.fr       */
+/*   Updated: 2025/08/11 14:57:38 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void ft_unset(t_env **lst, char *delkey)
 	if (ft_strcmp(tmp->key, delkey) == 0)
 	{
 		dellst = tmp;
-		ft_lstdelone(dellst);
+		ft_envlst_delone(dellst);
 		tmp = tmp->next;
 		return ;
 	}
@@ -33,7 +33,7 @@ void ft_unset(t_env **lst, char *delkey)
 		{
 			dellst = tmp->next;
 			tmp->next = (tmp->next)->next;
-			ft_lstdelone(dellst);
+			ft_envlst_delone(dellst);
 			return ;
 		}
 		tmp = tmp->next;

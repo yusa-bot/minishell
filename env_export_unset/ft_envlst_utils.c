@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lst_utils.c                                     :+:      :+:    :+:   */
+/*   ft_envlst__utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:30:45 by rinka             #+#    #+#             */
-/*   Updated: 2025/08/10 23:37:17 by rinka            ###   ########.fr       */
+/*   Updated: 2025/08/11 14:54:17 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_env.h"
 
-void	ft_lstdelone(t_env *lst)
+void	ft_envlst_delone(t_env *lst)
 {
 	if (lst)
 	{
@@ -22,7 +22,7 @@ void	ft_lstdelone(t_env *lst)
 	}
 }
 
-void	ft_lstclear(t_env **lst)
+void	ft_envlst_clear(t_env **lst)
 {
 	t_env	*current;
 	t_env	*nextnode;
@@ -33,13 +33,13 @@ void	ft_lstclear(t_env **lst)
 	while (current)
 	{
 		nextnode = current->next;
-		ft_lstdelone(current);
+		ft_envlst_delone(current);
 		current = nextnode;
 	}
 	*lst = NULL;
 }
 
-t_env *ft_lstlast(t_env *lst)
+t_env *ft_envlst_last(t_env *lst)
 {
 	while (lst)
 	{
@@ -50,7 +50,7 @@ t_env *ft_lstlast(t_env *lst)
 	return (lst);
 }
 
-void	ft_lstadd_back(t_env **lst, t_env *new)
+void	ft_envlst_add_back(t_env **lst, t_env *new)
 {
 	t_env	*last;
 
@@ -58,7 +58,7 @@ void	ft_lstadd_back(t_env **lst, t_env *new)
 	{
 		if (*lst)
 		{
-			last = ft_lstlast(*lst);
+			last = ft_envlst_last(*lst);
 			last->next = new;
 		}
 		else
@@ -66,7 +66,7 @@ void	ft_lstadd_back(t_env **lst, t_env *new)
 	}
 }
 
-t_env *ft_lstnew(char *key, char *value, int is_export)
+t_env *ft_envlst_new(char *key, char *value, int is_export)
 {
 	t_env	*new;
 
@@ -84,7 +84,7 @@ t_env *ft_lstnew(char *key, char *value, int is_export)
 	return (new);
 }
 
-// t_env ft_lstget(t_env *lst, char *key)
+// t_env ft_envlst_get(t_env *lst, char *key)
 // {
 // 	while(lst)
 // 	{

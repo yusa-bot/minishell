@@ -6,13 +6,13 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:31:03 by rinka             #+#    #+#             */
-/*   Updated: 2025/08/10 00:31:05 by rinka            ###   ########.fr       */
+/*   Updated: 2025/08/11 14:56:34 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_env.h"
 
-static	t_env *ft_lstnext(t_env *env_lst, char **prev_key)
+static	t_env *ft_envlst_next(t_env *env_lst, char **prev_key)
 {
 	t_env *res;
 
@@ -46,11 +46,11 @@ void ft_put_exports(t_env *env_lst, int fd)
 	t_env	*env_to_put;
 
 	prev_key = NULL;
-	env_to_put = ft_lstnext(env_lst, &prev_key);
+	env_to_put = ft_envlst_next(env_lst, &prev_key);
 	while(env_to_put)
 	{
 		if (env_to_put->is_export)
 			ft_putexport_fd(env_to_put, fd);
-		env_to_put = ft_lstnext(env_lst, &prev_key);
+		env_to_put = ft_envlst_next(env_lst, &prev_key);
 	}
 }
