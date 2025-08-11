@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:30:53 by rinka             #+#    #+#             */
-/*   Updated: 2025/08/11 14:53:47 by rinka            ###   ########.fr       */
+/*   Updated: 2025/08/11 20:20:44 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,10 @@ void	ft_envlst_delone(t_env *lst);
 void	ft_envlst_clear(t_env **lst);
 t_env *ft_envlst_last(t_env *lst);
 void	ft_envlst_add_back(t_env **lst, t_env *new);
+void	ft_envlst_add_front(t_env **lst, t_env *new);
 t_env *ft_envlst_new(char *key, char *value, int is_export);
+
+void ft_add_env(t_env **env_lst, char *str, int is_export);
 
 void ft_put_envs(t_env *lst, int fd);
 

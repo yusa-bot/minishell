@@ -1,11 +1,13 @@
-# テストよう環境変数をexport
-export TEST=test/path
+unset TEST
 
 #自作env,export,unsetの実行
 #main関数内でunset前と後のenv,exportを別ファイルに書き込んでいる
 cc -Wall -Wextra -Werror *.c ../libft/*.c -o env_pg
 ./env_pg my_env.txt my_unset.txt
 
+# bashテストよう環境変数をexport
+export TEST=/test/path
+TEST2=/test2/path
 #bashのenv,export
 env > original_env.txt
 export >> original_env.txt
@@ -36,6 +38,6 @@ cat original_unset.txt | grep TEST
 echo "
 "
 
-
+# 出力内容確認したければ以下コメントアウト
 rm my_env.txt my_unset.txt original_env.txt original_unset.txt
 rm ./env_pg

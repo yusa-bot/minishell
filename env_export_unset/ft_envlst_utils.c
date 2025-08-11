@@ -66,6 +66,12 @@ void	ft_envlst_add_back(t_env **lst, t_env *new)
 	}
 }
 
+void	ft_envlst_add_front(t_env **lst, t_env *new)
+{
+	new->next = *lst;
+	*lst = new;
+}
+
 t_env *ft_envlst_new(char *key, char *value, int is_export)
 {
 	t_env	*new;

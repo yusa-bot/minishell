@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:29:18 by rinka             #+#    #+#             */
-/*   Updated: 2025/08/11 14:56:51 by rinka            ###   ########.fr       */
+/*   Updated: 2025/08/11 20:34:15 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,18 +30,13 @@ t_env *set_env(char **envp)
 			return (NULL);
 		}
 		value = ft_strdup(ft_strchr(envp[i], '=') + 1);
-		if (key == NULL)
+		if (value == NULL)
 		{
 			free (key);
 			ft_envlst_clear(&lst);
 			return (NULL);
 		}
 		ft_envlst_add_back(&lst,ft_envlst_new(key, value, 1));//初期はすべてexportなのでflagたてる
-		if (key == NULL)
-		{
-			ft_envlst_clear(&lst);
-			return (NULL);
-		}
 		i++;
 	}
 	return (lst);
@@ -65,8 +60,13 @@ int main(int argc, char **argv, char **envp)//"export TEST=/test/pathでテス�
 		return (1);
 	}
 
+	//export TEST=/test/path
+	ft_add_env(&env_lst, "TEST=/test/path", 1);
+	//export TEST2=/test2/path
+	ft_add_env(&env_lst, "TEST2=/test2/path", 0);
+
 	//unset前
-	ft_put_envs(env_lst, env_fd);
+	ft_put_envs(env_lst, env_fd);//順番？？
 	write(env_fd, "\n", 1);
 	ft_put_exports(env_lst, env_fd);
 	write(env_fd, "\n", 1);
