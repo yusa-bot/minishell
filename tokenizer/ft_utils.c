@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
+/*   By: rtakayam <rtakayam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 23:04:52 by rinka             #+#    #+#             */
-/*   Updated: 2025/08/15 11:12:31 by rinka            ###   ########.fr       */
+/*   Updated: 2025/08/15 19:11:08 by rtakayam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ int	ft_strcmp(const char *s1, const char *s2)
 	}
 	return (((unsigned char *)s1)[i] - ((unsigned char *)s2)[i]);
 }
+
 char	*ft_strndup(const char *s, size_t n)
 {
 	char	*res;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   test.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
+/*   By: rtakayam <rtakayam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/08/15 11:13:35 by rinka            ###   ########.fr       */
+/*   Updated: 2025/08/15 17:56:43 by rtakayam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ int main()
 		
 		t_token *token_lst = tokenize_line(line);
 		t_token *tmp = token_lst;
-		int i = 0;
 		while (tmp)
 		{
 			printf("str: %s\n", tmp->str);

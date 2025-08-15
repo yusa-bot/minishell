@@ -1,14 +1,27 @@
-#ifndef TOKENIZER_PEARSER_H
-# define TOKENIZER_PEARSER_H
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokenizer_perser.h                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rtakayam <rtakayam@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/15 19:11:30 by rtakayam          #+#    #+#             */
+/*   Updated: 2025/08/15 19:16:21 by rtakayam         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef TOKENIZER_PERSER_H
+# define TOKENIZER_PERSER_H
 
 # include <unistd.h>
 # include <stdlib.h>
 # include <string.h>
-#include <readline/readline.h>
-#include <readline/history.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 # include "../libft/libft.h"
 
-typedef enum	e_token_type {
+typedef enum e_token_type
+{
 	CMD,// コマンド
 	ARG,// 引数
 	PIPE,// |
@@ -19,26 +32,28 @@ typedef enum	e_token_type {
 	HEREDOC,// <<
 	FILENAME,//ファイル名
 	WORD,//コマンドか$変数か引数（未確定）
-} t_token_type;
+}	t_token_type;
 
-typedef enum e_quote_type {
+typedef enum e_quote_type
+{
 	NONE,//クオート無し
 	SINGLE,// ''
 	DOUBLE,// ""
-} t_quote_type;
+}	t_quote_type;
 
-typedef struct s_token {
-	 char *str;
-		t_token_type token_type;
-		t_quote_type quote_type;
-		int	is_joined_with_next;
-		struct s_token *next;
-} t_token;
+typedef struct s_token
+{
+	char			*str;
+	t_token_type	token_type;
+	t_quote_type	quote_type;
+	int				is_joined_with_next;
+	struct s_token	*next;
+}	t_token;
 
-t_token *tokenize_line(char *line);
+t_token	*tokenize_line(char *line);
 
 //ft_utils.c
-int	ft_strcmp(const char *s1, const char *s2);
+int		ft_strcmp(const char *s1, const char *s2);
 char	*ft_strndup(const char *s, size_t n);
 
 // //ft_utils.c
@@ -48,10 +63,11 @@ char	*ft_strndup(const char *s, size_t n);
 //ft_tokenlst_utils.c
 void	ft_tokenlst_delone(t_token *lst);
 void	ft_tokenlst_clear(t_token **lst);
-t_token *ft_tokenlst_last(t_token *lst);
+t_token	*ft_tokenlst_last(t_token *lst);
 void	ft_tokenlst_add_back(t_token **lst, t_token *new);
 void	ft_tokenlst_add_front(t_token **lst, t_token *new);
-t_token *ft_tokenlst_new(char *str, t_token_type token_type, t_quote_type quote_type, int is_joined_with_next);
+t_token	*ft_tokenlst_new(char *str, t_token_type token_type,
+			t_quote_type quote_type, int is_joined_with_next);
 
 // void ft_put_exports(t_env *env_lst, int fd);
 

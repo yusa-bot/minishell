@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_tokenlst_utils.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rtakayam <rtakayam@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/15 18:55:49 by rtakayam          #+#    #+#             */
+/*   Updated: 2025/08/15 18:58:04 by rtakayam         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "tokenizer_perser.h"
 
 void	ft_tokenlst_delone(t_token *lst)
@@ -26,7 +38,7 @@ void	ft_tokenlst_clear(t_token **lst)
 	*lst = NULL;
 }
 
-t_token *ft_tokenlst_last(t_token *lst)
+t_token	*ft_tokenlst_last(t_token *lst)
 {
 	while (lst)
 	{
@@ -56,7 +68,8 @@ void	ft_tokenlst_add_front(t_token **lst, t_token *new)
 	*lst = new;
 }
 
-t_token *ft_tokenlst_new(char *str, t_token_type token_type, t_quote_type quote_type, int is_joined_with_next)
+t_token	*ft_tokenlst_new(char *str, t_token_type token_type,
+		t_quote_type quote_type, int is_joined_with_next)
 {
 	t_token	*new;
 
