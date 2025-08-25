@@ -1,4 +1,6 @@
-#include "ft_env.h"
+#include "minishell.h"
+
+//"export TEST" や"export TEST="にも対応する等に修正必要
 
 void ft_add_env(t_env **env_lst, char *str, int is_export)
 {

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_env.h"
+#include "minishell.h"
 
 void	ft_envlst_delone(t_env *lst)
 {

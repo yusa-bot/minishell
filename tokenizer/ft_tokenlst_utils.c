@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_tokenlst_utils.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rtakayam <rtakayam@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 18:55:49 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/08/15 18:58:04 by rtakayam         ###   ########.fr       */
+/*   Updated: 2025/08/24 12:13:43 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "tokenizer_perser.h"
+#include "minishell.h"
 
 void	ft_tokenlst_delone(t_token *lst)
 {

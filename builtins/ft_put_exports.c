@@ -6,11 +6,11 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:31:03 by rinka             #+#    #+#             */
-/*   Updated: 2025/08/11 14:56:34 by rinka            ###   ########.fr       */
+/*   Updated: 2025/08/24 12:04:38 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_env.h"
+#include "minishell.h"
 
 static	t_env *ft_envlst_next(t_env *env_lst, char **prev_key)
 {

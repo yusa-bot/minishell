@@ -1,24 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   tokenizer_perser.h                                 :+:      :+:    :+:   */
+/*   tokenizer.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rtakayam <rtakayam@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 19:11:30 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/08/15 19:16:21 by rtakayam         ###   ########.fr       */
+/*   Updated: 2025/08/24 12:12:43 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef TOKENIZER_PERSER_H
-# define TOKENIZER_PERSER_H
-
-# include <unistd.h>
-# include <stdlib.h>
-# include <string.h>
-# include <readline/readline.h>
-# include <readline/history.h>
-# include "../libft/libft.h"
+#ifndef TOKENIZER_H
+# define TOKENIZER_H
 
 typedef enum e_token_type
 {
@@ -50,15 +43,17 @@ typedef struct s_token
 	struct s_token	*next;
 }	t_token;
 
+typedef struct s_cmd
+{
+	char		**cmd_args;
+	char		**env_vars;//一時的な環境変数
+	char	*infile;
+	char	*outfile;
+	int	append;
+	struct s_cmd	*next;
+}	t_cmd;
+
 t_token	*tokenize_line(char *line);
-
-//ft_utils.c
-int		ft_strcmp(const char *s1, const char *s2);
-char	*ft_strndup(const char *s, size_t n);
-
-// //ft_utils.c
-// int	ft_strcmp(const char *s1, const char *s2);
-// char	*ft_strndup(const char *s, size_t n);
 
 //ft_tokenlst_utils.c
 void	ft_tokenlst_delone(t_token *lst);
@@ -68,9 +63,5 @@ void	ft_tokenlst_add_back(t_token **lst, t_token *new);
 void	ft_tokenlst_add_front(t_token **lst, t_token *new);
 t_token	*ft_tokenlst_new(char *str, t_token_type token_type,
 			t_quote_type quote_type, int is_joined_with_next);
-
-// void ft_put_exports(t_env *env_lst, int fd);
-
-// void ft_unset(t_env **lst, char *delkey);
 
 #endif

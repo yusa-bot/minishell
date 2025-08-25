@@ -6,11 +6,11 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:31:00 by rinka             #+#    #+#             */
-/*   Updated: 2025/08/10 00:31:01 by rinka            ###   ########.fr       */
+/*   Updated: 2025/08/24 12:04:34 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_env.h"
+#include "minishell.h"
 
 static void ft_putenv_fd(t_env *env, int fd)
 {
