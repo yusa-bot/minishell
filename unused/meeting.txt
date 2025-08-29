@@ -155,3 +155,17 @@ bash-5.3$ export |grep TEST
 bash-5.3$ declare | grep TEST
 TEST=test
 bash-5.3$ 
+
+[なぜecho $TESTやecho *.cの置き換え処理をパーサの段階でするのかについて]
+↓以下の挙動から、echoの変数展開がパーサの段階で行われていることがわかる
+bash-5.3$ echo .*
+.git
+bash-5.3$ echo main.*
+main.c
+bash-5.3$ unset TEST
+bash-5.3$ TEST=main
+bash-5.3$ echo $TEST.*
+main.c  ←（echo main.*と同じ挙動）
+bash-5.3$ unset TEST
+bash-5.3$ TEST=main echo $TEST.* 
+.git  ←（TEST=mainが処理される前なので、echo .*と同じ挙動）
