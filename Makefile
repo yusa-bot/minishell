@@ -6,7 +6,7 @@
 #    By: rinka <rinka@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/08 19:14:52 by rinka             #+#    #+#              #
-#    Updated: 2025/08/25 08:58:34 by rinka            ###   ########.fr        #
+#    Updated: 2025/08/29 13:19:18 by rinka            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,6 +21,8 @@ SRCS = \
 	builtins/ft_put_exports.c \
 	builtins/ft_unset.c \
 	builtins/set_env.c \
+	parser/join_expanded_tokens.c \
+	parser/ft_parser_utils.c \
 	tokenizer/ft_tokenizer.c \
 	tokenizer/ft_tokenlst_utils.c \
 	utils/ft_free.c \

@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 19:11:30 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/08/24 12:12:43 by rinka            ###   ########.fr       */
+/*   Updated: 2025/08/25 12:45:01 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,16 +42,6 @@ typedef struct s_token
 	int				is_joined_with_next;
 	struct s_token	*next;
 }	t_token;
-
-typedef struct s_cmd
-{
-	char		**cmd_args;
-	char		**env_vars;//一時的な環境変数
-	char	*infile;
-	char	*outfile;
-	int	append;
-	struct s_cmd	*next;
-}	t_cmd;
 
 t_token	*tokenize_line(char *line);
 

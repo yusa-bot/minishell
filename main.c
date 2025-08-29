@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/08/25 08:48:59 by rinka            ###   ########.fr       */
+/*   Updated: 2025/08/29 13:37:55 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,11 @@ int main(int argc, char **argv, char **envp)
 		}
 		
 		t_token *token_lst = tokenize_line(line);
-		t_token *tmp = token_lst;
+		// t_cmd	*cmd_lst = ft_parser(*token_lst, env_lst);
+		t_token *joined_token_lst = join_expanded_tokens(&token_lst, &token_lst, env_lst);//
+		free(token_lst);
+		// t_cmd cms_lst = *parse_tokens(token_lst, env_lst);
+		t_token *tmp = joined_token_lst;
 		while (tmp)
 		{
 			printf("str: %s\n", tmp->str);
@@ -56,8 +60,12 @@ int main(int argc, char **argv, char **envp)
 			printf("null tarminated\n");
 		printf("%s\n", line);
 		free(line);
-		ft_tokenlst_clear(&token_lst);
+		ft_tokenlst_clear(&joined_token_lst);
 	}
+
+	//parserでt_cmdに
+	// t_cmd *cmd_lst = parse_tokens(token_lst, env_lst);
+	// ft_tokenlst_clear(&tcmds_lst);
 
 	//t_envのfree
 	ft_envlst_clear(&env_lst);

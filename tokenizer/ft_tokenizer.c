@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 18:58:26 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/08/24 12:13:39 by rinka            ###   ########.fr       */
+/*   Updated: 2025/08/25 13:06:29 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,11 +74,11 @@ int	handle_word(t_token **token_lst, char *line)
 	}
 	if (word_len == 0)
 		return (in_quote * 2);
-	if (*p == '"' || *p == '\'')
+	if (*p && *p != ' ' && *p != '\t')
 		is_joined_with_next = 1;
 	p = ft_strndup(line, word_len);
 	if (p == NULL)
-	{
+	{//mallocエラー処理
 		// ft_tokenlst_clear(token_lst);
 		// error_exit("malloc error");
 		return (0);
