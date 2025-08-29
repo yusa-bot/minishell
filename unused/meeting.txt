@@ -1,0 +1,147 @@
+[branch rinka]
+bash-5.3$ ./minishell 
+$ hello
+str: hello
+token_type: 9
+quote_type: 0
+joint_next: 0
+
+
+null tarminated
+hello
+$ 
+bash-5.3$ ./minishell 
+$ hello world
+str: hello
+token_type: 9
+quote_type: 0
+joint_next: 0
+
+str: world
+token_type: 9
+quote_type: 0
+joint_next: 0
+
+
+null tarminated
+hello world
+$ hello wor"l"d
+str: hello
+token_type: 9
+quote_type: 0
+joint_next: 0
+
+str: world
+token_type: 9
+quote_type: 0
+joint_next: 0
+
+
+null tarminated
+hello wor"l"d
+$ hello"world"
+str: helloworld
+token_type: 9
+quote_type: 0
+joint_next: 0
+
+
+null tarminated
+hello"world"
+$ | < 
+
+null tarminated
+| < 
+$ hello"world"
+str: helloworld
+token_type: 9
+quote_type: 0
+joint_next: 0
+
+
+null tarminated
+hello"world"
+$ hello$PATH
+-----expand PATH-----
+str: hello[expanddvalue]
+token_type: 9
+quote_type: 0
+joint_next: 0
+
+
+null tarminated
+hello$PATH
+$ hello'$PATH'
+str: hello$PATH
+token_type: 9
+quote_type: 0
+joint_next: 0
+
+
+null tarminated
+hello'$PATH'
+$ $?
+str: 0000
+token_type: 9
+quote_type: 0
+joint_next: 0
+
+
+null tarminated
+$?
+$ hello 
+bash-5.3$ < nonexist cat
+bash: nonexist: No such file or directory
+bash-5.3$ $?
+bash: 1: command not found
+bash-5.3$ < nonexist cat
+bash: nonexist: No such file or directory
+bash-5.3$ hello$?world
+bash: hello1world: command not found
+bash-5.3$ hello$?world
+bash: hello127world: command not found
+bash-5.3$ 
+
+↓exportをつけて代入すると子ブログラムにも引き継がれる
+bash-5.3$ export TEST=tes
+bash-5.3$ export | grep TEST
+declare -x TEST="tes"
+bash-5.3$ unset TEST
+bash-5.3$ TEST=test
+bash-5.3$ echo $TEST
+test
+bash-5.3$ export | grep TEST
+bash-5.3$ 
+
+
+------------（補足↓）---------------
+
+↓envとexportはともに子プログラムに引き継がれる環境変数を出力する
+bash-5.3$ TEST=test (←export無し（ローカル変数となる）)
+bash-5.3$ env | grep TEST
+bash-5.3$ export |grep TEST
+bash-5.3$ unset TEST
+bash-5.3$ export TEST=test(←exportあり)
+bash-5.3$ env | grep TEST
+TEST=test
+bash-5.3$ export |grep TEST
+declare -x TEST="test"
+bash-5.3$
+※ビルドインコマンド(echo)などではローカル変数も有効（子プログラムを生成しないので）
+
+ではminishellでenvとexportで挙動に違いが出るケースは？？
+↓コマンドの前で一時的に設定された変数を含むかどうか
+	（envはコマンドの前で一時的に設定された変数を含む）
+bash-5.3$ unset TEST
+bash-5.3$ TEST=test export | grep TEST
+bash-5.3$ TEST=test env | grep TEST
+TEST=test
+
+↓ちなみに、最新のbash5.3ではローカル変数はdeclareで確認できる
+bash-5.3$ unset TEST
+bash-5.3$ TEST=test
+bash-5.3$ env | grep TEST
+bash-5.3$ export |grep TEST
+bash-5.3$ declare | grep TEST
+TEST=test
+bash-5.3$ 
