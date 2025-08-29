@@ -137,7 +137,17 @@ bash-5.3$ TEST=test export | grep TEST
 bash-5.3$ TEST=test env | grep TEST
 TEST=test
 
-↓ちなみに、最新のbash5.3ではローカル変数はdeclareで確認できる
+↓また、コマンド前の変数設定は一時的でありローカル変数にはならない
+bash-5.3$ unset TEST
+bash-5.3$ TEST=test env | grep TEST
+TEST=test
+bash-5.3$ echo $TEST ←TESTはローカル変数にならないのでビルドインコマンドでも有効ではない
+
+bash-5.3$ TEST=test ←ローカルコマンドとなりビルドインコマンドで有効
+bash-5.3$ echo $TEST
+test
+
+↓ちなみに、最新のbash5.3ではローカル変数はdeclareで確認できるらしい
 bash-5.3$ unset TEST
 bash-5.3$ TEST=test
 bash-5.3$ env | grep TEST
