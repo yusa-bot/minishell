@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 23:04:52 by rinka             #+#    #+#             */
-/*   Updated: 2025/08/25 00:03:52 by rinka            ###   ########.fr       */
+/*   Updated: 2025/08/29 14:31:57 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,3 +59,19 @@ char *ft_strjoin_safe(char *s1, char *s2)
 	free(s1);
 	return new_str;
 }
+
+void	ft_free_str_array(char **arr)
+{
+	int	i;
+
+	i = 0;
+	if (!arr)
+		return ;
+	while (arr[i])
+	{
+		free(arr[i]);
+		i++;
+	}
+	free(arr);
+}
+

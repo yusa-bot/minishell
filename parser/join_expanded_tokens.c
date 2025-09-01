@@ -6,45 +6,28 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 13:18:26 by rinka             #+#    #+#             */
-/*   Updated: 2025/08/29 13:43:46 by rinka            ###   ########.fr       */
+/*   Updated: 2025/09/01 13:34:07 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "minishell.h"
 
-// t_cmd *ft_cmdlst_init(void)
-// {
-// 	t_cmd *new_cmd;
+//current: 08/29
+static int	is_valid_assignment(char *str)//key部分のquote_type=NONEは検証済みなのでkeyの文字だけチェック
+{
+	int i;
 
-// 	new_cmd = malloc(sizeof(t_cmd));
-// 	if (new_cmd == NULL)
-// 		return (NULL):
-// 		new_cmd->argv = NULL;
-// 		new_cmd->env_vars = NULL;
-// 		new_cmd->infile = NULL;
-// 		new_cmd->outfile = NULL;
-// 		new_cmd->append = 0;
-// 		new_cmd->next = NULL;
-// 		return (new_cmd);
-// }
+	i = 0;
+	while (str[i] && str[i] != '=')
+	{
+		if (!ft_isalpha(str[i]) && str[i] != '_')
+			return (0);
+	}
+	return (1);
+}
 
-// t_cmd	*ft_cmdlst_new(char **cmd_args, char **env_vars, char *infile, char *outfile, int append)
-// {
-// 	t_cmd	*new;
-
-// 	new = malloc(sizeof(t_cmd));
-// 	if (new == NULL)
-// 		return (NULL);
-// 	new->cmd_args = cmd_args;
-// 	new->env_vars = env_vars;
-// 	new->infile = infile;
-// 	new->outfile = outfile;
-// 	new->append = append;
-// 	return (new);
-// }
-
-char *ft_dupkey(char *str)//hello$TEST"world"の$TEST抜き出し
+static char *ft_dupkey(char *str)//hello$TEST"world"の$TEST抜き出し
 {
 	char *key;
 	int i;
@@ -138,10 +121,20 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 	t_token *newnode;
 	t_token *current_lst;
 	char *new_str;
+	t_token_type	token_type;
 
+	new_lst = NULL;
 	current_lst = *cmd_start;
+	token_type = WORD;
+	if (current_lst->token_type == PIPE)//どこでチェックが最適か
+		syntax_error("|", token_lst,&env_lst);
+	// while (current_lst && current_lst->quote_type != NONE && ft_strchr(current_lst->str, '='))
+	// {
+
+	// }
 	while (current_lst && current_lst->token_type != PIPE)//is_joined結合
 	{
+		printf("koko(%s)\n", current_lst->str);
 		if (is_delimiter(current_lst->str))//><>><<の時
 		{
 			newnode = ft_tokenlst_dup(current_lst);
@@ -167,6 +160,8 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 				current_lst->str = expanded_str;
 				free(old_str);
 			}
+			if (!new_str && current_lst->quote_type == NONE && ft_strchr(current_lst->str, '=') && is_valid_assignment(current_lst->str))
+				token_type = VARIABLE_ASSIGNMENT;
 			if (!new_str)
 				new_str = ft_strdup(current_lst->str);
 			else
@@ -185,7 +180,8 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 			}
 			current_lst = current_lst->next;
 		}
-		newnode = ft_tokenlst_new(new_str, WORD, 0, 0);
+		//↓一時的な環境変数がTEST~=testのような無効な構文の場合、TEST~=testはコマンド名として扱われる。
+		newnode = ft_tokenlst_new(new_str, token_type, 0, 0);
 		if (newnode == NULL)
 		{//mallocエラー処理
 			ft_tokenlst_clear(&new_lst);
@@ -195,6 +191,8 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 		}///
 		ft_tokenlst_add_back(&new_lst, newnode);
 	}
-
+	*cmd_start = current_lst;
+	if (*cmd_start)
+		*cmd_start = (*cmd_start)->next;
 	return (new_lst);
 }

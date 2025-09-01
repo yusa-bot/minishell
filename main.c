@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/08/29 13:37:55 by rinka            ###   ########.fr       */
+/*   Updated: 2025/08/31 13:05:50 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,25 +42,38 @@ int main(int argc, char **argv, char **envp)
 		}
 		
 		t_token *token_lst = tokenize_line(line);
-		// t_cmd	*cmd_lst = ft_parser(*token_lst, env_lst);
-		t_token *joined_token_lst = join_expanded_tokens(&token_lst, &token_lst, env_lst);//
-		free(token_lst);
-		// t_cmd cms_lst = *parse_tokens(token_lst, env_lst);
-		t_token *tmp = joined_token_lst;
-		while (tmp)
+		t_cmd	*cmd_lst = ft_parser(token_lst, env_lst);
+		// (void) cmd_lst;
+		t_cmd	*tmp_cmd = cmd_lst;
+		while (tmp_cmd)
 		{
-			printf("str: %s\n", tmp->str);
-			printf("token_type: %d\n", tmp->token_type);
-			printf("quote_type: %d\n", tmp->quote_type);
-			printf("joint_next: %d\n\n", tmp->is_joined_with_next);
-			tmp = tmp->next;
+			char **args = tmp_cmd->cmd_args;
+			int i = 0;
+			printf("args:");
+			while (args && args[i])
+			{
+				printf(" %s", args[i]);
+				i++;
+			}
+			printf("\n");
+			if (tmp_cmd->infile)
+				printf("< %s\n", tmp_cmd->infile);
+			if (tmp_cmd->outfile)
+				printf("> %s\n", tmp_cmd->outfile);
+			if (tmp_cmd->append == 1)
+				printf("append: Yes\n");
+			else
+				printf("append: No\n");
+			printf("\n");
+			tmp_cmd = tmp_cmd->next;
 		}
 		printf("\n");
-		if (tmp == NULL) 
-			printf("null tarminated\n");
+		// if (tmp == NULL) 
+		// 	printf("null tarminated\n");
 		printf("%s\n", line);
 		free(line);
-		ft_tokenlst_clear(&joined_token_lst);
+
+		ft_cmdlst_clear(&cmd_lst);
 	}
 
 	//parserでt_cmdに
@@ -69,6 +82,7 @@ int main(int argc, char **argv, char **envp)
 
 	//t_envのfree
 	ft_envlst_clear(&env_lst);
+	
 	
 	return (0);
 }

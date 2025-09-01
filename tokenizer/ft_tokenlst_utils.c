@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 18:55:49 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/08/24 12:13:43 by rinka            ###   ########.fr       */
+/*   Updated: 2025/08/31 13:18:43 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@ void	ft_tokenlst_delone(t_token *lst)
 {
 	if (lst)
 	{
-		free(lst->str);
+		if (lst->str)
+			free(lst->str);
 		free(lst);
 	}
 }
