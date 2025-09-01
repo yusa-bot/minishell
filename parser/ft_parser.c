@@ -1,7 +1,7 @@
 
 #include "minishell.h"
 
-void count_args_vars(t_token *lst,int *arg_count, int *var_count)
+void	count_args_vars(t_token *lst,int *arg_count, int *var_count)
 {
 	*arg_count = 0;
 	*var_count = 0;
@@ -10,7 +10,7 @@ void count_args_vars(t_token *lst,int *arg_count, int *var_count)
 		(*var_count)++;
 		lst = lst->next;
 	}
-	while(lst)
+	while (lst)
 	{
 			if (is_delimiter(lst->str))//syntaxerrorは後でチェック
 			{
@@ -30,9 +30,9 @@ void count_args_vars(t_token *lst,int *arg_count, int *var_count)
 	}
 }
 
-char **set_env_vars(t_token **lst, int var_count)
+char	**set_env_vars(t_token **lst, int var_count)
 {
-	char **env_vars;
+	char	**env_vars;
 	int	i;
 
 	env_vars = malloc(sizeof(char *) * (var_count + 1));
@@ -96,9 +96,9 @@ int	set_infile_name(t_token *lst, char **infile, char **outfile, int *append)
 	return (0);
 }
 
-char **set_cmd_args(t_token *current_lst, int arg_count)
+char	**set_cmd_args(t_token *current_lst, int arg_count)
 {
-	char **cmd_args;
+	char	**cmd_args;
 	int	i;
 
 	cmd_args = malloc(sizeof(char *) * (arg_count + 1));
@@ -124,7 +124,7 @@ char **set_cmd_args(t_token *current_lst, int arg_count)
 
 //コマンド一個分の情報格納する関数
 //current0829:まずchar**型の情報をカウント、その後値を格納していく
-t_cmd *ft_parse_single_cmd(t_token *single_token_lst, t_token *token_lst, t_env *env_lst)
+t_cmd	*ft_parse_single_cmd(t_token *single_token_lst, t_token *token_lst, t_env *env_lst)
 {
 	t_cmd *res;
 	t_token *current_lst;
@@ -138,10 +138,7 @@ t_cmd *ft_parse_single_cmd(t_token *single_token_lst, t_token *token_lst, t_env 
 
 	current_lst = single_token_lst;
 	printf("---------arg_var_count--------\n");
-	printf("元の値→%s\n",single_token_lst->str);
 	count_args_vars(single_token_lst, &arg_count, &var_count);
-
-	printf("値渡しできてるか→%s\n",single_token_lst->str);
 	printf("var_count: %d, arg_count: %d\n", var_count, arg_count);
 	env_vars = NULL;
 	if (var_count)//env_varsに一時的な環境変数の情報格納
@@ -170,7 +167,6 @@ t_cmd *ft_parse_single_cmd(t_token *single_token_lst, t_token *token_lst, t_env 
 	}//
 	printf("infile: %s, outfile: %s\n", infile, outfile);//
 
-//current：cmd_argsの格納
 	cmd_args = NULL;
 	printf("---------set_cmd_args--------\n");//
 	if (arg_count)
@@ -207,8 +203,6 @@ t_cmd *ft_parser(t_token *token_lst, t_env *env_lst)
 	while (current_lst)
 	{
 		joined_token_lst = join_expanded_tokens(&current_lst, &token_lst, env_lst);//
-		// free(token_lst);//
-		// t_cmd cms_lst = *parse_tokens(token_lst, env_lst);
 		tmp = joined_token_lst;
 		while (tmp)
 		{
@@ -231,7 +225,7 @@ t_cmd *ft_parser(t_token *token_lst, t_env *env_lst)
 		new = ft_parse_single_cmd(joined_token_lst, token_lst, env_lst);
 		printf("---------add_cmd_lst--------\n");//
 		ft_cmdlst_add_back(&cmd_lst, new);
-		ft_tokenlst_clear(&joined_token_lst);
+		// ft_tokenlst_clear(&joined_token_lst);
 	}
 
 	// int j = 0;
@@ -244,3 +238,5 @@ t_cmd *ft_parser(t_token *token_lst, t_env *env_lst)
 	ft_tokenlst_clear(&token_lst);
 	return (cmd_lst);
 }
+
+//TEST=test TEST2=test2 < infile.txt cat | grep apple | wc -l >> outfile.txt
