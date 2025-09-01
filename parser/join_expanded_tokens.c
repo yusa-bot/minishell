@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 13:18:26 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/01 13:34:07 by rinka            ###   ########.fr       */
+/*   Updated: 2025/09/01 14:00:03 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ static int	is_valid_assignment(char *str)//key部分のquote_type=NONEは検証�
 	{
 		if (!ft_isalpha(str[i]) && str[i] != '_')
 			return (0);
+		i++;
 	}
 	return (1);
 }

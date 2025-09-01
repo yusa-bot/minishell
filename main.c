@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/08/31 13:05:50 by rinka            ###   ########.fr       */
+/*   Updated: 2025/09/01 14:02:23 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,15 @@ int main(int argc, char **argv, char **envp)
 			char **args = tmp_cmd->cmd_args;
 			int i = 0;
 			printf("args:");
+			while (args && args[i])
+			{
+				printf(" %s", args[i]);
+				i++;
+			}
+			printf("\n");
+			args = tmp_cmd->env_vars;
+			i = 0;
+			printf("vars:");
 			while (args && args[i])
 			{
 				printf(" %s", args[i]);
