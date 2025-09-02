@@ -98,4 +98,14 @@ bash-5.3$
 
 */
 
+/*ambiguous redirectエラーのタイミング
+以下より、おそらくt_cmdリンクリストが完成した後にエラーチェック
+↓
+(base) MacBookAir-Rinka:git-minishell rinka$ echo hello | < $NON
+bash: $NON: ambiguous redirect
+(base) MacBookAir-Rinka:git-minishell rinka$ echo hello | < $NON | |
+bash: 予期しないトークン `|' 周辺に構文エラーがあります
+(base) MacBookAir-Rinka:git-minishell rinka$ 
+*/
+
 メモ：delimiterのtoken_lst->strをどこで解放したか忘れた。関数に渡した時に変更されたのかも
