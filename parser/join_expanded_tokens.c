@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 13:18:26 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/02 09:05:04 by rinka            ###   ########.fr       */
+/*   Updated: 2025/09/02 09:28:21 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static int	is_valid_assignment(char *str)//key部分のquote_type=NONEは検証�
 	i = 0;
 	while (str[i] && str[i] != '=')
 	{
-		if (!ft_isalpha(str[i]) && str[i] != '_')
+		if (!ft_isalpha(str[i]) && !ft_isdigit(str[i]) && str[i] != '_')
 			return (0);
 		i++;
 	}
@@ -133,7 +133,7 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 
 	new_lst = NULL;
 	current_lst = *cmd_start;
-	token_type = WORD;
+	// token_type = WORD;ß
 	if (current_lst->token_type == PIPE)//どこでチェックが最適か
 		syntax_error("|", token_lst,&env_lst);
 	// while (current_lst && current_lst->quote_type != NONE && ft_strchr(current_lst->str, '='))
@@ -142,6 +142,7 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 	// }
 	while (current_lst && current_lst->token_type != PIPE)//is_joined結合
 	{
+		token_type = WORD;
 		printf("koko(%s)\n", current_lst->str);
 		if (is_delimiter(current_lst->str))//><>><<の時
 		{
