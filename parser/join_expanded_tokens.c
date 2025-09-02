@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 13:18:26 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/01 14:00:03 by rinka            ###   ########.fr       */
+/*   Updated: 2025/09/02 09:05:04 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,17 +42,24 @@ static char *ft_dupkey(char *str)//hello$TEST"world"の$TEST抜き出し
 
 char *expand_key(char *key, t_token **token_lst, t_env *env_lst)
 {
-	(void)key;
-	(void)token_lst;
-	(void)env_lst;
-	//有効変数処理＆return
+	char *res;
 
-	// if (is_redirect)
-// 	{// ambiguous redirectエラー(t_cmdにafilename格納するときでいいかも)
-// 		ambiguous_redirect_error(original, res, token_lst, env_lst);
-// 	}
-	printf("-----expand %s-----\n",key);////	
-	return (ft_strdup("[expanddvalue]"));
+	while (env_lst)
+	{
+		if (ft_strcmp(env_lst->key, key) == 0)
+		{
+			res = ft_strdup(env_lst->value);
+			if (res == NULL)
+			{//mallocエラー
+				ft_tokenlst_clear(token_lst);
+				ft_envlst_clear(&env_lst);
+			 malloc_error();
+			}////////
+			return (res);
+		}
+		env_lst = env_lst->next;
+	}
+	return (ft_strdup(""));
 }
 
 char *expand_vars(const t_token *original, t_token **token_lst, t_env *env_lst)
