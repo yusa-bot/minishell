@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/01 14:02:23 by rinka            ###   ########.fr       */
+/*   Updated: 2025/09/02 09:29:20 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,12 @@ int main(int argc, char **argv, char **envp)
 		t_cmd	*cmd_lst = ft_parser(token_lst, env_lst);
 		// (void) cmd_lst;
 		t_cmd	*tmp_cmd = cmd_lst;
+		printf("\n↓↓↓以下、パイプ区切りで分けてt_cmdに格納した値↓↓↓\n");
 		while (tmp_cmd)
 		{
 			char **args = tmp_cmd->cmd_args;
 			int i = 0;
+			printf("[cmd_lst%d個目]\n", i+1);
 			printf("args:");
 			while (args && args[i])
 			{
