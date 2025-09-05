@@ -105,7 +105,18 @@ bash-5.3$
 bash: $NON: ambiguous redirect
 (base) MacBookAir-Rinka:git-minishell rinka$ echo hello | < $NON | |
 bash: 予期しないトークン `|' 周辺に構文エラーがあります
-(base) MacBookAir-Rinka:git-minishell rinka$ 
+(base) MacBookAir-Rinka:git-minishell rinka$
+
+(補足)
+以下より、ambiguous redirectと No such file or directoryは同じタイミングでエラー検出しているっぽい
+bash-5.3$ TEST=main.c
+bash-5.3$ < $TEST < $TSET2 < main.c wc -l
+bash: $TSET2: ambiguous redirect
+bash-5.3$ < nonexist < $TEST < $TSET2 < main.c wc -l
+bash: nonexist: No such file or directory
+bash-5.3$ < main.c < $TEST < $TSET2 < main.c wc -l
+bash: $TSET2: ambiguous redirect
+
 */
 
 メモ：delimiterのtoken_lst->strをどこで解放したか忘れた。関数に渡した時に変更されたのかも
