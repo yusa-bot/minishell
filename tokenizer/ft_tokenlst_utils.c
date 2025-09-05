@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 18:55:49 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/08/31 13:18:43 by rinka            ###   ########.fr       */
+/*   Updated: 2025/09/04 13:53:26 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ void	ft_tokenlst_delone(t_token *lst)
 	{
 		if (lst->str)
 			free(lst->str);
+		if (lst->original_str)
+			free(lst->original_str);
 		free(lst);
 	}
 }
@@ -81,6 +83,7 @@ t_token	*ft_tokenlst_new(char *str, t_token_type token_type,
 		return (NULL);
 	}
 	new->str = str;
+	new->original_str = NULL;
 	new->quote_type = quote_type;
 	new->token_type = token_type;
 	new->is_joined_with_next = is_joined_with_next;

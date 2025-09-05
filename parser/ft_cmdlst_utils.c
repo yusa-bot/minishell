@@ -6,11 +6,91 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 18:55:49 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/08/31 12:57:44 by rinka            ###   ########.fr       */
+/*   Updated: 2025/09/05 15:07:44 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static void	ft_redirectlst_delone(t_redirect *file)
+{
+	if (!file)
+		return ;
+	if (file->original_filename)
+		free(file->original_filename);
+	if (file->expanded_filename)
+		free(file->expanded_filename);
+	free (file);
+}
+
+void	ft_redirectlst_clear(t_redirect **lst)
+{
+	t_redirect	*current;
+	t_redirect	*nextnode;
+
+	if (!lst || !*lst)
+		return ;
+	current = *lst;
+	while (current)
+	{
+		nextnode = current->next;
+		ft_redirectlst_delone(current);
+		current = nextnode;
+	}
+	*lst = NULL;
+}
+
+t_redirect *ft_redirectlst_init(void)
+{
+	t_redirect *new_redirect;
+
+	new_redirect = malloc(sizeof(t_redirect));
+	if (new_redirect == NULL)
+		return (NULL);
+	new_redirect->expanded_filename = NULL;
+	new_redirect->original_filename = NULL;
+	new_redirect->token_type = REDIRECT_IN;
+	return (new_redirect);
+}
+
+t_redirect	*ft_redirectlst_new(char *expanded_filename, char *original_filename, t_token_type token_type)
+{
+	t_redirect	*new;
+
+	new = ft_redirectlst_init();//t_cmd初期化
+	if (new == NULL)
+		return (NULL);
+	new->expanded_filename = expanded_filename;
+	new->original_filename = original_filename;
+	new->token_type = token_type;
+	return (new);
+}
+
+t_redirect	*ft_redirectlst_last(t_redirect *lst)
+{
+	while (lst)
+	{
+		if (!lst->next)
+			return (lst);
+		lst = lst->next;
+	}
+	return (lst);
+}
+
+void	ft_redirectlst_add_back(t_redirect **lst, t_redirect *new)
+{
+	t_redirect	*last;
+
+	if (*lst)
+	{
+		last = ft_redirectlst_last(*lst);
+		last->next = new;
+	}
+	else
+		*lst = new;
+}
+
+//ここまでredirect_lstここからcmd_lst
 
 static t_cmd *ft_cmdlst_init(void)
 {
@@ -23,12 +103,11 @@ static t_cmd *ft_cmdlst_init(void)
 		new_cmd->env_vars = NULL;
 		new_cmd->infile = NULL;
 		new_cmd->outfile = NULL;
-		new_cmd->append = 0;
 		new_cmd->next = NULL;
 		return (new_cmd);
 }
 
-t_cmd	*ft_cmdlst_new(char **cmd_args, char **env_vars, char *infile, char *outfile, int append)
+t_cmd	*ft_cmdlst_new(char **cmd_args, char **env_vars, t_redirect *infile, t_redirect *outfile)
 {
 	t_cmd	*new;
 
@@ -39,7 +118,6 @@ t_cmd	*ft_cmdlst_new(char **cmd_args, char **env_vars, char *infile, char *outfi
 	new->env_vars = env_vars;
 	new->infile = infile;
 	new->outfile = outfile;
-	new->append = append;
 	return (new);
 }
 
@@ -50,9 +128,9 @@ void	ft_cmdlst_delone(t_cmd *lst)
 		ft_free_str_array(lst->cmd_args);
 		ft_free_str_array(lst->env_vars);
 		if (lst->infile)
-			free(lst->infile);
+			ft_redirectlst_clear(&lst->infile);
 		if (lst->outfile)
-			free(lst->outfile);
+			ft_redirectlst_clear(&lst->outfile);
 		free(lst);
 	}
 }
@@ -122,3 +200,5 @@ void	ft_cmdlst_add_back(t_cmd **lst, t_cmd *new)
 // // 	new->next = NULL;
 // // 	return (new);
 // // }
+
+//current ;変数展開前後のファイル目を常に保持するように変更

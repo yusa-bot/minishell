@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/02 09:29:20 by rinka            ###   ########.fr       */
+/*   Updated: 2025/09/05 15:49:02 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,13 +68,25 @@ int main(int argc, char **argv, char **envp)
 			}
 			printf("\n");
 			if (tmp_cmd->infile)
-				printf("< %s\n", tmp_cmd->infile);
+			{
+				t_redirect *tmp_fileinfo = tmp_cmd->infile;
+				while (tmp_fileinfo)
+				{
+					printf("< %s\n", tmp_fileinfo->expanded_filename);
+					tmp_fileinfo = tmp_fileinfo->next;
+				}
+			}
 			if (tmp_cmd->outfile)
-				printf("> %s\n", tmp_cmd->outfile);
-			if (tmp_cmd->append == 1)
-				printf("append: Yes\n");
-			else
-				printf("append: No\n");
+			{
+				t_redirect *tmp_fileinfo = tmp_cmd->outfile;
+				while (tmp_fileinfo)
+				{
+					printf("> %s\n", tmp_fileinfo->expanded_filename);
+					if (tmp_fileinfo->token_type == APPEND)
+						printf("(Append)\n");
+					tmp_fileinfo = tmp_fileinfo->next;
+				}
+			}
 			printf("\n");
 			tmp_cmd = tmp_cmd->next;
 		}

@@ -1,6 +1,19 @@
 
 #include "minishell.h"
 
+// char *check_filename(t_cmd *cmd_lst)
+// {
+// 	char *res;
+// 	int	cmd_lst_index;
+// 	int i;
+
+// 	cmd_lst_index = 0;
+// 	while (cmd_lst)
+// 	{
+// 		if (cmd_lst->nonexist)
+// 	}
+// }
+
 void	count_args_vars(t_token *lst,int *arg_count, int *var_count)
 {
 	*arg_count = 0;
@@ -54,40 +67,70 @@ char	**set_env_vars(t_token **lst, int var_count)
 	return (env_vars);
 }
 
-int	set_infile_name(t_token *lst, char **infile, char **outfile, int *append)
+int	set_infile_name(t_token *lst, t_redirect **infile, t_redirect **outfile)
 {
-	*append = 0;
+	t_redirect *new_file;
 	while (lst)
 	{
 		if (is_delimiter(lst->str))
 		{
 			if (lst->token_type == REDIRECT_IN || lst->token_type == HEREDOC)
 			{
-				if (*infile)
-					free (*infile);
-				*infile = ft_strdup((lst->next)->str);
-				if (*infile == NULL)
+				new_file = ft_redirectlst_init();
+				if (infile == NULL)
 				{
 					if (*outfile)
-						free (*outfile);
+						ft_redirectlst_clear(outfile);
 					return (1);
 				}
+				if ((lst->next)->original_str)
+				{
+					new_file->original_filename = ft_strdup((lst->next)->original_str);
+					if (new_file->original_filename == NULL)
+					{
+						ft_redirectlst_clear(outfile);
+						ft_redirectlst_clear(infile);
+						return (1);
+					}
+				}
+				new_file->expanded_filename = ft_strdup((lst->next)->str);
+				if (new_file->expanded_filename == NULL)
+				{
+					ft_redirectlst_clear(outfile);
+					ft_redirectlst_clear(infile);
+					return (1);
+				}
+				new_file->token_type = lst->token_type;
+				ft_redirectlst_add_back(infile, new_file);
 			}
 			else if (lst->token_type == REDIRECT_OUT || lst->token_type == APPEND)
 			{
-				if (*outfile)
-					free (*outfile);
-				*outfile = ft_strdup((lst->next)->str);
-				if (*outfile == NULL)
+				new_file = ft_redirectlst_init();
+				if (outfile == NULL)
 				{
 					if (*infile)
-						free (*infile);
+						ft_redirectlst_clear(infile);
 					return (1);
 				}
-				if (lst->token_type == APPEND)
-					*append = 1;
-				else
-					*append = 0;
+				if ((lst->next)->original_str)
+				{
+					new_file->original_filename = ft_strdup((lst->next)->original_str);
+					if (new_file->original_filename == NULL)
+					{
+						ft_redirectlst_clear(outfile);
+						ft_redirectlst_clear(infile);
+						return (1);
+					}
+				}
+				new_file->expanded_filename = ft_strdup((lst->next)->str);
+				if (new_file->expanded_filename == NULL)
+				{
+					ft_redirectlst_clear(outfile);
+					ft_redirectlst_clear(infile);
+					return (1);
+				}
+				new_file->token_type = lst->token_type;
+				ft_redirectlst_add_back(outfile, new_file);
 			}
 			lst = lst->next;
 		}
@@ -123,7 +166,6 @@ char	**set_cmd_args(t_token *current_lst, int arg_count)
 }
 
 //コマンド一個分の情報格納する関数
-//current0829:まずchar**型の情報をカウント、その後値を格納していく
 t_cmd	*ft_parse_single_cmd(t_token *single_token_lst, t_token *token_lst, t_env *env_lst)
 {
 	t_cmd *res;
@@ -132,9 +174,8 @@ t_cmd	*ft_parse_single_cmd(t_token *single_token_lst, t_token *token_lst, t_env 
 	int arg_count = 0;
 	char **env_vars;
 	int var_count = 0;
-	char	*infile;
-	char	*outfile;
-	int	append;//
+	t_redirect	*infile;
+	t_redirect	*outfile;
 
 	current_lst = single_token_lst;
 	printf("---------arg_var_count--------\n");
@@ -157,7 +198,7 @@ t_cmd	*ft_parse_single_cmd(t_token *single_token_lst, t_token *token_lst, t_env 
 	printf("---------set_infile_name--------\n");//
 	infile = NULL;
 	outfile = NULL;
-	if (set_infile_name(current_lst, &infile, &outfile, &append))
+	if (set_infile_name(current_lst, &infile, &outfile))
 	{//malloc_error
 		ft_free_str_array(env_vars);
 		ft_tokenlst_clear(&single_token_lst);
@@ -165,7 +206,20 @@ t_cmd	*ft_parse_single_cmd(t_token *single_token_lst, t_token *token_lst, t_env 
 		ft_envlst_clear(&env_lst);
 		malloc_error();
 	}//
-	printf("infile: %s, outfile: %s\n", infile, outfile);//
+	// printf("infile: %s, outfile: %s\n", infile->expanded_filename, outfile->expanded_filename);///
+
+	// if ((infile && ft_strlen(infile) == 0)|| (outfile && ft_strlen(outfile) == 0))
+	// {
+	// 	if (infile && ft_strlen(infile) == 0)
+	// 	{
+	// 		nonexist_filename = get_filename_var(current_lst, 0);
+	// 	}
+	// 	else
+	// 	{
+	// 		nonexist_filename = get_filename_var(current_lst, 1);
+	// 	}
+
+	// }
 
 	cmd_args = NULL;
 	printf("---------set_cmd_args--------\n");//
@@ -186,7 +240,7 @@ t_cmd	*ft_parse_single_cmd(t_token *single_token_lst, t_token *token_lst, t_env 
 		}//
 	}
 
-	res = ft_cmdlst_new(cmd_args, env_vars, infile, outfile, append);
+	res = ft_cmdlst_new(cmd_args, env_vars, infile, outfile);
 	return (res);
 	}
 
@@ -207,6 +261,7 @@ t_cmd *ft_parser(t_token *token_lst, t_env *env_lst)
 		while (tmp)
 		{
 			printf("str: %s\n", tmp->str);
+			printf("original_str: %s\n", tmp->original_str);
 			printf("token_type: %d\n", tmp->token_type);
 			printf("quote_type: %d\n", tmp->quote_type);
 			printf("joint_next: %d\n\n", tmp->is_joined_with_next);
@@ -227,15 +282,6 @@ t_cmd *ft_parser(t_token *token_lst, t_env *env_lst)
 		ft_cmdlst_add_back(&cmd_lst, new);
 		// ft_tokenlst_clear(&joined_token_lst);
 	}
-
-	// int j = 0;
-	// while (token_lst)
-	// {
-	// 		printf("lst%d : %s\n", j, token_lst->str);
-	// 		token_lst = token_lst->next;
-	// 		j++;
-	// }
-	ft_tokenlst_clear(&token_lst);
 	return (cmd_lst);
 }
 

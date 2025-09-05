@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 19:11:30 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/08/31 13:17:29 by rinka            ###   ########.fr       */
+/*   Updated: 2025/09/04 13:52:22 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,8 @@ typedef enum e_quote_type
 
 typedef struct s_token
 {
-	char			*str;
+	char *str;
+	char	*original_str;
 	t_token_type	token_type;
 	t_quote_type	quote_type;
 	int				is_joined_with_next;

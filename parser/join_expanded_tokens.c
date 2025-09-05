@@ -6,14 +6,13 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 13:18:26 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/02 09:28:21 by rinka            ###   ########.fr       */
+/*   Updated: 2025/09/04 13:57:12 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "minishell.h"
 
-//current: 08/29
 static int	is_valid_assignment(char *str)//key部分のquote_type=NONEは検証済みなのでkeyの文字だけチェック
 {
 	int i;
@@ -121,7 +120,6 @@ char *expand_vars(const t_token *original, t_token **token_lst, t_env *env_lst)
 	return (res);
 }
 
-//current: 環境変数展開＆is＿jointedの連結
 //t_cmd関連関数の前に完成させてテストする（その前にt_envを持ってきてファイル構成テストも）
 t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *env_lst)
 {
@@ -130,6 +128,7 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 	t_token *current_lst;
 	char *new_str;
 	t_token_type	token_type;
+	char *original_var;
 
 	new_lst = NULL;
 	current_lst = *cmd_start;
@@ -142,8 +141,8 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 	// }
 	while (current_lst && current_lst->token_type != PIPE)//is_joined結合
 	{
+		original_var = NULL;
 		token_type = WORD;
-		printf("koko(%s)\n", current_lst->str);
 		if (is_delimiter(current_lst->str))//><>><<の時
 		{
 			newnode = ft_tokenlst_dup(current_lst);
@@ -166,6 +165,8 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 				//変数展開
 				char *old_str = current_lst->str;
 				char *expanded_str = expand_vars(current_lst, token_lst, env_lst);
+				if (is_delimiter(ft_tokenlst_last(new_lst)->str))
+					original_var = ft_strjoin_safe(original_var, old_str);
 				current_lst->str = expanded_str;
 				free(old_str);
 			}
@@ -198,6 +199,13 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 			ft_envlst_clear(&env_lst);
 			malloc_error();
 		}///
+		if (original_var)//current : redirectでnex_str == ""でoriginal_varの時、元の変数名を保存これをparser.cでも引き継ぐ
+		{
+			if (ft_tokenlst_last(new_lst)->token_type == REDIRECT_IN)
+				newnode->original_str = original_var;
+			else if (ft_tokenlst_last(new_lst)->token_type == REDIRECT_OUT || ft_tokenlst_last(new_lst)->token_type == APPEND)
+				newnode->original_str = original_var;
+		}
 		ft_tokenlst_add_back(&new_lst, newnode);
 	}
 	*cmd_start = current_lst;
