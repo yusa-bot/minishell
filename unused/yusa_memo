@@ -1,0 +1,18 @@
+error free?
+42 header name
+
+GitHub Pull Requests
+
+
+-----
+minishell.hの各.hへの引き継ぎ
+
+
+
+-----
+
+main()
+	ユーザーが入力したコマンドラインをパース
+	コマンドごと（パイプ区切り）に分解
+	構造体（t_cmd）に格納
+	t_cmd デバッグ

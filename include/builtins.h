@@ -3,21 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:30:53 by rinka             #+#    #+#             */
-/*   Updated: 2025/08/25 00:04:31 by rinka            ###   ########.fr       */
+/*   Updated: 2025/09/06 21:59:52 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef BUILTINS_H
 # define BUILTINS_H
 
+// cd
+# include <unistd.h>
+# include <limits.h>
+# include <errno.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+
 typedef struct s_env {
-	 char *key;
-		char *value;
-		int is_export;
-		struct s_env *next;
+	char			*key;
+	char			*value;
+	int				is_export;
+	struct s_env	*next;
 } t_env;
 
 //ft_envlst__utils.c

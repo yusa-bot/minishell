@@ -15,8 +15,10 @@ typedef struct s_cmd
 	char		**env_vars;//一時的な環境変数
 	t_redirect	*infile;
 	t_redirect	*outfile;
+	struct s_cmd	*prev;
 	struct s_cmd	*next;
 }	t_cmd;
+ここから←をしていく
 
 t_cmd *ft_parser(t_token *token_lst, t_env *env_lst);
 
@@ -26,7 +28,7 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 t_token *ft_tokenlst_dup(t_token *lst);
 void	ambiguous_redirect_error(char *original);
 
-//ft_cmdlst_utils.c 
+//ft_cmdlst_utils.c
 t_cmd	*ft_cmdlst_new(char **cmd_args, char **env_vars, t_redirect *infile, t_redirect *outfile);
 void	ft_cmdlst_delone(t_cmd *lst);
 void	ft_cmdlst_clear(t_cmd **lst);

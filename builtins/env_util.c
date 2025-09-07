@@ -1,16 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   set_env.c                                          :+:      :+:    :+:   */
+/*   env_util.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:29:18 by rinka             #+#    #+#             */
-/*   Updated: 2025/08/24 12:05:13 by rinka            ###   ########.fr       */
+/*   Updated: 2025/09/06 22:21:49 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+char *get_env(t_env *env, const char *key)
+{
+	while (env)
+	{
+		if (strcmp(env->key, key) == 0)
+			return env->value;
+		env = env->next;
+	}
+	return NULL;
+}
 
 t_env *set_env(char **envp)
 {
@@ -36,12 +47,11 @@ t_env *set_env(char **envp)
 			ft_envlst_clear(&lst);
 			return (NULL);
 		}
-		ft_envlst_add_back(&lst,ft_envlst_new(key, value, 1));//初期はすべてexportなのでflagたてる
+		ft_envlst_add_back(&lst, ft_envlst_new(key, value, 1));//初期はすべてexportなのでflagたてる
 		i++;
 	}
 	return (lst);
 }
-
 
 // // void	ft_add_export(t_env *env_lst, char)
 // #include <fcntl.h>

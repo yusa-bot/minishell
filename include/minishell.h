@@ -8,11 +8,25 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 
+#include <stdio.h>
+//signal
+#include <signal.h>
 # include "libft.h"
 # include "builtins.h"
 # include "tokenizer.h"
 # include "parser.h"
 
+//.hの扱いってこれであってる？
+#include "../include/builtins.h"
+#include "../include/tokenizer.h"
+#include "../include/parser.h"
+
+int g_sig;
+
+//pipe
+typedef struct s_pipeline {
+
+} t_pipeline;
 
 //ft_utils.c
 int	is_delimiter(char *str);

@@ -3,153 +3,77 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/05 15:49:02 by rinka            ###   ########.fr       */
+/*   Updated: 2025/09/07 20:10:10 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int g_sig = 0;  // SIGINT/SIGQUIT を受けるグローバル
 
 int main(int argc, char **argv, char **envp)
 {
 	t_env *env_lst;
 	(void)argc;
 	(void)argv;
-
+	int g_last_status = 0;
 	env_lst = set_env(envp);
-	
-	//------------------以下、tokenizer--------------------------------
+	rl_catch_signals = 0;// readlineが自動でsignal処理しないように無効化
+	setup_signals_interactive();
 
 	char *line;
 	while (1)
 	{
+		g_sig = 0;
 		line = readline("$ ");
 		if (line == NULL)
 		{
 			printf("exit\n");
 			break ;
 		}
-		if (*line)
-		{
-			add_history(line);
-		}
 		if (ft_strcmp(line, "exit") == 0)
 		{
 			free(line);
 			break ;
 		}
-		
+
+		// 直前の SIGINT を検知して空行扱いにする（好みで）
+		if (g_sig == SIGINT) {
+			g_sig = 0;
+			free(line);
+			continue;
+		}
+		// 空ならスキップ（履歴は追加しない）
+		if (*line == '\0') {
+			free(line);
+			continue;
+		}
+		add_history(line);
+
 		t_token *token_lst = tokenize_line(line);
 		t_cmd	*cmd_lst = ft_parser(token_lst, env_lst);
-		// (void) cmd_lst;
-		t_cmd	*tmp_cmd = cmd_lst;
-		printf("\n↓↓↓以下、パイプ区切りで分けてt_cmdに格納した値↓↓↓\n");
-		while (tmp_cmd)
-		{
-			char **args = tmp_cmd->cmd_args;
-			int i = 0;
-			printf("[cmd_lst%d個目]\n", i+1);
-			printf("args:");
-			while (args && args[i])
-			{
-				printf(" %s", args[i]);
-				i++;
-			}
-			printf("\n");
-			args = tmp_cmd->env_vars;
-			i = 0;
-			printf("vars:");
-			while (args && args[i])
-			{
-				printf(" %s", args[i]);
-				i++;
-			}
-			printf("\n");
-			if (tmp_cmd->infile)
-			{
-				t_redirect *tmp_fileinfo = tmp_cmd->infile;
-				while (tmp_fileinfo)
-				{
-					printf("< %s\n", tmp_fileinfo->expanded_filename);
-					tmp_fileinfo = tmp_fileinfo->next;
-				}
-			}
-			if (tmp_cmd->outfile)
-			{
-				t_redirect *tmp_fileinfo = tmp_cmd->outfile;
-				while (tmp_fileinfo)
-				{
-					printf("> %s\n", tmp_fileinfo->expanded_filename);
-					if (tmp_fileinfo->token_type == APPEND)
-						printf("(Append)\n");
-					tmp_fileinfo = tmp_fileinfo->next;
-				}
-			}
-			printf("\n");
-			tmp_cmd = tmp_cmd->next;
-		}
-		printf("\n");
-		// if (tmp == NULL) 
-		// 	printf("null tarminated\n");
-		printf("%s\n", line);
+		ft_tokenlst_clear(&token_lst);
 		free(line);
+		if (!cmd_lst)
+			continue; //構文エラー等：parse内でステータス設定済みの想定
+
+
+		// 単独ビルトインは親で実行
+        if (!cmd_lst->next && cmd_lst->cmd_args && cmd_lst->cmd_args[0]
+            && is_builtin_name(cmd_lst->cmd_args[0]) && must_run_in_parent(cmd_lst->cmd_args[0]))
+        {
+            g_last_status = run_single_builtin_in_parent(cmd_lst, &env_lst);
+        }
+        else
+        {
+            g_last_status = execute_pipeline(cmd_lst, &env_lst);
+        }
 
 		ft_cmdlst_clear(&cmd_lst);
 	}
-
-	//parserでt_cmdに
-	// t_cmd *cmd_lst = parse_tokens(token_lst, env_lst);
-	// ft_tokenlst_clear(&tcmds_lst);
-
-	//t_envのfree
 	ft_envlst_clear(&env_lst);
-	
-	
-	return (0);
+	return g_last_status;
 }
-
-// int main(int argc, char **argv, char **envp)//"export TEST=/test/pathでテスト"
-// {
-// 	t_env *env_lst;
-// 	(void)argc;
-
-// 	env_lst = NULL;
-// 	env_lst = set_env(envp);
-
-// 	int env_fd = open(argv[1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-// 	if (env_fd == -1)
-// 	{
-// 		return (1);
-// 	}
-
-// 	//export TEST=/test/path
-// 	ft_add_env(&env_lst, "TEST=/test/path", 1);
-// 	//export TEST2=/test2/path
-// 	ft_add_env(&env_lst, "TEST2=/test2/path", 0);
-
-// 	//unset前
-// 	ft_put_envs(env_lst, env_fd);//順番？？
-// 	write(env_fd, "\n", 1);
-// 	ft_put_exports(env_lst, env_fd);
-// 	write(env_fd, "\n", 1);
-
-// 	int unset_fd = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-// 	if (unset_fd == -1)
-// 	{
-// 		return (1);
-// 	}
-
-// 		//TEST=/test/pathをunset
-// 	ft_unset(&env_lst, "TEST");
-
-// 	//unset後
-// 	ft_put_envs(env_lst, unset_fd);
-// 	write(unset_fd, "\n", 1);
-// 	ft_put_exports(env_lst, unset_fd);
-
-// 	//t_envのfree
-// 	ft_envlst_clear(&env_lst);
-// }
-
