@@ -6,29 +6,35 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 16:57:55 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/07 21:30:30 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/08 22:01:52 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// リダイレクション処理のヘルパー関数
-static int handle_redirect(t_redirect *r, int target_fd, int flags)
+// 既存 handle_redirect に prepared_fd を考慮させる例
+int handle_redirect(const t_redirect *r, int target_fd, int oflags)
 {
-    int fd;
+    int fd = -1;
 
-    fd = open(r->expanded_filename, flags, 0644);
+    if (r->token_type == INFILE && r->prepared_fd >= 0)
+        fd = r->prepared_fd;// HEREDOCから来たやつ
+	else if (r->token_type == INFILE)
+        fd = open(r->expanded_filename, O_RDONLY);
+	else
+        fd = open(r->expanded_filename, oflags, 0644);// OUTFILE/APPEND
     if (fd < 0)
-    {
-        perror("minishell");
+	{
+        perror(r->expanded_filename);
         return -1;
     }
     if (dup2(fd, target_fd) < 0)
-    {
+	{
+        perror("dup2");
         close(fd);
-        perror("minishell");
         return -1;
     }
+    // HEREDOCのread側FDはdup2後に閉じてOK（以降はdup先から読まれる）
     close(fd);
     return 0;
 }
@@ -41,7 +47,6 @@ int apply_redirections(const t_cmd *c)
     r = c->infile;
     while (r)
     {
-        // HEREDOCは事前にテンポラリfdにしておくと楽（ここでは通常入力だけ例示）
         if (handle_redirect(r, STDIN_FILENO, O_RDONLY) < 0)
             return -1;
         r = r->next;

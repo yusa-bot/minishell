@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/07 20:10:10 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/08 21:54:04 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,11 @@ int main(int argc, char **argv, char **envp)
 
 		t_token *token_lst = tokenize_line(line);
 		t_cmd	*cmd_lst = ft_parser(token_lst, env_lst);
+		while (cmd_lst)// HEREDOCのときのみ専用fdに入れ替える
+		{
+			prepare_heredocs_for_cmd(cmd_lst, env_lst);
+			cmd_lst = cmd_lst->next;
+		}
 		ft_tokenlst_clear(&token_lst);
 		free(line);
 		if (!cmd_lst)

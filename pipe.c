@@ -6,17 +6,15 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 13:48:40 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/07 20:23:03 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/08 22:46:35 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// pipeline.c：パイプ列の実行（ビルトイン混在OK）
 // 各コマンドを子プロセスで実行する関数
 static void child_exec(t_cmd *c, int in_fd, int out_fd, t_env **env)
 {
-    // 子プロセス用のシグナルハンドラを設定（SIG_DFL）
     setup_signals_child();
     // パイプからparent_builtin.cの入力を標準入力に接続
     if (in_fd != STDIN_FILENO)  { dup2(in_fd, STDIN_FILENO); close(in_fd); }

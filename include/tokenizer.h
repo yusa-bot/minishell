@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 19:11:30 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/09/04 13:52:22 by rinka            ###   ########.fr       */
+/*   Updated: 2025/09/08 20:53:51 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,12 @@ typedef enum e_token_type
 	ARG,// 引数（いらないかも）
 	PIPE,// |
 	VARIABLE,//$変数
-	REDIRECT_IN,// < 
+	REDIRECT_IN,// <
 	REDIRECT_OUT,// >
 	APPEND,// >>
 	HEREDOC,// <<
 	FILENAME,//ファイル名
+	INFILE,//リダイレクトのファイル名（確定）
 	WORD,//コマンドか$変数か引数（未確定）
 	VARIABLE_ASSIGNMENT,//一時的な変数代入
 }	t_token_type;

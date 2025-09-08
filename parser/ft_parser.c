@@ -268,9 +268,9 @@ t_cmd *ft_parser(t_token *token_lst, t_env *env_lst)
 			tmp = tmp->next;
 		}
 		printf("\n");
-		if (tmp == NULL) 
+		if (tmp == NULL)
 			printf("null tarminated\n");
-	
+
 		if (is_delimiter(ft_tokenlst_last(joined_token_lst)->str))
 		{
 			if (!current_lst)

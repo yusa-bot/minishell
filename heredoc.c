@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:40:06 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/07 22:35:00 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/08 22:01:45 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,8 +88,11 @@ static int build_heredoc_fd(const char *raw_delim, int do_expand, void *env)
 // 親でコマンド実行前に呼ぶ：HEREDOCをpipeのread FDに置き換える
 int prepare_heredocs_for_cmd(t_cmd *cmd, void *env)
 {
-    for (t_redirect *r = cmd->infile; r; r = r->next) {
-        if (r->token_type == HEREDOC) {
+	t_redirect *r = cmd->infile;
+    while (r)
+	{
+        if (r->token_type == HEREDOC)
+		{
             int expand = !is_quoted_delim(r->arg); // クォートあり→展開しない（bash準拠）
             int fd = build_heredoc_fd(r->arg, expand, env);
             if (fd < 0) return -1; // 中断や失敗。呼び出し側で全体の実行を中止する
@@ -99,34 +102,7 @@ int prepare_heredocs_for_cmd(t_cmd *cmd, void *env)
             r->token_type = INFILE;
             // argは使わないが、後片付けポリシーに応じて保持/解放を判断
         }
+		r->next
     }
-    return 0;
-}
-
-// 既存 handle_redirect に prepared_fd を考慮させる例
-int handle_redirect(const t_redirect *r, int target_fd, int oflags)
-{
-    int fd = -1;
-
-    if (r->token_type == INFILE && r->prepared_fd >= 0) {
-        // HEREDOCから来たやつ
-        fd = r->prepared_fd;
-    } else if (r->token_type == INFILE) {
-        fd = open(r->arg, O_RDONLY);
-    } else {
-        // OUTFILE/APPEND
-        fd = open(r->arg, oflags, 0644);
-    }
-    if (fd < 0) {
-        perror(r->arg);
-        return -1;
-    }
-    if (dup2(fd, target_fd) < 0) {
-        perror("dup2");
-        close(fd);
-        return -1;
-    }
-    // HEREDOCのread側FDはdup2後に閉じてOK（以降はdup先から読まれる）
-    close(fd);
     return 0;
 }

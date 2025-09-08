@@ -7,6 +7,7 @@ typedef struct s_redirect
 	char *expanded_filename;
 	t_token_type token_type;
 	struct s_redirect *next;
+	int prepared_fd; // HEREDOC用に準備されたFDを保持
 } t_redirect;
 
 typedef struct s_cmd
