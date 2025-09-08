@@ -7,7 +7,7 @@ typedef struct s_redirect
 	char *expanded_filename;
 	t_token_type token_type;
 	struct s_redirect *next;
-}   t_redirect;
+} t_redirect;
 
 typedef struct s_cmd
 {
@@ -18,7 +18,7 @@ typedef struct s_cmd
 	struct s_cmd	*prev;
 	struct s_cmd	*next;
 }	t_cmd;
-ここから←をしていく
+
 
 t_cmd *ft_parser(t_token *token_lst, t_env *env_lst);
 
