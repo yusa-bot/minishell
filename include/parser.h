@@ -1,12 +1,24 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/13 21:23:29 by ayusa             #+#    #+#             */
+/*   Updated: 2025/09/13 21:23:31 by ayusa            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PARSER_H
 # define PARSER_H
 
 typedef struct s_redirect
 {
-	char *original_filename;
-	char *expanded_filename;
-	t_token_type token_type;
-	struct s_redirect *next;
+	char *original_str;//用途を限定せず汎用的に
+	char *expanded_str;
+	t_token_type token_type;//<, >, >>, <<
+	struct s_redirect *next;//複数リダイレクト用
 	int prepared_fd; // HEREDOC用に準備されたFDを保持
 } t_redirect;
 
@@ -16,8 +28,8 @@ typedef struct s_cmd
 	char		**env_vars;//一時的な環境変数
 	t_redirect	*infile;
 	t_redirect	*outfile;
-	struct s_cmd	*prev;
-	struct s_cmd	*next;
+	struct s_cmd	*prev;//pipeline用
+	struct s_cmd	*next;//pipeline用
 }	t_cmd;
 
 
@@ -37,7 +49,7 @@ t_cmd	*ft_cmdlst_last(t_cmd *lst);
 void	ft_cmdlst_add_back(t_cmd **lst, t_cmd *new);
 //ft_redirectlst
 t_redirect *ft_redirectlst_init(void);
-t_redirect	*ft_redirectlst_new(char *expanded_filename, char *original_filename, t_token_type token_type);
+t_redirect	*ft_redirectlst_new(char *expanded_str, char *original_str, t_token_type token_type);
 void	ft_redirectlst_clear(t_redirect **lst);
 t_redirect	*ft_redirectlst_last(t_redirect *lst);
 void	ft_redirectlst_add_back(t_redirect **lst, t_redirect *new);

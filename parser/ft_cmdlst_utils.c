@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 18:55:49 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/09/08 21:09:23 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/13 21:09:26 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,10 @@ static void	ft_redirectlst_delone(t_redirect *file)
 {
 	if (!file)
 		return ;
-	if (file->original_filename)
-		free(file->original_filename);
-	if (file->expanded_filename)
-		free(file->expanded_filename);
+	if (file->original_str)
+		free(file->original_str);
+	if (file->expanded_str)
+		free(file->expanded_str);
 	free (file);
 }
 
@@ -47,21 +47,21 @@ t_redirect *ft_redirectlst_init(void)
 	new_redirect = malloc(sizeof(t_redirect));
 	if (new_redirect == NULL)
 		return (NULL);
-	new_redirect->expanded_filename = NULL;
-	new_redirect->original_filename = NULL;
+	new_redirect->expanded_str = NULL;
+	new_redirect->original_str = NULL;
 	new_redirect->token_type = REDIRECT_IN;
 	return (new_redirect);
 }
 
-t_redirect	*ft_redirectlst_new(char *expanded_filename, char *original_filename, t_token_type token_type)
+t_redirect	*ft_redirectlst_new(char *expanded_str, char *original_str, t_token_type token_type)
 {
 	t_redirect	*new;
 
 	new = ft_redirectlst_init();//t_cmd初期化
 	if (new == NULL)
 		return (NULL);
-	new->expanded_filename = expanded_filename;
-	new->original_filename = original_filename;
+	new->expanded_str = expanded_str;
+	new->original_str = original_str;
 	new->token_type = token_type;
 	return (new);
 }

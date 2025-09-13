@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/08 21:54:04 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/13 21:21:23 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ int main(int argc, char **argv, char **envp)
 	(void)argv;
 	int g_last_status = 0;
 	env_lst = set_env(envp);
-	rl_catch_signals = 0;// readlineが自動でsignal処理しないように無効化
+
+	rl_catch_signals = 0;//readlineのデフォルトハンドラを無効化。カスタムのシグナルハンドラを作成しているため。
 	setup_signals_interactive();
 
 	char *line;
@@ -40,45 +41,51 @@ int main(int argc, char **argv, char **envp)
 			break ;
 		}
 
-		// 直前の SIGINT を検知して空行扱いにする（好みで）
-		if (g_sig == SIGINT) {
+		//sigint_handler()後に実行
+		if (g_sig == SIGINT)
+		{
 			g_sig = 0;
 			free(line);
 			continue;
 		}
 		// 空ならスキップ（履歴は追加しない）
-		if (*line == '\0') {
+		if (*line == '\0')
+		{
 			free(line);
 			continue;
 		}
 		add_history(line);
 
 		t_token *token_lst = tokenize_line(line);
-		t_cmd	*cmd_lst = ft_parser(token_lst, env_lst);
-		while (cmd_lst)// HEREDOCのときのみ専用fdに入れ替える
-		{
-			prepare_heredocs_for_cmd(cmd_lst, env_lst);
-			cmd_lst = cmd_lst->next;
-		}
-		ft_tokenlst_clear(&token_lst);
 		free(line);
-		if (!cmd_lst)
-			continue; //構文エラー等：parse内でステータス設定済みの想定
+		t_cmd	*cmd_lst = ft_parser(token_lst, env_lst);
 
+	// 	//HEREDOCのときのみ専用fdに入れ替える関数を通す。
+	// 	//ここではcmd_lstを回す。
+	// 	while (cmd_lst)
+	// 	{
+	// 		prepare_heredoc_for_cmd(cmd_lst, env_lst);
+	// 		cmd_lst = cmd_lst->next;
+	// 	}
 
-		// 単独ビルトインは親で実行
-        if (!cmd_lst->next && cmd_lst->cmd_args && cmd_lst->cmd_args[0]
-            && is_builtin_name(cmd_lst->cmd_args[0]) && must_run_in_parent(cmd_lst->cmd_args[0]))
-        {
-            g_last_status = run_single_builtin_in_parent(cmd_lst, &env_lst);
-        }
-        else
-        {
-            g_last_status = execute_pipeline(cmd_lst, &env_lst);
-        }
+	// 	ft_tokenlst_clear(&token_lst);
+	// 	free(line);
+	// 	if (!cmd_lst)
+	// 		continue;
 
-		ft_cmdlst_clear(&cmd_lst);
+    //     if (!cmd_lst->next && cmd_lst->cmd_args && cmd_lst->cmd_args[0]
+    //         && is_builtin_name(cmd_lst->cmd_args[0]) && must_run_in_parent(cmd_lst->cmd_args[0]))
+    //     {
+    //         g_last_status = run_single_builtin_in_parent(cmd_lst, &env_lst);
+    //     }
+    //     else
+    //     {
+    //         g_last_status = execute_pipeline(cmd_lst, &env_lst);
+    //     }
+
+	 	ft_cmdlst_clear(&cmd_lst);
 	}
 	ft_envlst_clear(&env_lst);
-	return g_last_status;
+	// return g_last_status;
+	return 0;
 }

@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 16:57:55 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/08 22:01:52 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/13 21:08:52 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,12 @@ int handle_redirect(const t_redirect *r, int target_fd, int oflags)
     if (r->token_type == INFILE && r->prepared_fd >= 0)
         fd = r->prepared_fd;// HEREDOCから来たやつ
 	else if (r->token_type == INFILE)
-        fd = open(r->expanded_filename, O_RDONLY);
+        fd = open(r->expanded_str, O_RDONLY);
 	else
-        fd = open(r->expanded_filename, oflags, 0644);// OUTFILE/APPEND
+        fd = open(r->expanded_str, oflags, 0644);// OUTFILE/APPEND
     if (fd < 0)
 	{
-        perror(r->expanded_filename);
+        perror(r->expanded_str);
         return -1;
     }
     if (dup2(fd, target_fd) < 0)

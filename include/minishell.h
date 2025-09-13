@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/13 21:23:17 by ayusa             #+#    #+#             */
+/*   Updated: 2025/09/13 21:24:27 by ayusa            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
@@ -9,17 +20,11 @@
 # include <readline/history.h>
 
 #include <stdio.h>
-//signal
-#include <signal.h>
-# include "libft.h"
-# include "builtins.h"
-# include "tokenizer.h"
-# include "parser.h"
 
-//.hの扱いってこれであってる？
 #include "../include/builtins.h"
 #include "../include/tokenizer.h"
 #include "../include/parser.h"
+#include "../include/signal.h"
 
 int g_sig;
 

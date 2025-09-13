@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: rinka <rinka@student.42.fr>                +#+  +:+       +#+         #
+#    By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/08 19:14:52 by rinka             #+#    #+#              #
-#    Updated: 2025/08/29 14:29:50 by rinka            ###   ########.fr        #
+#    Updated: 2025/09/13 21:26:06 by ayusa            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,7 +29,8 @@ SRCS = \
 	tokenizer/ft_tokenlst_utils.c \
 	utils/ft_free.c \
 	utils/ft_utils.c \
-	main.c
+	main.c \
+	signal.c
 
 OBJS = $(SRCS:.c=.o)
 

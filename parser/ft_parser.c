@@ -85,16 +85,16 @@ int	set_infile_name(t_token *lst, t_redirect **infile, t_redirect **outfile)
 				}
 				if ((lst->next)->original_str)
 				{
-					new_file->original_filename = ft_strdup((lst->next)->original_str);
-					if (new_file->original_filename == NULL)
+					new_file->original_str = ft_strdup((lst->next)->original_str);
+					if (new_file->original_str == NULL)
 					{
 						ft_redirectlst_clear(outfile);
 						ft_redirectlst_clear(infile);
 						return (1);
 					}
 				}
-				new_file->expanded_filename = ft_strdup((lst->next)->str);
-				if (new_file->expanded_filename == NULL)
+				new_file->expanded_str = ft_strdup((lst->next)->str);
+				if (new_file->expanded_str == NULL)
 				{
 					ft_redirectlst_clear(outfile);
 					ft_redirectlst_clear(infile);
@@ -114,16 +114,16 @@ int	set_infile_name(t_token *lst, t_redirect **infile, t_redirect **outfile)
 				}
 				if ((lst->next)->original_str)
 				{
-					new_file->original_filename = ft_strdup((lst->next)->original_str);
-					if (new_file->original_filename == NULL)
+					new_file->original_str = ft_strdup((lst->next)->original_str);
+					if (new_file->original_str == NULL)
 					{
 						ft_redirectlst_clear(outfile);
 						ft_redirectlst_clear(infile);
 						return (1);
 					}
 				}
-				new_file->expanded_filename = ft_strdup((lst->next)->str);
-				if (new_file->expanded_filename == NULL)
+				new_file->expanded_str = ft_strdup((lst->next)->str);
+				if (new_file->expanded_str == NULL)
 				{
 					ft_redirectlst_clear(outfile);
 					ft_redirectlst_clear(infile);
@@ -206,7 +206,7 @@ t_cmd	*ft_parse_single_cmd(t_token *single_token_lst, t_token *token_lst, t_env 
 		ft_envlst_clear(&env_lst);
 		malloc_error();
 	}//
-	// printf("infile: %s, outfile: %s\n", infile->expanded_filename, outfile->expanded_filename);///
+	// printf("infile: %s, outfile: %s\n", infile->expanded_str, outfile->expanded_str);///
 
 	// if ((infile && ft_strlen(infile) == 0)|| (outfile && ft_strlen(outfile) == 0))
 	// {
