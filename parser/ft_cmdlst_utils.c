@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 18:55:49 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/09/13 21:09:26 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/13 21:37:57 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,12 +99,12 @@ static t_cmd *ft_cmdlst_init(void)
 	new_cmd = malloc(sizeof(t_cmd));
 	if (new_cmd == NULL)
 		return (NULL);
-		new_cmd->cmd_args = NULL;
-		new_cmd->env_vars = NULL;
-		new_cmd->infile = NULL;
-		new_cmd->outfile = NULL;
-		new_cmd->next = NULL;
-		return (new_cmd);
+	new_cmd->cmd_args = NULL;
+	new_cmd->env_vars = NULL;
+	new_cmd->infile = NULL;
+	new_cmd->outfile = NULL;
+	new_cmd->next = NULL;
+	return (new_cmd);
 }
 
 t_cmd	*ft_cmdlst_new(char **cmd_args, char **env_vars, t_redirect *infile, t_redirect *outfile)

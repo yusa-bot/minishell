@@ -6,7 +6,7 @@
 #    By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/08 19:14:52 by rinka             #+#    #+#              #
-#    Updated: 2025/09/13 21:26:06 by ayusa            ###   ########.fr        #
+#    Updated: 2025/09/13 21:37:22 by ayusa            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,6 @@ SRCS = \
 	builtins/ft_put_envs.c \
 	builtins/ft_put_exports.c \
 	builtins/ft_unset.c \
-	builtins/set_env.c \
 	parser/ft_cmdlst_utils.c \
 	parser/join_expanded_tokens.c \
 	parser/ft_parser_utils.c \

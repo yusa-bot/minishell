@@ -6,20 +6,24 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/13 21:21:23 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/13 22:19:07 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "./include/minishell.h"
 
-int g_sig = 0;  // SIGINT/SIGQUIT を受けるグローバル
+#ifndef SIGINT
+# define SIGINT 2
+#endif
+
+int g_sig = 0;  //SIGINT/SIGQUITを受けるグローバル
 
 int main(int argc, char **argv, char **envp)
 {
 	t_env *env_lst;
 	(void)argc;
 	(void)argv;
-	int g_last_status = 0;
+	//int g_last_status = 0;
 	env_lst = set_env(envp);
 
 	rl_catch_signals = 0;//readlineのデフォルトハンドラを無効化。カスタムのシグナルハンドラを作成しているため。
@@ -59,6 +63,59 @@ int main(int argc, char **argv, char **envp)
 		t_token *token_lst = tokenize_line(line);
 		free(line);
 		t_cmd	*cmd_lst = ft_parser(token_lst, env_lst);
+
+
+		///////////
+		t_cmd	*tmp_cmd = cmd_lst;
+		printf("\n↓↓↓以下、パイプ区切りで分けてt_cmdに格納した値↓↓↓\n");
+		while (tmp_cmd)
+		{
+			char **args = tmp_cmd->cmd_args;
+			int i = 0;
+			printf("[cmd_lst%d個目]\n", i+1);
+			printf("args:");
+			while (args && args[i])
+			{
+				printf(" %s", args[i]);
+				i++;
+			}
+			printf("\n");
+			args = tmp_cmd->env_vars;
+			i = 0;
+			printf("vars:");
+			while (args && args[i])
+			{
+				printf(" %s", args[i]);
+				i++;
+			}
+			printf("\n");
+			if (tmp_cmd->infile)
+			{
+				t_redirect *tmp_fileinfo = tmp_cmd->infile;
+				while (tmp_fileinfo)
+				{
+					printf("< %s\n", tmp_fileinfo->expanded_str);
+					tmp_fileinfo = tmp_fileinfo->next;
+				}
+			}
+			if (tmp_cmd->outfile)
+			{
+				t_redirect *tmp_fileinfo = tmp_cmd->outfile;
+				while (tmp_fileinfo)
+				{
+					printf("> %s\n", tmp_fileinfo->expanded_str);
+					if (tmp_fileinfo->token_type == APPEND)
+						printf("(Append)\n");
+					tmp_fileinfo = tmp_fileinfo->next;
+				}
+			}
+			printf("\n");
+			tmp_cmd = tmp_cmd->next;
+		}
+		printf("\n");
+		printf("%s\n", line);
+		///////////////
+
 
 	// 	//HEREDOCのときのみ専用fdに入れ替える関数を通す。
 	// 	//ここではcmd_lstを回す。

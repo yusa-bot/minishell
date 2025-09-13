@@ -6,25 +6,25 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 21:23:17 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/13 21:24:27 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/13 22:07:55 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# include <signal.h>
 # include <unistd.h>
 # include <stdlib.h>
 # include <string.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <stdio.h>
 
-#include <stdio.h>
-
-#include "../include/builtins.h"
-#include "../include/tokenizer.h"
-#include "../include/parser.h"
-#include "../include/signal.h"
+# include "../include/builtins.h"
+# include "../include/tokenizer.h"
+# include "../include/parser.h"
+# include "../include/signal.h"
 
 int g_sig;
 
@@ -44,5 +44,6 @@ void	ft_free_str_array(char **arr);
 void malloc_error();
 void	syntax_error(char *unexpected_token, t_token **token_lst, t_env **env_lst);
 
+t_env *set_env(char **envp);
 
 #endif
