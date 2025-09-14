@@ -6,15 +6,14 @@
 #    By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/08 19:14:52 by rinka             #+#    #+#              #
-#    Updated: 2025/09/13 21:37:22 by ayusa            ###   ########.fr        #
+#    Updated: 2025/09/14 12:56:06 by ayusa            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
-CC = cc
-CFLAGS = -Wall -Wextra -Werror
 
 SRCS = \
+	builtins/env_util.c \
 	builtins/ft_add_env.c \
 	builtins/ft_envlst_utils.c \
 	builtins/ft_put_envs.c \
@@ -33,29 +32,38 @@ SRCS = \
 
 OBJS = $(SRCS:.c=.o)
 
+CC = cc
+CFLAGS = -Wall -Wextra -Werror
+RM = rm -f
+
+
 LIBFT_DIR = libft
+
 LIBFT = $(LIBFT_DIR)/libft.a
-LIBFT_INCLUDE = -I$(LIBFT_DIR)
 
 INCLUDE = -I./include
 
+LDFLAGS = -lreadline
+
+%.o: %.c
+	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
+
 all: $(NAME)
 
-$(NAME): $(OBJS) $(LIBFT)
-	$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -lreadline -o $(NAME)
+$(NAME): $(LIBFT) $(OBJS)
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(LIBFT) $(LDFLAGS)
 
 $(LIBFT):
 	make -C $(LIBFT_DIR)
 
-%.o: %.c
-	$(CC) $(CFLAGS) $(INCLUDE) $(LIBFT_INCLUDE) -c $< -o $@
 
 clean:
-	rm -f $(OBJS)
-	make fclean -C $(LIBFT_DIR)
+	$(RM) $(OBJS)
+	make -C $(LIBFT_DIR) clean
 
 fclean: clean
-	rm -f $(NAME)
+	$(RM) $(NAME)
+	make -C $(LIBFT_DIR) fclean
 
 re: fclean all
 

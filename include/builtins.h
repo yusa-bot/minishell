@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:30:53 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/06 21:59:52 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/14 15:25:12 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 typedef struct s_env {
 	char			*key;
 	char			*value;
-	int				is_export;
+	int				is_export;// <->ローカル変数
 	struct s_env	*next;
 } t_env;
 

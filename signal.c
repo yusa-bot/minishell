@@ -6,15 +6,11 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 21:38:45 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/13 22:23:11 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/14 13:08:53 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./include/minishell.h"
-#include <signal.h>
-
-//ここでまた初期化するのか？
-int g_sig = 0;  //SIGINT/SIGQUIT を受けるグローバル
+#include "minishell.h"
 
 //子プロセス（コマンド実行時など）でシグナルの挙動を「デフォルト」に戻す
 void setup_signals_child(void)

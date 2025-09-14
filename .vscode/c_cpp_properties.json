@@ -1,0 +1,5 @@
+{
+	"compilerPath": "/usr/bin/gcc",
+	"cStandard": "c11",
+	"includePath": "/usr/include/x86_64-linux-gnu"
+}

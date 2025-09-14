@@ -6,23 +6,19 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/13 22:19:07 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/14 13:18:11 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./include/minishell.h"
+#include "minishell.h"
 
-#ifndef SIGINT
-# define SIGINT 2
-#endif
-
-int g_sig = 0;  //SIGINT/SIGQUITを受けるグローバル
+int g_sig = 0;
 
 int main(int argc, char **argv, char **envp)
 {
-	t_env *env_lst;
 	(void)argc;
 	(void)argv;
+	t_env *env_lst;
 	//int g_last_status = 0;
 	env_lst = set_env(envp);
 
