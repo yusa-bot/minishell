@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   join_expanded_tokens.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 13:18:26 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/04 13:57:12 by rinka            ###   ########.fr       */
+/*   Updated: 2025/09/14 16:33:25 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ char *expand_key(char *key, t_token **token_lst, t_env *env_lst)
 			if (res == NULL)
 			{//mallocエラー
 				ft_tokenlst_clear(token_lst);
-				ft_envlst_clear(&env_lst);
+				ft_lst_clear(&env_lst);
 			 malloc_error();
 			}////////
 			return (res);
@@ -150,7 +150,7 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 			{//mallocエラー
 				ft_tokenlst_clear(&new_lst);
 				ft_tokenlst_clear(token_lst);
-				ft_envlst_clear(&env_lst);
+				ft_lst_clear(&env_lst);
 			 malloc_error();
 			}////////
 			ft_tokenlst_add_back(&new_lst, newnode);
@@ -180,7 +180,7 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 			{//mallocエラー
 			 ft_tokenlst_clear(&new_lst);
 				ft_tokenlst_clear(token_lst);
-				ft_envlst_clear(&env_lst);
+				ft_lst_clear(&env_lst);
 			 malloc_error();
 			}///////
 			if (current_lst->is_joined_with_next == 0)
@@ -196,7 +196,7 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 		{//mallocエラー処理
 			ft_tokenlst_clear(&new_lst);
 			ft_tokenlst_clear(token_lst);
-			ft_envlst_clear(&env_lst);
+			ft_lst_clear(&env_lst);
 			malloc_error();
 		}///
 		if (original_var)//current : redirectでnex_str == ""でoriginal_varの時、元の変数名を保存これをparser.cでも引き継ぐ

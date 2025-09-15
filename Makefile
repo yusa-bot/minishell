@@ -6,7 +6,7 @@
 #    By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/08 19:14:52 by rinka             #+#    #+#              #
-#    Updated: 2025/09/14 12:56:06 by ayusa            ###   ########.fr        #
+#    Updated: 2025/09/14 17:58:55 by ayusa            ###   ########.fr        #∆
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,19 +14,16 @@ NAME = minishell
 
 SRCS = \
 	builtins/env_util.c \
-	builtins/ft_add_env.c \
-	builtins/ft_envlst_utils.c \
-	builtins/ft_put_envs.c \
-	builtins/ft_put_exports.c \
-	builtins/ft_unset.c \
+	builtins/cmd/ft_env.c \
+	builtins/cmd/ft_export.c \
+	builtins/cmd/ft_unset.c \
 	parser/ft_cmdlst_utils.c \
 	parser/join_expanded_tokens.c \
 	parser/ft_parser_utils.c \
 	parser/ft_parser.c \
 	tokenizer/ft_tokenizer.c \
 	tokenizer/ft_tokenlst_utils.c \
-	utils/ft_free.c \
-	utils/ft_utils.c \
+	ft_free.c \
 	main.c \
 	signal.c
 
@@ -41,9 +38,13 @@ LIBFT_DIR = libft
 
 LIBFT = $(LIBFT_DIR)/libft.a
 
-INCLUDE = -I./include
+# linux
+#INCLUDE = -I./include
+#LDFLAGS = -lreadline
 
-LDFLAGS = -lreadline
+# mac
+INCLUDE = -I./include -I/opt/homebrew/opt/readline/include
+LDFLAGS = -L/opt/homebrew/opt/readline/lib -lreadline
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@

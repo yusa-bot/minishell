@@ -43,7 +43,7 @@ void	count_args_vars(t_token *lst,int *arg_count, int *var_count)
 	}
 }
 
-char	**set_env_vars(t_token **lst, int var_count)
+char	**ft_set_env_vars(t_token **lst, int var_count)
 {
 	char	**env_vars;
 	int	i;
@@ -178,24 +178,24 @@ t_cmd	*ft_parse_single_cmd(t_token *single_token_lst, t_token *token_lst, t_env 
 	t_redirect	*outfile;
 
 	current_lst = single_token_lst;
-	printf("---------arg_var_count--------\n");
+	// printf("---------arg_var_count--------\n");
 	count_args_vars(single_token_lst, &arg_count, &var_count);
-	printf("var_count: %d, arg_count: %d\n", var_count, arg_count);
+	// printf("var_count: %d, arg_count: %d\n", var_count, arg_count);
 	env_vars = NULL;
 	if (var_count)//env_varsに一時的な環境変数の情報格納
 	{
-		printf("---------set_env_vars--------\n");//
-		env_vars = set_env_vars(&current_lst, var_count);//current_lst->str);//
+		// printf("---------ft_set_env_vars--------\n");//
+		env_vars = ft_set_env_vars(&current_lst, var_count);//current_lst->str);//
 		if (env_vars == NULL)
 		{//malloc_error
 			ft_tokenlst_clear(&single_token_lst);
 			ft_tokenlst_clear(&token_lst);
-			ft_envlst_clear(&env_lst);
+			ft_lst_clear(&env_lst);
 			malloc_error();
 		}//
 	}
 
-	printf("---------set_infile_name--------\n");//
+	// printf("---------set_infile_name--------\n");//
 	infile = NULL;
 	outfile = NULL;
 	if (set_infile_name(current_lst, &infile, &outfile))
@@ -203,7 +203,7 @@ t_cmd	*ft_parse_single_cmd(t_token *single_token_lst, t_token *token_lst, t_env 
 		ft_free_str_array(env_vars);
 		ft_tokenlst_clear(&single_token_lst);
 		ft_tokenlst_clear(&token_lst);
-		ft_envlst_clear(&env_lst);
+		ft_lst_clear(&env_lst);
 		malloc_error();
 	}//
 	// printf("infile: %s, outfile: %s\n", infile->expanded_str, outfile->expanded_str);///
@@ -222,7 +222,7 @@ t_cmd	*ft_parse_single_cmd(t_token *single_token_lst, t_token *token_lst, t_env 
 	// }
 
 	cmd_args = NULL;
-	printf("---------set_cmd_args--------\n");//
+	// printf("---------set_cmd_args--------\n");//
 	if (arg_count)
 	{
 		cmd_args = set_cmd_args(current_lst, arg_count);
@@ -235,7 +235,7 @@ t_cmd	*ft_parse_single_cmd(t_token *single_token_lst, t_token *token_lst, t_env 
 				free (outfile);
 			ft_tokenlst_clear(&single_token_lst);
 			ft_tokenlst_clear(&token_lst);
-			ft_envlst_clear(&env_lst);
+			ft_lst_clear(&env_lst);
 			malloc_error();
 		}//
 	}
@@ -248,7 +248,7 @@ t_cmd *ft_parser(t_token *token_lst, t_env *env_lst)
 {
 	t_cmd *cmd_lst;
 	t_cmd *new;
-	t_token *tmp;
+	//t_token *tmp;
 	t_token *current_lst;
 	t_token *joined_token_lst;
 
@@ -257,19 +257,19 @@ t_cmd *ft_parser(t_token *token_lst, t_env *env_lst)
 	while (current_lst)
 	{
 		joined_token_lst = join_expanded_tokens(&current_lst, &token_lst, env_lst);//
-		tmp = joined_token_lst;
-		while (tmp)
-		{
-			printf("str: %s\n", tmp->str);
-			printf("original_str: %s\n", tmp->original_str);
-			printf("token_type: %d\n", tmp->token_type);
-			printf("quote_type: %d\n", tmp->quote_type);
-			printf("joint_next: %d\n\n", tmp->is_joined_with_next);
-			tmp = tmp->next;
-		}
-		printf("\n");
-		if (tmp == NULL)
-			printf("null tarminated\n");
+		//tmp = joined_token_lst;
+		// while (tmp)
+		// {
+		// 	printf("str: %s\n", tmp->str);
+		// 	printf("original_str: %s\n", tmp->original_str);
+		// 	printf("token_type: %d\n", tmp->token_type);
+		// 	printf("quote_type: %d\n", tmp->quote_type);
+		// 	printf("joint_next: %d\n\n", tmp->is_joined_with_next);
+		// 	tmp = tmp->next;
+		// }
+		// printf("\n");
+		// if (tmp == NULL)
+		// 	printf("null tarminated\n");
 
 		if (is_delimiter(ft_tokenlst_last(joined_token_lst)->str))
 		{
@@ -278,7 +278,7 @@ t_cmd *ft_parser(t_token *token_lst, t_env *env_lst)
 			syntax_error("|", &token_lst,&env_lst);
 		}
 		new = ft_parse_single_cmd(joined_token_lst, token_lst, env_lst);
-		printf("---------add_cmd_lst--------\n");//
+		// printf("---------add_cmd_lst--------\n");//
 		ft_cmdlst_add_back(&cmd_lst, new);
 		// ft_tokenlst_clear(&joined_token_lst);
 	}

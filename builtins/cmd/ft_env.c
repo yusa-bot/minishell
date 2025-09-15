@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_put_envs.c                                      :+:      :+:    :+:   */
+/*   ft_env.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/10 00:31:00 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/06 21:55:58 by ayusa            ###   ########.fr       */
+/*   Created: 2025/09/14 17:41:21 by ayusa             #+#    #+#             */
+/*   Updated: 2025/09/15 12:59:04 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static void ft_putenv_fd(t_env *env, int fd)
 	ft_putstr_fd("\n", fd);
 }
 
-void ft_put_envs(t_env *lst, int fd)
+void ft_env(t_env *lst, int fd)
 {
 	t_env *tmp;
 

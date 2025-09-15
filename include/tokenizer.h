@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 19:11:30 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/09/08 20:53:51 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/14 20:03:21 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,31 +15,29 @@
 
 typedef enum e_token_type
 {
-	CMD,// コマンド(いらないかも)
-	ARG,// 引数（いらないかも）
-	PIPE,// |
-	VARIABLE,//$変数
+	PIPE,
+	VARIABLE,
 	REDIRECT_IN,// <
 	REDIRECT_OUT,// >
 	APPEND,// >>
 	HEREDOC,// <<
-	FILENAME,//ファイル名
+	FILENAME,
 	INFILE,//リダイレクトのファイル名（確定）
-	WORD,//コマンドか$変数か引数（未確定）
-	VARIABLE_ASSIGNMENT,//一時的な変数代入
+	WORD,
+	VARIABLE_ASSIGNMENT,
 }	t_token_type;
 
 typedef enum e_quote_type
 {
-	NONE,//クオート無し
-	SINGLE,// ''
-	DOUBLE,// ""
+	NONE,
+	SINGLE,
+	DOUBLE,
 }	t_quote_type;
 
 typedef struct s_token
 {
-	char *str;
-	char	*original_str;
+	char			*str;
+	char			*original_str;
 	t_token_type	token_type;
 	t_quote_type	quote_type;
 	int				is_joined_with_next;

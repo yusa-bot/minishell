@@ -11,7 +11,7 @@ void	syntax_error(char *unexpected_token, t_token **token_lst, t_env **env_lst)
 {
 	char *full_msg;
 
-	ft_envlst_clear(env_lst);
+	ft_lst_clear(env_lst);
 	full_msg = ft_strjoin("minishell: syntax error near unexpected token `", unexpected_token);
 	ft_tokenlst_clear(token_lst);
 	if (full_msg)

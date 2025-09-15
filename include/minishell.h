@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 21:23:17 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/14 13:05:40 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/14 20:04:07 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,14 @@
 
 # include <unistd.h>
 # include <stdlib.h>
-# include <string.h>
-# include <readline/readline.h>
-# include <readline/history.h>
 # include <stdio.h>
+# include <string.h>
 # include <signal.h>
 # include <sys/types.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 
+# include "../libft/lst/lst.h"
 # include "../libft/libft.h"
 
 # include "../include/builtins.h"
@@ -29,10 +30,6 @@
 # include "../include/parser.h"
 
 extern int g_sig;
-
-typedef struct s_pipeline {
-
-} t_pipeline;
 
 //ft_utils.c
 int	is_delimiter(char *str);
@@ -45,7 +42,7 @@ void	ft_free_str_array(char **arr);
 void malloc_error();
 void	syntax_error(char *unexpected_token, t_token **token_lst, t_env **env_lst);
 
-t_env *set_env(char **envp);
+t_env *ft_set_env(char **envp);
 
 void	setup_signals_interactive(void);
 void	sigint_handler(int sig);
