@@ -23,7 +23,7 @@ SRCS = \
 	parser/ft_parser.c \
 	tokenizer/ft_tokenizer.c \
 	tokenizer/ft_tokenlst_utils.c \
-	ft_free.c \
+	tmp/ft_free.c \
 	main.c \
 	signal.c
 

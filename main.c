@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/15 12:03:47 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/15 16:34:52 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,17 +77,11 @@ int main(int argc, char **argv, char **envp)
 
 
 
-
-        //if (PIPE)
-		// 	//pipe
-
-
-		////PIPE以外 (とりあえず単独コマンドのみ。)(リダイレクト対応は後で。)
-		//if (cmd_lst && run_parent(cmd_lst->cmd_args[0]))
-		//	//親
-		//if (echo, pwd, env | 外部コマンド)
-		//	//fork
-
+        if (cmd_lst && cmd_lst->next)
+		 	run_pipe(cmd_lst, &env_lst);
+		//PIPE以外 (とりあえず単独コマンドのみ。)(リダイレクト対応は後で。)
+		else if (cmd_lst && !run_parent(cmd_lst->cmd_args, &env_lst))//親は実行済み
+			run_child(cmd_lst, &env_lst);
 
 
 

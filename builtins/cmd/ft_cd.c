@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 21:47:51 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/15 14:11:22 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/15 14:36:02 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,61 +102,61 @@ int ft_cd(char **argv, t_env **env_lst)
 }
 
 
-// テスト用main関数
-#include <stdio.h>
-int main()
-{
-    printf("=== ft_cd テスト ===\n\n");
+//// テスト用main関数
+//#include <stdio.h>
+//int main()
+//{
+//    printf("=== ft_cd テスト ===\n\n");
 
-    // 環境変数リストの初期化
-    char *envp[] = {
-        "USER=testuser",
-        "HOME=/Users/testuser",
-        "PWD=/Users/testuser/Desktop",
-        "OLDPWD=/Users/testuser",
-        NULL
-    };
-    t_env *env_lst = ft_set_env(envp);
+//    // 環境変数リストの初期化
+//    char *envp[] = {
+//        "USER=testuser",
+//        "HOME=/Users/testuser",
+//        "PWD=/Users/testuser/Desktop",
+//        "OLDPWD=/Users/testuser",
+//        NULL
+//    };
+//    t_env *env_lst = ft_set_env(envp);
 
-    printf("初期PWD: %s\n", ft_get_env(env_lst, "PWD"));
-    printf("初期OLDPWD: %s\n\n", ft_get_env(env_lst, "OLDPWD"));
+//    printf("初期PWD: %s\n", ft_get_env(env_lst, "PWD"));
+//    printf("初期OLDPWD: %s\n\n", ft_get_env(env_lst, "OLDPWD"));
 
-    // テスト1: 引数なし（HOMEに移動）
-    printf("テスト1: cd (HOMEに移動)\n");
-    char *test1[] = {"cd", NULL};
-    int result1 = ft_cd(test1, &env_lst);
-    printf("結果: %d\n", result1);
-    printf("PWD: %s\n", ft_get_env(env_lst, "PWD"));
-    printf("OLDPWD: %s\n\n", ft_get_env(env_lst, "OLDPWD"));
+//    // テスト1: 引数なし（HOMEに移動）
+//    printf("テスト1: cd (HOMEに移動)\n");
+//    char *test1[] = {"cd", NULL};
+//    int result1 = ft_cd(test1, &env_lst);
+//    printf("結果: %d\n", result1);
+//    printf("PWD: %s\n", ft_get_env(env_lst, "PWD"));
+//    printf("OLDPWD: %s\n\n", ft_get_env(env_lst, "OLDPWD"));
 
-    // テスト2: 特定のディレクトリに移動
-    printf("テスト2: cd /tmp\n");
-    char *test2[] = {"cd", "/tmp", NULL};
-    int result2 = ft_cd(test2, &env_lst);
-    printf("結果: %d\n", result2);
-    printf("PWD: %s\n", ft_get_env(env_lst, "PWD"));
-    printf("OLDPWD: %s\n\n", ft_get_env(env_lst, "OLDPWD"));
+//    // テスト2: 特定のディレクトリに移動
+//    printf("テスト2: cd /tmp\n");
+//    char *test2[] = {"cd", "/tmp", NULL};
+//    int result2 = ft_cd(test2, &env_lst);
+//    printf("結果: %d\n", result2);
+//    printf("PWD: %s\n", ft_get_env(env_lst, "PWD"));
+//    printf("OLDPWD: %s\n\n", ft_get_env(env_lst, "OLDPWD"));
 
-    // テスト3: cd - (前のディレクトリに戻る)
-    printf("テスト3: cd -\n");
-    char *test3[] = {"cd", "-", NULL};
-    int result3 = ft_cd(test3, &env_lst);
-    printf("結果: %d\n", result3);
-    printf("PWD: %s\n", ft_get_env(env_lst, "PWD"));
-    printf("OLDPWD: %s\n\n", ft_get_env(env_lst, "OLDPWD"));
+//    // テスト3: cd - (前のディレクトリに戻る)
+//    printf("テスト3: cd -\n");
+//    char *test3[] = {"cd", "-", NULL};
+//    int result3 = ft_cd(test3, &env_lst);
+//    printf("結果: %d\n", result3);
+//    printf("PWD: %s\n", ft_get_env(env_lst, "PWD"));
+//    printf("OLDPWD: %s\n\n", ft_get_env(env_lst, "OLDPWD"));
 
-    // テスト4: 存在しないディレクトリ
-    printf("テスト4: cd /nonexistent\n");
-    char *test4[] = {"cd", "/nonexistent", NULL};
-    int result4 = ft_cd(test4, &env_lst);
-    printf("結果: %d (エラーが表示されるはず)\n\n", result4);
+//    // テスト4: 存在しないディレクトリ
+//    printf("テスト4: cd /nonexistent\n");
+//    char *test4[] = {"cd", "/nonexistent", NULL};
+//    int result4 = ft_cd(test4, &env_lst);
+//    printf("結果: %d (エラーが表示されるはず)\n\n", result4);
 
-    // テスト5: 引数が多すぎる場合
-    printf("テスト5: cd arg1 arg2\n");
-    char *test5[] = {"cd", "arg1", "arg2", NULL};
-    int result5 = ft_cd(test5, &env_lst);
-    printf("結果: %d (エラーが表示されるはず)\n\n", result5);
+//    // テスト5: 引数が多すぎる場合
+//    printf("テスト5: cd arg1 arg2\n");
+//    char *test5[] = {"cd", "arg1", "arg2", NULL};
+//    int result5 = ft_cd(test5, &env_lst);
+//    printf("結果: %d (エラーが表示されるはず)\n\n", result5);
 
-    ft_lst_clear(&env_lst);
-    return 0;
-}
+//    ft_lst_clear(&env_lst);
+//    return 0;
+//}
