@@ -6,13 +6,13 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 21:31:47 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/15 12:05:09 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/15 22:01:49 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-int ft_echo(char **argv)
+int ft_echo(char **argv, int fd, t_shell shell)
 {
     int i = 1;
     int no_newline = 0;
@@ -26,13 +26,17 @@ int ft_echo(char **argv)
     //複数引数
     while (argv[i])
     {
-        printf("%s", argv[i]);
+        ft_putstr_fd(argv[i], fd);
         if (argv[i + 1])
-            printf(" ");
+            ft_putstr_fd(" ", fd);
         i++;
     }
     if (!no_newline)
-        printf("\n");
+        ft_putstr_fd("\n", fd);
+
+    if (argv[1] && ft_strcmp(argv[1], "$?") == 0)
+        ft_putnbr_fd(shell.status, fd);
+
     return 0;
 }
 

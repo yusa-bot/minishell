@@ -6,13 +6,13 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 13:48:40 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/15 18:07:35 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/15 21:53:50 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int run_pipe(t_cmd *cmd, t_env **env)
+void run_pipe(t_cmd *cmd, t_env **env, t_shell shell)
 {
     int pipefd[2];
     int in_fd = STDIN_FILENO;
@@ -25,6 +25,7 @@ int run_pipe(t_cmd *cmd, t_env **env)
         pid = fork();
         if (pid == 0)//子
         {
+            setup_signals_child();
             if (in_fd != STDIN_FILENO)//最初ではなかったらdup
             {
                 dup2(in_fd, STDIN_FILENO);
@@ -36,7 +37,7 @@ int run_pipe(t_cmd *cmd, t_env **env)
                 close(pipefd[0]);
                 close(pipefd[1]);
             }
-            run_child(cmd, env);
+            run_child(cmd, env, shell);
             exit(0);
         }
         else//親
@@ -52,5 +53,4 @@ int run_pipe(t_cmd *cmd, t_env **env)
         cmd = cmd->next;
     }
     while (wait(NULL) > 0);//全プロセス
-    return 0;
 }

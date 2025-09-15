@@ -6,11 +6,48 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:29:18 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/15 13:30:35 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/15 22:19:09 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
+
+// envリストをexecve用のchar**に変換
+char **env_to_array(t_env *env)
+{
+    int     count = 0;
+    char    **arr;
+    char    *tmp;
+    t_env   *cur;
+
+    cur = env;
+    while (cur)
+    {
+        if (cur->is_export)
+            count++;
+        cur = cur->next;
+    }
+    arr = malloc(sizeof(char *) * (count + 1));
+    if (!arr)
+        return (NULL);
+    count = 0;
+    cur = env;
+    while (cur)
+    {
+        if (cur->is_export)
+        {
+            if (cur->value)
+                tmp = ft_strjoin3(cur->key, "=", cur->value);
+            else
+                tmp = ft_strdup(cur->key);
+            arr[count++] = tmp;
+        }
+        cur = cur->next;
+    }
+    arr[count] = NULL;
+    return arr;
+}
+
 
 // minishellで動的に追加/変更した環境変数の取得用
 char *ft_get_env(t_env *env, const char *key)

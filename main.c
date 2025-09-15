@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/15 16:34:52 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/15 21:59:53 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,10 @@ int main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	t_env *env_lst;
-	//int g_last_status = 0;
+	t_shell shell;
+	shell.status = 0;
 	env_lst = ft_set_env(envp);
-
+	shell.env = env_lst;
 	rl_catch_signals = 0;//readlineのデフォルトハンドラを無効化。カスタムのシグナルハンドラを作成しているため。
 	setup_signals_interactive();
 
@@ -30,7 +31,7 @@ int main(int argc, char **argv, char **envp)
 	{
 		g_sig = 0;
 		line = readline("$ ");
-		if (*line == '\0')// 空ならスキップ（履歴は追加しない）
+		if (*line == '\0')
 		{
 			free(line);
 			continue;
@@ -46,7 +47,6 @@ int main(int argc, char **argv, char **envp)
 			break ;
 		}
 
-		/////must test
 		if (g_sig == SIGINT)//sigint_handler()後に実行
 		{
 			g_sig = 0;
@@ -54,7 +54,6 @@ int main(int argc, char **argv, char **envp)
 			continue;
 		}
 		add_history(line);
-		//////
 
 		t_token *token_lst = tokenize_line(line);
 		free(line);
@@ -78,17 +77,13 @@ int main(int argc, char **argv, char **envp)
 
 
         if (cmd_lst && cmd_lst->next)
-		 	run_pipe(cmd_lst, &env_lst);
-		//PIPE以外 (とりあえず単独コマンドのみ。)(リダイレクト対応は後で。)
-		else if (cmd_lst && !run_parent(cmd_lst->cmd_args, &env_lst))//親は実行済み
-			run_child(cmd_lst, &env_lst);
-
-
-
-
+		 	run_pipe(cmd_lst, &env_lst, shell);
+		else if (is_parent(cmd_lst->cmd_args))
+			shell.status = run_parent(cmd_lst, &env_lst, shell);
+		else
+			shell.status = run_child(cmd_lst, &env_lst, shell);
 	 	ft_cmdlst_clear(&cmd_lst);
 	}
 	ft_lst_clear(&env_lst);
-	// return g_last_status;
-	return 0;
+	return shell.status;
 }

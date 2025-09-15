@@ -13,26 +13,35 @@
 NAME = minishell
 
 SRCS = \
+	main.c \
+	signal.c \
+	pipe.c \
+	redirect.c \
+	child_external_saerch_path.c \
 	builtins/env_util.c \
+	builtins/cmd/ft_cd.c \
+	builtins/cmd/ft_echo.c \
 	builtins/cmd/ft_env.c \
+	builtins/cmd/ft_exit.c \
 	builtins/cmd/ft_export.c \
+	builtins/cmd/ft_pwd.c \
 	builtins/cmd/ft_unset.c \
+	exec_buildin/buildin.c \
+	exec_buildin/child_builtin.c \
+	exec_buildin/parent_builtin.c \
 	parser/ft_cmdlst_utils.c \
-	parser/join_expanded_tokens.c \
-	parser/ft_parser_utils.c \
 	parser/ft_parser.c \
+	parser/ft_parser_utils.c \
+	parser/join_expanded_tokens.c \
 	tokenizer/ft_tokenizer.c \
 	tokenizer/ft_tokenlst_utils.c \
-	tmp/ft_free.c \
-	main.c \
-	signal.c
+	tmp/ft_free.c
 
 OBJS = $(SRCS:.c=.o)
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 RM = rm -f
-
 
 LIBFT_DIR = libft
 
@@ -69,5 +78,3 @@ fclean: clean
 re: fclean all
 
 .PHONY: all clean fclean re
-
-# current0:makefileテストできる状態にする

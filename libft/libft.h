@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 10:15:09 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/09/15 12:01:15 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/15 22:20:55 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,5 +61,7 @@ char    *ft_strjoin_safe(char *s1, char *s2);
 void    ft_free_str_array(char **arr);
 int     is_delimiter(char *str);
 size_t  ft_strspn(const char *s, const char *accept);
+long	ft_strtol(const char *nptr, char **endptr, int base);
+char *ft_strjoin3(const char *s1, const char *s2, const char *s3);
 
 #endif
