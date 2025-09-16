@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 21:38:45 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/14 13:08:53 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/16 20:46:34 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	sigint_handler(int signo)
 void setup_signals_interactive(void)
 {
 	struct sigaction sa;
-	memset(&sa, 0, sizeof(sa));//
+	ft_memset(&sa, 0, sizeof(sa));//
 	sa.sa_handler = sigint_handler;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = SA_RESTART;//Ctrl+Cを押してもreadlineが中断されず、シェルのプロンプトが正常に継続する
@@ -45,7 +45,7 @@ void setup_signals_interactive(void)
 }
 
 //シグナルは用途に応じて名前と番号が決まっている↓
-//SIGINT : キーボードからの割り込み(Ctrl+C)
+//SIGINT : キーボードからの割り込み(Ctrl+C)2
 //SIGQUIT : キーボードからの終了(Ctrl+\)
 
 //SIG_DFL: デフォルトの動作

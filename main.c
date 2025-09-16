@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/15 21:59:53 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/16 23:35:59 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,12 @@ int main(int argc, char **argv, char **envp)
 	(void)argv;
 	t_env *env_lst;
 	t_shell shell;
+	t_token *token_lst;
+	t_cmd *cmd_lst;
 	shell.status = 0;
-	env_lst = ft_set_env(envp);
+	env_lst = ft_set_env(envp);//t_env malloc
 	shell.env = env_lst;
-	rl_catch_signals = 0;//readlineのデフォルトハンドラを無効化。カスタムのシグナルハンドラを作成しているため。
+	rl_catch_signals = 0;
 	setup_signals_interactive();
 
 	char *line;
@@ -34,32 +36,29 @@ int main(int argc, char **argv, char **envp)
 		if (*line == '\0')
 		{
 			free(line);
+			continue_free(token_lst, cmd_lst);
 			continue;
 		}
-		if (line == NULL)//EOF (Ctrl-D)
+		if (line == NULL)//EOF(Ctrl-D)
 		{
-			printf("exit\n");
-			break ;
-		}
-		if (ft_strcmp(line, "exit") == 0)
-		{
+			rl_clear_history();
 			free(line);
-			break ;
+			ft_lst_clear(&env_lst);
+			write(1, "exit\n", 5);
+			exit(EXIT_SUCCESS);
 		}
-
-		if (g_sig == SIGINT)//sigint_handler()後に実行
+		if (g_sig == SIGINT)//Ctrl-C
 		{
 			g_sig = 0;
 			free(line);
+			continue_free(token_lst, cmd_lst);
 			continue;
 		}
 		add_history(line);
-
-		t_token *token_lst = tokenize_line(line);
+		//token, parserのエラー処理（free）は任せたい。
+		token_lst = tokenize_line(line);
 		free(line);
-		t_cmd	*cmd_lst = ft_parser(token_lst, env_lst);
-
-
+		cmd_lst = ft_parser(token_lst, env_lst);
 
 	 	////HEREDOCのときのみ専用fdに入れ替える関数を通す。
 	 	////ここではcmd_lstを回す。
@@ -74,14 +73,33 @@ int main(int argc, char **argv, char **envp)
 	 	//if (!cmd_lst)
 	 	//	continue;
 
-
-
         if (cmd_lst && cmd_lst->next)
-		 	run_pipe(cmd_lst, &env_lst, shell);
+		{
+			if (!(run_pipe(cmd_lst, &env_lst, shell)))
+			{
+				continue_free(cmd_lst, token_lst, &env_lst);
+				shell.status = EXIT_FAILURE;
+				continue;
+			}
+		}
 		else if (is_parent(cmd_lst->cmd_args))
-			shell.status = run_parent(cmd_lst, &env_lst, shell);
+		{
+			if (!(run_parent(cmd_lst, &env_lst, shell)))
+			{
+				continue_free(cmd_lst, token_lst, &env_lst);
+				shell.status = EXIT_FAILURE;
+				continue;
+			}
+		}
 		else
-			shell.status = run_child(cmd_lst, &env_lst, shell);
+		{
+			if (!(exec_child(cmd_lst, &env_lst, shell)))
+			{
+				continue_free(cmd_lst, token_lst, &env_lst);
+				shell.status = EXIT_FAILURE;
+				continue;
+			}
+		}
 	 	ft_cmdlst_clear(&cmd_lst);
 	}
 	ft_lst_clear(&env_lst);

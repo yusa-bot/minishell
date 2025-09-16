@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:29:18 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/15 22:19:09 by ayusa            ###   ########.fr       */
+ft_set_env/*   Updated: 2025/09/16 20:14:49 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,18 +74,14 @@ t_env *ft_set_env(char **envp)
 	{
 		key = ft_strndup(envp[i], ft_strchr(envp[i], '=') - envp[i]);
 		if (key == NULL)
-		{
-			ft_lst_clear(&lst);
-			return (NULL);
-		}
+			exit(EXIT_FAILURE);
 		value = ft_strdup(ft_strchr(envp[i], '=') + 1);
 		if (value == NULL)
 		{
 			free (key);
-			ft_lst_clear(&lst);
-			return (NULL);
+			exit(EXIT_FAILURE);
 		}
-		ft_lst_add_back(&lst, ft_lst_new(key, value, 1)); //初期はすべてexportなのでflagたてる
+		ft_lst_add_back(&lst, ft_lst_new(key, value, 1));
 		i++;
 	}
 	return (lst);
@@ -159,4 +155,3 @@ void ft_add_env(t_env **env_lst, char *str, int is_export)
 
 //	ft_lst_clear(&env_lst);
 //}
-

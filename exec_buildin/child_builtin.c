@@ -6,11 +6,33 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 14:45:06 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/15 22:22:55 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/17 00:22:43 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	exec_child(t_cmd *cmd, t_env **env, t_shell shell)
+{
+	setup_signals_child();
+	if (apply_redirect(cmd) < 0)//
+		exit(1);
+
+	if (!run_builtin(&cmd->cmd_args[0], env, shell))//builtin//
+	{   //external
+		char *path = search_external_path(cmd->cmd_args[0], env);//
+		if (!path)
+		{
+			write(2, cmd->cmd_args[0], strlen(cmd->cmd_args[0]));
+			write(2, ": command not found\n", 20);
+			exit(127);
+		}
+		execve(path, cmd->cmd_args, env_to_array(*env));
+		perror("execve");
+		exit(126);
+	}
+}
+ここのエラー処理から。
 
 int run_child(t_cmd *cmd, t_env **env, t_shell shell)
 {
@@ -20,31 +42,13 @@ int run_child(t_cmd *cmd, t_env **env, t_shell shell)
     pid = fork();
     if (pid < 0)
     {
-        perror("fork");
-        return (1);
+		perror("pipe");
+		exit(EXIT_FAILURE);
     }
     if (pid == 0)
-    {
-        setup_signals_child();
-        if (apply_redirect(cmd) < 0)
-            exit(1);
-
-        // pipeでも使い回しているため、全てのbuildinかを判定している。
-            //単独の場合、そもそもこの関数は通らない。
-        if (!run_builtin(&cmd->cmd_args[0], env, shell))//builtin
-        {   //external
-            char *path = search_external_path(cmd->cmd_args[0], env);
-            if (!path)
-            {
-                fprintf(stderr, "%s: command not found\n", cmd->cmd_args[0]);
-                exit(127);
-            }
-            execve(path, cmd->cmd_args, env_to_array(*env));
-            perror("execve");
-            exit(126);
-        }
-    }
-    else//親(終了コード管理)
+		exec_child(cmd, env, shell);
+	//単独コマンドだったらこっちが親
+    else
     {
         waitpid(pid, &status, 0);
         if (WIFEXITED(status))
@@ -52,7 +56,7 @@ int run_child(t_cmd *cmd, t_env **env, t_shell shell)
         if (WIFSIGNALED(status))
             return (128 + WTERMSIG(status));
     }
-    return (0);
+    return (1);
 }
 
 //1. waitpid(pid, &status, 0)
@@ -73,4 +77,3 @@ int run_child(t_cmd *cmd, t_env **env, t_shell shell)
 //6. 128 + WTERMSIG(status)
 //シェルの慣例: シグナル終了時の終了コード
 //計算: 128 + シグナル番号
-

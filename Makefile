@@ -48,12 +48,12 @@ LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
 # linux
-#INCLUDE = -I./include
-#LDFLAGS = -lreadline
+INCLUDE = -I./include
+LDFLAGS = -lreadline
 
 # mac
-INCLUDE = -I./include -I/opt/homebrew/opt/readline/include
-LDFLAGS = -L/opt/homebrew/opt/readline/lib -lreadline
+# INCLUDE = -I./include -I/opt/homebrew/opt/readline/include
+# LDFLAGS = -L/opt/homebrew/opt/readline/lib -lreadline
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@

@@ -1,31 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lst_new.c                                       :+:      :+:    :+:   */
+/*   ft_free_handle.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/14 16:29:04 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/16 20:14:53 by ayusa            ###   ########.fr       */
+/*   Created: 2025/09/16 19:59:29 by ayusa             #+#    #+#             */
+/*   Updated: 2025/09/16 21:47:27 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "lst.h"
+#include "minishell.h"
 
-t_env *ft_lst_new(char *key, char *value, int is_export)
+void continue_free(t_token *token_lst, t_cmd *cmd_lst)
 {
-	t_env	*new;
+	if (token_lst)
+		ft_token_clear(&token_lst);
+	if (cmd_lst)
+		ft_cmd_clear(&cmd_lst);
+}
 
-	new = malloc(sizeof(t_env));
-	if (new == NULL)
-	{
-		free(key);
-		free(value);
-		exit(EXIT_FAILURE);
-	}
-	new->key = key;
-	new->value = value;
-	new->next = NULL;
-	new->is_export = is_export;
-	return (new);
+void pipe_free(int pipefd[2], int in_fd)
+{
+	if (pipefd[0] > 0)
+		close(pipefd[0]);
+	if (pipefd[1] > 0)
+		close(pipefd[1]);
+	if (in_fd != STDIN_FILENO)
+		close(in_fd);
 }

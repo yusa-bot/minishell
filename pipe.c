@@ -6,13 +6,13 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 13:48:40 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/15 21:53:50 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/17 00:23:07 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void run_pipe(t_cmd *cmd, t_env **env, t_shell shell)
+int run_pipe(t_cmd *cmd, t_env **env, t_shell shell)
 {
     int pipefd[2];
     int in_fd = STDIN_FILENO;
@@ -21,26 +21,49 @@ void run_pipe(t_cmd *cmd, t_env **env, t_shell shell)
     while (cmd)
     {
         if (cmd->next)
-            pipe(pipefd);
+		{
+            if (pipe(pipefd) == -1)
+			{
+				pipe_free(pipefd, in_fd);
+                perror("pipe");
+				exit(EXIT_FAILURE);
+            }
+        }
         pid = fork();
-        if (pid == 0)//子
+        if (pid < 0)
+		{
+			pipe_free(pipefd, in_fd);
+            perror("fork");
+            exit(EXIT_FAILURE);
+        }
+        if (pid == 0)
         {
             setup_signals_child();
             if (in_fd != STDIN_FILENO)//最初ではなかったらdup
             {
-                dup2(in_fd, STDIN_FILENO);
+                if (dup2(in_fd, STDIN_FILENO) == -1)
+				{
+					pipe_free(pipefd, in_fd);
+                    perror("dup2");
+					exit(EXIT_FAILURE);
+                }
                 close(in_fd);
             }
             if (cmd->next)
             {
-                dup2(pipefd[1], STDOUT_FILENO);
-                close(pipefd[0]);
-                close(pipefd[1]);
+                if (dup2(pipefd[1], STDOUT_FILENO) == -1)
+				{
+					pipe_free(pipefd, in_fd);
+					perror("dup2");
+					exit(EXIT_FAILURE);
+                }
+                pipe_free(pipefd, in_fd);
             }
-            run_child(cmd, env, shell);
-            exit(0);
+            if(!(exec_child(cmd, env, shell)))
+				exit(EXIT_FAILURE);
+            exit(EXIT_SUCCESS);
         }
-        else//親
+        else//pipeだったらこれが親
         {
             if (in_fd != STDIN_FILENO)
                 close(in_fd);
@@ -52,5 +75,6 @@ void run_pipe(t_cmd *cmd, t_env **env, t_shell shell)
         }
         cmd = cmd->next;
     }
-    while (wait(NULL) > 0);//全プロセス
+    while (wait(NULL) > 0);ここもかきかえ
+	return (1);
 }
