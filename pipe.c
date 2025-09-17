@@ -6,17 +6,18 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 13:48:40 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/17 00:23:07 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/17 22:13:35 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int run_pipe(t_cmd *cmd, t_env **env, t_shell shell)
+int run_pipe(t_cmd *cmd, t_env **env, t_shell *shell)
 {
     int pipefd[2];
     int in_fd = STDIN_FILENO;
     pid_t pid;
+	pid_t wpid;
 
     while (cmd)
     {
@@ -24,7 +25,6 @@ int run_pipe(t_cmd *cmd, t_env **env, t_shell shell)
 		{
             if (pipe(pipefd) == -1)
 			{
-				pipe_free(pipefd, in_fd);
                 perror("pipe");
 				exit(EXIT_FAILURE);
             }
@@ -32,7 +32,6 @@ int run_pipe(t_cmd *cmd, t_env **env, t_shell shell)
         pid = fork();
         if (pid < 0)
 		{
-			pipe_free(pipefd, in_fd);
             perror("fork");
             exit(EXIT_FAILURE);
         }
@@ -43,7 +42,6 @@ int run_pipe(t_cmd *cmd, t_env **env, t_shell shell)
             {
                 if (dup2(in_fd, STDIN_FILENO) == -1)
 				{
-					pipe_free(pipefd, in_fd);
                     perror("dup2");
 					exit(EXIT_FAILURE);
                 }
@@ -53,14 +51,12 @@ int run_pipe(t_cmd *cmd, t_env **env, t_shell shell)
             {
                 if (dup2(pipefd[1], STDOUT_FILENO) == -1)
 				{
-					pipe_free(pipefd, in_fd);
 					perror("dup2");
 					exit(EXIT_FAILURE);
                 }
                 pipe_free(pipefd, in_fd);
             }
-            if(!(exec_child(cmd, env, shell)))
-				exit(EXIT_FAILURE);
+            exec_child(cmd, env, shell);
             exit(EXIT_SUCCESS);
         }
         else//pipeだったらこれが親
@@ -75,6 +71,15 @@ int run_pipe(t_cmd *cmd, t_env **env, t_shell shell)
         }
         cmd = cmd->next;
     }
-    while (wait(NULL) > 0);ここもかきかえ
+	while ((wpid = wait(shell->status)) > 0)
+	{
+		if (wpid == pid)
+		{
+			if (WIFEXITED(shell->status))
+				shell->status = WEXITSTATUS(shell->status);
+			else if (WIFSIGNALED(shell->status))
+				shell->status = 128 + WTERMSIG(shell->status);
+		}
+	}
 	return (1);
 }

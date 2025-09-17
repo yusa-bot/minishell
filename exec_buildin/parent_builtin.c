@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 20:24:47 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/15 22:23:28 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/17 21:47:42 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,23 +38,23 @@ static void fd_restore(int save_stdin, int save_stdout)
     }
 }
 
-int run_parent(t_cmd *cmd, t_env **env, t_shell shell)
+int run_parent(t_cmd *cmd, t_env **env, t_shell *shell)
 {
     int save_in = -1;
     int save_out = -1;
-    int status = 1;
 
     if (fd_save(&save_in, &save_out) < 0)
     {
         perror("dup");
-        return (1);
+        return (0);
     }
     if (apply_redirect(cmd) < 0)
     {
         fd_restore(save_in, save_out);
-        return (1);
+		perror("redirect");
+        return (0);
     }
-    status = run_builtin(cmd->cmd_args, env, shell);
+    run_builtin(cmd->cmd_args, env, shell);
     fd_restore(save_in, save_out);
-    return status;
+    return (1);
 }

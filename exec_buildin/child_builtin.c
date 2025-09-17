@@ -6,35 +6,28 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 14:45:06 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/17 00:22:43 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/17 22:58:20 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	exec_child(t_cmd *cmd, t_env **env, t_shell shell)
+int	exec_child(t_cmd *cmd, t_env **env, t_shell *shell)
 {
 	setup_signals_child();
-	if (apply_redirect(cmd) < 0)//
-		exit(1);
-
-	if (!run_builtin(&cmd->cmd_args[0], env, shell))//builtin//
-	{   //external
-		char *path = search_external_path(cmd->cmd_args[0], env);//
-		if (!path)
-		{
-			write(2, cmd->cmd_args[0], strlen(cmd->cmd_args[0]));
-			write(2, ": command not found\n", 20);
-			exit(127);
-		}
+	apply_redirect(cmd);
+	if (is_builtin_child(cmd->cmd_args))
+		return (run_builtin(&cmd->cmd_args[0], env, shell));
+	else //external
+	{
+		char *path = search_external_path(cmd->cmd_args[0], env);
 		execve(path, cmd->cmd_args, env_to_array(*env));
 		perror("execve");
-		exit(126);
+		exit(EXIT_NO_EXEC);
 	}
 }
-ここのエラー処理から。
 
-int run_child(t_cmd *cmd, t_env **env, t_shell shell)
+int run_child(t_cmd *cmd, t_env **env, t_shell *shell)
 {
     pid_t pid;
     int   status;

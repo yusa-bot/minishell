@@ -3,33 +3,57 @@
 /*                                                        :::      ::::::::   */
 /*   ft_putnbr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rtakayam <rtakayam@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 09:59:27 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/05/14 14:15:29 by rtakayam         ###   ########.fr       */
+/*   Updated: 2025/09/17 22:39:12 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_putnbr_fd(int n, int fd)
+static int	handle_negative(int *n, int fd)
 {
-	if (n < 0)
+	int	count;
+
+	count = 0;
+	if (*n < 0)
 	{
-		ft_putchar_fd('-', fd);
-		if (n == INT_MIN)
+		if (ft_putchar_fd('-', fd) < 0)
+			return (-1);
+		count++;
+		if (*n == INT_MIN)
 		{
-			ft_putchar_fd('2', fd);
-			n = -147483648;
+			if (ft_putchar_fd('2', fd) < 0)
+				return (-1);
+			count++;
+			*n = -147483648;
 		}
-		n = -n;
+		*n = -*n;
 	}
+	return (count);
+}
+
+int	ft_putnbr_fd(int n, int fd)
+{
+	int	count;
+	int	tmp;
+
+	count = handle_negative(&n, fd);
+	if (count < 0)
+		return (-1);
 	if (n > 9)
 	{
-		ft_putnbr_fd(n / 10, fd);
+		tmp = ft_putnbr_fd(n / 10, fd);
+		if (tmp < 0)
+			return (-1);
+		count += tmp;
 	}
-	ft_putchar_fd('0' + n % 10, fd);
+	if (ft_putchar_fd('0' + n % 10, fd) < 0)
+		return (-1);
+	return (count + 1);
 }
+
 
 // int main()
 // {

@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 21:23:17 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/16 21:55:06 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/17 22:58:41 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,13 @@
 # define EXIT_SUCCESS 0
 # define EXIT_FAILURE 1
 # define EXIT_SYNTAX_ERROR 258
-# define EXIT_CMD_NOT_FOUND 127
 # define EXIT_SIGINT 130
 # define EXIT_SIGQUIT 131
+
+# define STDERR_FILENO 2
+#define EXIT_CMD_NOT_FOUND 127
+#define EXIT_NO_EXEC       126
+
 
 extern int g_sig;
 typedef struct s_shell {
@@ -60,10 +64,10 @@ void	sigint_handler(int signo);
 void setup_signals_interactive(void);
 
 int is_parent(char **args);
-int run_builtin(char **args, t_env **env, t_shell shell);
+int run_builtin(char **args, t_env **env, t_shell *shell);
 int run_child(t_cmd *cmd, t_env **env, t_shell shell);
 int run_parent(t_cmd *cmd, t_env **env, t_shell shell);
 
-int ft_echo(char **argv, int fd, t_shell shell);
+int ft_echo(char **argv, int fd, t_shell *shell);
 
 #endif

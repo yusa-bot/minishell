@@ -4,6 +4,7 @@
 		"signal.h": "c",
 		"unistd.h": "c",
 		"string.h": "c",
-		"history.h": "c"
+		"history.h": "c",
+		"libft.h": "c"
 	}
 }
