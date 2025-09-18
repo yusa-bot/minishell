@@ -31,27 +31,32 @@ static	t_env *ft_lst_next(t_env *env_lst, char **prev_key)
 	return (res);
 }
 
-static	void ft_putexport_fd(t_env *env, int fd)
+static int ft_putexport_fd(t_env *env, int fd)
 {
-	ft_putstr_fd("declare -x ", fd);
-	ft_putstr_fd(env->key, fd);
-	ft_putstr_fd("=\"", fd);
-	ft_putstr_fd(env->value, fd);
-	ft_putstr_fd("\"\n", fd);
+    if (ft_putstr_fd("declare -x ", fd) < 0
+        || ft_putstr_fd(env->key, fd) < 0
+        || ft_putstr_fd("=\"", fd) < 0
+        || ft_putstr_fd(env->value, fd) < 0
+        || ft_putstr_fd("\"\n", fd) < 0)
+        return (EXIT_FAILURE);
+    return (EXIT_SUCCESS);
 }
 
-void ft_export(t_env *env_lst, int fd)
+int ft_export(t_env *env_lst, int fd)
 {
-	char *prev_key;
-	t_env	*env_to_put;
+    char    *prev_key;
+    t_env   *env_to_put;
 
-	prev_key = NULL;
-	env_to_put = ft_lst_next(env_lst, &prev_key);
-	while(env_to_put)
-	{
-		if (env_to_put->is_export)
-			ft_putexport_fd(env_to_put, fd);
-		env_to_put = ft_lst_next(env_lst, &prev_key);
-	}
+    prev_key = NULL;
+    env_to_put = ft_lst_next(env_lst, &prev_key);
+    while (env_to_put)
+    {
+        if (env_to_put->is_export)
+        {
+            if (ft_putexport_fd(env_to_put, fd) == EXIT_FAILURE)
+                return (EXIT_FAILURE);
+        }
+        env_to_put = ft_lst_next(env_lst, &prev_key);
+    }
+    return (EXIT_SUCCESS);
 }
-

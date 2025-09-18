@@ -6,18 +6,21 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 14:45:06 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/17 22:58:20 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/18 21:35:49 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	exec_child(t_cmd *cmd, t_env **env, t_shell *shell)
+void	exec_child(t_cmd *cmd, t_env **env, t_shell *shell)
 {
 	setup_signals_child();
 	apply_redirect(cmd);
 	if (is_builtin_child(cmd->cmd_args))
-		return (run_builtin(&cmd->cmd_args[0], env, shell));
+	{
+		shell->status = run_builtin(&cmd->cmd_args[0], env, shell);
+		exit(shell->status);
+	}
 	else //external
 	{
 		char *path = search_external_path(cmd->cmd_args[0], env);
@@ -49,7 +52,6 @@ int run_child(t_cmd *cmd, t_env **env, t_shell *shell)
         if (WIFSIGNALED(status))
             return (128 + WTERMSIG(status));
     }
-    return (1);
 }
 
 //1. waitpid(pid, &status, 0)

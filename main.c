@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/17 22:13:24 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/18 21:41:54 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,28 +75,28 @@ int main(int argc, char **argv, char **envp)
 
         if (cmd_lst && cmd_lst->next)
 		{
-			if (!(run_pipe(cmd_lst, &env_lst, shell)))
+			shell.status = run_pipe(cmd_lst, &env_lst, shell);
+			if (shell.status != EXIT_SUCCESS)
 			{
 				continue_free(cmd_lst, token_lst, &env_lst);
-				shell.status = EXIT_FAILURE;
 				continue;
 			}
 		}
 		else if (is_parent(cmd_lst->cmd_args))
 		{
-			if (!(run_parent(cmd_lst, &env_lst, shell)))
+			shell.status = run_parent(cmd_lst, &env_lst, shell);
+			if (shell.status != EXIT_SUCCESS)
 			{
 				continue_free(cmd_lst, token_lst, &env_lst);
-				shell.status = EXIT_FAILURE;
 				continue;
 			}
 		}
 		else
 		{
-			if (!(exec_child(cmd_lst, &env_lst, shell)))
+			shell.status = run_child(cmd_lst, &env_lst, shell);
+			if (shell.status != EXIT_SUCCESS)
 			{
 				continue_free(cmd_lst, token_lst, &env_lst);
-				shell.status = EXIT_FAILURE;
 				continue;
 			}
 		}

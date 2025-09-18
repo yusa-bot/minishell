@@ -6,11 +6,11 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 21:47:51 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/15 14:36:02 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/18 21:04:14 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/minishell.h"
+#include "minishell.h"
 
 static int  update_pwd_vars(t_env **env_lst, const char *oldpwd)
 {
@@ -22,22 +22,22 @@ static int  update_pwd_vars(t_env **env_lst, const char *oldpwd)
     if (!getcwd(buf, sizeof(buf)))
     {
         perror("minishell: cd: getcwd");
-        return (1);
+        return (EXIT_FAILURE);
     }
     oldpwd_str = ft_strjoin("OLDPWD=", oldpwd);
     if (!oldpwd_str)
-        return (1);
+        return (EXIT_FAILURE);
     pwd_str = ft_strjoin("PWD=", buf);
     if (!pwd_str)
     {
         free(oldpwd_str);
-        return (1);
+        return (EXIT_FAILURE);
     }
     ft_add_env(env_lst, oldpwd_str, 1);
     ft_add_env(env_lst, pwd_str, 1);
     free(oldpwd_str);
     free(pwd_str);
-    return (0);
+    return (EXIT_SUCCESS);
 }
 
 int ft_cd(char **argv, t_env **env_lst)
@@ -52,7 +52,7 @@ int ft_cd(char **argv, t_env **env_lst)
     if (argc > 2) //valid
     {
         write(2, "minishell: cd: too many arguments\n", 34);
-        return (1);
+        return (EXIT_FAILURE);
     }
     else if (argc == 1) //home
     {
@@ -60,7 +60,7 @@ int ft_cd(char **argv, t_env **env_lst)
         if (path == NULL)
         {
             write(2, "minishell: cd: HOME not set\n", 28);
-            return (1);
+            return (EXIT_FAILURE);
         }
     }
     else if (ft_strcmp(argv[1], "-") == 0) //oldpwd
@@ -69,7 +69,7 @@ int ft_cd(char **argv, t_env **env_lst)
         if (path == NULL)
         {
             write(2, "minishell: cd: OLDPWD not set\n", 30);
-            return (1);
+            return (EXIT_FAILURE);
         }
         write(1, path, ft_strlen(path)); // bashの挙動で移動先を表示
         write(1, "\n", 1);
@@ -77,28 +77,37 @@ int ft_cd(char **argv, t_env **env_lst)
     else
         path = argv[1];
 
-    oldpwd = getcwd(NULL, 0);//更新
+    oldpwd = getcwd(NULL, 0);//malloc
     if (oldpwd == NULL)
-		oldpwd = ft_get_env(*env_lst, "PWD");
+    {
+        char	*pwd;
+        pwd = ft_get_env(*env_lst, "PWD");//*
+        if (pwd)
+            oldpwd = ft_strdup(pwd);
+        else
+            oldpwd = ft_strdup("");
+    }
+
+
     if (chdir(path) == -1)
     {
         free(oldpwd);
         write(2, "minishell: cd: ", 15);
         write(2, path, ft_strlen(path));
         write(2, ": No such file or directory\n", 28);
-        return (1);
+        return (EXIT_FAILURE);
     }
 
-    //更新
-    if (oldpwd == NULL)
+
+    if (oldpwd == NULL)//更新
 	    oldpwd = ft_strdup("");
-    if (update_pwd_vars(env_lst, oldpwd))
+    if (update_pwd_vars(env_lst, oldpwd) == EXIT_FAILURE)
     {
         free(oldpwd);
-        return (1);
+        return (EXIT_FAILURE);
     }
     free(oldpwd);
-    return (0);
+    return (EXIT_SUCCESS);
 }
 
 

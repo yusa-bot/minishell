@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 21:23:17 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/17 22:58:41 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/18 21:17:38 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <sys/wait.h>
+# include <limits.h>
 
 # include "../libft/lst/lst.h"
 # include "../libft/libft.h"
@@ -32,13 +33,11 @@
 
 # define EXIT_SUCCESS 0
 # define EXIT_FAILURE 1
-# define EXIT_SYNTAX_ERROR 258
-# define EXIT_SIGINT 130
-# define EXIT_SIGQUIT 131
+# define EXIT_CMD_NOT_FOUND 127
+# define EXIT_NO_EXEC 126
+# define EXIT_OUT_OF_RANGE 255
 
-# define STDERR_FILENO 2
-#define EXIT_CMD_NOT_FOUND 127
-#define EXIT_NO_EXEC       126
+
 
 
 extern int g_sig;

@@ -6,13 +6,13 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 21:31:47 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/17 22:45:27 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/18 20:36:45 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void ft_echo(char **argv, int fd, t_shell *shell)
+int ft_echo(char **argv, int fd, t_shell *shell)
 {
     int i = 1;
     int no_newline = 0;
@@ -29,33 +29,29 @@ void ft_echo(char **argv, int fd, t_shell *shell)
 		if (ft_putstr_fd(argv[i], fd) < 0)
 		{
 			perror("minishell: echo");
-			shell->status = EXIT_FAILURE;
-			exit(EXIT_FAILURE);
+			return (EXIT_FAILURE);
 		}
 		if (argv[i + 1] && ft_putstr_fd(" ", fd) < 0)
         {
             perror("minishell: echo");
-            shell->status = EXIT_FAILURE;
-            exit(EXIT_FAILURE);
+            return (EXIT_FAILURE);
         }
         i++;
     }
 	if (!no_newline && ft_putstr_fd("\n", fd) < 0)
     {
         perror("minishell: echo");
-        shell->status = EXIT_FAILURE;
-        exit(EXIT_FAILURE);
+		return (EXIT_FAILURE);
     }
 	if (argv[1] && ft_strcmp(argv[1], "$?") == 0)
     {
         if (ft_putnbr_fd(shell->status, fd) < 0)
         {
             perror("minishell: echo");
-            shell->status = EXIT_FAILURE;
-            exit(EXIT_FAILURE);
+            return (EXIT_FAILURE);
         }
     }
-    exit(EXIT_SUCCESS);
+    return (EXIT_SUCCESS);
 }
 
 

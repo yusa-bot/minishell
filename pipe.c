@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 13:48:40 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/17 22:13:35 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/18 21:38:15 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ int run_pipe(t_cmd *cmd, t_env **env, t_shell *shell)
     int pipefd[2];
     int in_fd = STDIN_FILENO;
     pid_t pid;
-	pid_t wpid;
 
     while (cmd)
     {
@@ -71,15 +70,14 @@ int run_pipe(t_cmd *cmd, t_env **env, t_shell *shell)
         }
         cmd = cmd->next;
     }
-	while ((wpid = wait(shell->status)) > 0)
+	while (wait(shell->status) > 0)
 	{
-		if (wpid == pid)
+		if (wait(shell->status) == pid)
 		{
 			if (WIFEXITED(shell->status))
-				shell->status = WEXITSTATUS(shell->status);
+				return (WEXITSTATUS(shell->status));
 			else if (WIFSIGNALED(shell->status))
-				shell->status = 128 + WTERMSIG(shell->status);
+				return (128 + WTERMSIG(shell->status));
 		}
 	}
-	return (1);
 }

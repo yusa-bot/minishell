@@ -6,12 +6,11 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 20:24:47 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/17 21:47:42 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/18 21:22:52 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
 
 //redirect halper
 static int fd_save(int *save_stdin, int *save_stdout)
@@ -54,7 +53,8 @@ int run_parent(t_cmd *cmd, t_env **env, t_shell *shell)
 		perror("redirect");
         return (0);
     }
-    run_builtin(cmd->cmd_args, env, shell);
+    shell->status = run_builtin(cmd->cmd_args, env, shell);
+	return (shell->status);
     fd_restore(save_in, save_out);
     return (1);
 }

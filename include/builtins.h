@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:30:53 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/17 22:49:40 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/18 21:21:00 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,11 @@ t_env *ft_set_env(char **envp);
 char *ft_get_env(t_env *env, const char *key);
 char **env_to_array(t_env *env);
 
-void ft_env(t_env *lst, int fd, t_shell *shell);
-void ft_export(t_env *env_lst, int fd, t_shell *shell);
-void ft_unset(t_env **lst, char *delkey, t_shell *shell);
-int ft_pwd(t_env *env_lst, int fd, t_shell *shell);
-int ft_cd(char **argv, t_env **env_lst, t_shell *shell);
+void ft_env(t_env *lst, int fd);
+void ft_export(t_env *env_lst, int fd);
+void ft_unset(t_env **lst, char *delkey);
+int ft_pwd(t_env *env_lst, int fd);
+int ft_cd(char **argv, t_env **env_lst);
 int ft_exit(char **argv, t_shell *shell);
 
 
