@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 21:23:17 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/18 21:17:38 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/18 22:27:57 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,9 @@
 # define EXIT_NO_EXEC 126
 # define EXIT_OUT_OF_RANGE 255
 
-
+# ifndef PATH_MAX
+#  define PATH_MAX 4096
+# endif
 
 
 extern int g_sig;
