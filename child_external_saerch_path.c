@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 15:45:01 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/17 21:37:58 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/19 16:48:26 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ static char	*search_in_path(const char *cmd, const char *path_env)
 	return (NULL);
 }
 
-char	*search_external_path(const char *cmd, t_env **env)
+char	*search_external_path(const char *cmd, t_env **env_lst)
 {
 	char	*path_env;
 	char	*result;
@@ -108,7 +108,7 @@ char	*search_external_path(const char *cmd, t_env **env)
 	{
 		cwd = getcwd(NULL, 0);
 		if (cwd == NULL)
-			cwd = ft_get_env(*env, "PWD");
+			cwd = ft_get_env(*env_lst, "PWD");
 		result = build_full_path(cwd, cmd);//cwd+cmd
 		free(cwd);
 		if (result && access(result, X_OK) == 0)
@@ -126,6 +126,6 @@ char	*search_external_path(const char *cmd, t_env **env)
 		}
 	}
 	// コマンド名のみの場合、PATHを検索
-	path_env = ft_get_env(*env, "PATH");
+	path_env = ft_get_env(*env_lst, "PATH");
 	return (search_in_path(cmd, path_env));
 }

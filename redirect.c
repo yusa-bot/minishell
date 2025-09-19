@@ -6,13 +6,13 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 16:57:55 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/17 21:17:57 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/19 17:08:24 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void handle_redirect(const t_redirect *r, int target_fd, int oflags)
+int handle_redirect(const t_redirect *r, int target_fd, int oflags)
 {
     int fd = -1;
 
@@ -25,15 +25,13 @@ void handle_redirect(const t_redirect *r, int target_fd, int oflags)
     if (fd < 0)
 	{
         write(STDERR_FILENO, "minishell: Invalid file descriptor\n", 36);
-        exit(EXIT_FAILURE);
+        return (EXIT_FAILURE);
     }
     if (dup2(fd, target_fd) < 0)//開いたfdをstdi/oに複製
 	{
         perror("dup2");//fdはosが回収
-        exit(EXIT_FAILURE);
+        return (EXIT_FAILURE);
     }
-
-
     /////////////
     //// HEREDOCの場合とファイルの場合で異なる処理
     //if (r->token_type == INFILE && r->prepared_fd >= 0)
@@ -42,20 +40,23 @@ void handle_redirect(const t_redirect *r, int target_fd, int oflags)
     //    // dup2でSTDIN_FILENOにコピー済みなので、以降はそちらから読まれる
     //    // prepared_fdは他の処理で必要な可能性があるため保持
     //}
+	// else //通常
+    //     close(fd);
     //////////////
-
-    else //通常
-        close(fd);
+    close(fd);
+	return (EXIT_SUCCESS);
 }
 
-void apply_redirect(const t_cmd *cmd)
+int apply_redirect(const t_cmd *cmd, t_shell *shell)
 {
     t_redirect *r;
 
     r = cmd->infile;
     while (r)
     {
-        handle_redirect(r, STDIN_FILENO, O_RDONLY);
+        shell->status = handle_redirect(r, STDIN_FILENO, O_RDONLY);
+		if (shell->status != EXIT_SUCCESS)
+			return (shell->status);
         r = r->next;
     }
     r = cmd->outfile;
@@ -69,4 +70,5 @@ void apply_redirect(const t_cmd *cmd)
         handle_redirect(r, STDOUT_FILENO, flags);
         r = r->next;
     }
+	return (EXIT_SUCCESS);
 }

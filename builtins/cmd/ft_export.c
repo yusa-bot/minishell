@@ -31,12 +31,12 @@ static	t_env *ft_lst_next(t_env *env_lst, char **prev_key)
 	return (res);
 }
 
-static int ft_putexport_fd(t_env *env, int fd)
+static int ft_putexport_fd(t_env *env_lst, int fd)
 {
     if (ft_putstr_fd("declare -x ", fd) < 0
-        || ft_putstr_fd(env->key, fd) < 0
+        || ft_putstr_fd(env_lst->key, fd) < 0
         || ft_putstr_fd("=\"", fd) < 0
-        || ft_putstr_fd(env->value, fd) < 0
+        || ft_putstr_fd(env_lst->value, fd) < 0
         || ft_putstr_fd("\"\n", fd) < 0)
         return (EXIT_FAILURE);
     return (EXIT_SUCCESS);

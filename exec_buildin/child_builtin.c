@@ -6,31 +6,31 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 14:45:06 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/18 21:35:49 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/19 17:12:27 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	exec_child(t_cmd *cmd, t_env **env, t_shell *shell)
+void	exec_child(t_cmd *cmd, t_env **env_lst, t_shell *shell)
 {
 	setup_signals_child();
-	apply_redirect(cmd);
+	shell->status = apply_redirect(cmd, shell);
 	if (is_builtin_child(cmd->cmd_args))
 	{
-		shell->status = run_builtin(&cmd->cmd_args[0], env, shell);
+		shell->status = run_builtin(&cmd->cmd_args[0], env_lst, shell);
 		exit(shell->status);
 	}
 	else //external
 	{
-		char *path = search_external_path(cmd->cmd_args[0], env);
-		execve(path, cmd->cmd_args, env_to_array(*env));
+		char *path = search_external_path(cmd->cmd_args[0], env_lst);
+		execve(path, cmd->cmd_args, env_to_array(*env_lst));
 		perror("execve");
 		exit(EXIT_NO_EXEC);
 	}
 }
 
-int run_child(t_cmd *cmd, t_env **env, t_shell *shell)
+int run_child(t_cmd *cmd, t_env **env_lst, t_shell *shell)
 {
     pid_t pid;
     int   status;
@@ -42,7 +42,7 @@ int run_child(t_cmd *cmd, t_env **env, t_shell *shell)
 		exit(EXIT_FAILURE);
     }
     if (pid == 0)
-		exec_child(cmd, env, shell);
+		exec_child(cmd, env_lst, shell);
 	//単独コマンドだったらこっちが親
     else
     {
@@ -52,6 +52,7 @@ int run_child(t_cmd *cmd, t_env **env, t_shell *shell)
         if (WIFSIGNALED(status))
             return (128 + WTERMSIG(status));
     }
+	return (shell->status);
 }
 
 //1. waitpid(pid, &status, 0)

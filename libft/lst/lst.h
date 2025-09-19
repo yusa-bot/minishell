@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 16:16:17 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/14 16:31:24 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/19 15:47:36 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,8 @@
 # include <stdlib.h>
 # include <stddef.h>
 
-typedef struct s_env {
-	char			*key;
-	char			*value;
-	int				is_export; //<->ローカル変数
-	struct s_env	*next;
-} t_env;
+# include "../libft/libft.h"
+# include "../../include/struct.h"
 
 void	ft_lst_delone(t_env *lst);
 void	ft_lst_clear(t_env **lst);

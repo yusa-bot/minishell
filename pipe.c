@@ -6,13 +6,13 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 13:48:40 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/18 21:38:15 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/19 16:48:54 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int run_pipe(t_cmd *cmd, t_env **env, t_shell *shell)
+int run_pipe(t_cmd *cmd, t_env **env_lst, t_shell *shell)
 {
     int pipefd[2];
     int in_fd = STDIN_FILENO;
@@ -53,9 +53,8 @@ int run_pipe(t_cmd *cmd, t_env **env, t_shell *shell)
 					perror("dup2");
 					exit(EXIT_FAILURE);
                 }
-                pipe_free(pipefd, in_fd);
             }
-            exec_child(cmd, env, shell);
+            exec_child(cmd, env_lst, shell);
             exit(EXIT_SUCCESS);
         }
         else//pipeだったらこれが親
@@ -70,14 +69,15 @@ int run_pipe(t_cmd *cmd, t_env **env, t_shell *shell)
         }
         cmd = cmd->next;
     }
-	while (wait(shell->status) > 0)
+	while (wait(&shell->status) > 0)
 	{
-		if (wait(shell->status) == pid)
-		{
-			if (WIFEXITED(shell->status))
-				return (WEXITSTATUS(shell->status));
-			else if (WIFSIGNALED(shell->status))
-				return (128 + WTERMSIG(shell->status));
-		}
+        if (wait(&shell->status) == pid)
+        {
+            if (WIFEXITED(shell->status))
+                return (WEXITSTATUS(shell->status));
+            else if (WIFSIGNALED(shell->status))
+                return (128 + WTERMSIG(shell->status));
+        }
 	}
+	return (shell->status);
 }

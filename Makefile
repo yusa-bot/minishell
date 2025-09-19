@@ -18,6 +18,7 @@ SRCS = \
 	pipe.c \
 	redirect.c \
 	child_external_saerch_path.c \
+	ft_free_handle.c \
 	builtins/env_util.c \
 	builtins/cmd/ft_cd.c \
 	builtins/cmd/ft_echo.c \

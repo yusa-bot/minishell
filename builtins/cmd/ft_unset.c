@@ -6,24 +6,24 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:31:10 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/18 21:11:42 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/19 16:51:39 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int ft_unset(t_env **lst, char *delkey)
+int ft_unset(t_env **env_lst, char *delkey)
 {
 	t_env *dellst;
 	t_env *tmp;
 
-	if (!lst || !*lst || !delkey)
+	if (!env_lst || !*env_lst || !delkey)
 		return (EXIT_FAILURE);
-	tmp = *lst;
+	tmp = *env_lst;
 	if (ft_strcmp(tmp->key, delkey) == 0)
 	{
 		dellst = tmp;
-		*lst = tmp->next;  // リストの先頭を更新
+		*env_lst = tmp->next;  // リストの先頭を更新
 		ft_lst_delone(dellst);
 		//tmp = tmp->next;
 		return (EXIT_SUCCESS);

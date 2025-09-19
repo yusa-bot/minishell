@@ -6,32 +6,14 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 21:23:29 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/13 21:23:31 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/19 16:44:47 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PARSER_H
 # define PARSER_H
 
-typedef struct s_redirect
-{
-	char *original_str;//用途を限定せず汎用的に
-	char *expanded_str;
-	t_token_type token_type;//<, >, >>, <<
-	struct s_redirect *next;//複数リダイレクト用
-	int prepared_fd; // HEREDOC用に準備されたFDを保持
-} t_redirect;
-
-typedef struct s_cmd
-{
-	char		**cmd_args;
-	char		**env_vars;//一時的な環境変数
-	t_redirect	*infile;
-	t_redirect	*outfile;
-	struct s_cmd	*prev;//pipeline用
-	struct s_cmd	*next;//pipeline用
-}	t_cmd;
-
+# include "struct.h"
 
 t_cmd *ft_parser(t_token *token_lst, t_env *env_lst);
 

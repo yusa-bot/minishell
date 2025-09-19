@@ -6,21 +6,21 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:29:18 by rinka             #+#    #+#             */
-ft_set_env/*   Updated: 2025/09/16 20:14:49 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/19 16:50:12 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
 // envリストをexecve用のchar**に変換
-char **env_to_array(t_env *env)
+char **env_to_array(t_env *env_lst)
 {
     int     count = 0;
     char    **arr;
     char    *tmp;
     t_env   *cur;
 
-    cur = env;
+    cur = env_lst;
     while (cur)
     {
         if (cur->is_export)
@@ -31,7 +31,7 @@ char **env_to_array(t_env *env)
     if (!arr)
         return (NULL);
     count = 0;
-    cur = env;
+    cur = env_lst;
     while (cur)
     {
         if (cur->is_export)
@@ -50,25 +50,25 @@ char **env_to_array(t_env *env)
 
 
 // minishellで動的に追加/変更した環境変数の取得用
-char *ft_get_env(t_env *env, const char *key)
+char *ft_get_env(t_env *env_lst, const char *key)
 {
-	while (env)
+	while (env_lst)
 	{
-		if (ft_strcmp(env->key, key) == 0)
-			return env->value;
-		env = env->next;
+		if (ft_strcmp(env_lst->key, key) == 0)
+			return env_lst->value;
+		env_lst = env_lst->next;
 	}
 	return NULL;
 }
 
 t_env *ft_set_env(char **envp)
 {
-	t_env *lst;
+	t_env *env_lst;
 	int	i;
 	char *key;
 	char *value;
 
-	lst = NULL;
+	env_lst = NULL;
 	i = 0;
 	while (envp[i])
 	{
@@ -81,10 +81,10 @@ t_env *ft_set_env(char **envp)
 			free (key);
 			exit(EXIT_FAILURE);
 		}
-		ft_lst_add_back(&lst, ft_lst_new(key, value, 1));
+		ft_lst_add_back(&env_lst, ft_lst_new(key, value, 1));
 		i++;
 	}
-	return (lst);
+	return (env_lst);
 }
 
 void ft_add_env(t_env **env_lst, char *str, int is_export)
