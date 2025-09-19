@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 18:55:49 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/09/13 21:37:57 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/19 18:58:21 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,6 +123,7 @@ t_cmd	*ft_cmdlst_new(char **cmd_args, char **env_vars, t_redirect *infile, t_red
 
 void	ft_cmdlst_delone(t_cmd *lst)
 {
+	printf("ft_cmdlst_delone\n");
 	if (lst)
 	{
 		ft_free_str_array(lst->cmd_args);
@@ -137,6 +138,7 @@ void	ft_cmdlst_delone(t_cmd *lst)
 
 void	ft_cmdlst_clear(t_cmd **lst)
 {
+	printf("ft_cmdlst_clear\n");
 	t_cmd	*current;
 	t_cmd	*nextnode;
 
