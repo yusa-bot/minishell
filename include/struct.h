@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 21:23:17 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/19 16:46:10 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/22 22:26:26 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ typedef struct s_shell {
 	struct s_env   *env;
 	int     status;
 } t_shell;
-
 
 typedef enum e_token_type
 {

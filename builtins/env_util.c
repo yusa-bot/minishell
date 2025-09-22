@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:29:18 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/19 16:50:12 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/22 22:16:51 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,20 +67,31 @@ t_env *ft_set_env(char **envp)
 	int	i;
 	char *key;
 	char *value;
+	char *equal;
 
 	env_lst = NULL;
 	i = 0;
 	while (envp[i])
 	{
-		key = ft_strndup(envp[i], ft_strchr(envp[i], '=') - envp[i]);
-		if (key == NULL)
-			exit(EXIT_FAILURE);
+		equal = ft_strchr(envp[i], '=');
+        if (!equal)
+        {
+            i++;
+            continue;
+        }
+		key = ft_strndup(envp[i], equal - envp[i]);
+		if (!key)
+        {
+            ft_lst_clear(&env_lst);
+            exit(EXIT_FAILURE);
+        }
 		value = ft_strdup(ft_strchr(envp[i], '=') + 1);
-		if (value == NULL)
-		{
-			free (key);
-			exit(EXIT_FAILURE);
-		}
+		if (!value)
+        {
+            free(key);
+            ft_lst_clear(&env_lst);
+            exit(EXIT_FAILURE);
+        }
 		ft_lst_add_back(&env_lst, ft_lst_new(key, value, 1));
 		i++;
 	}
