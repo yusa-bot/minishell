@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 09:59:27 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/09/17 22:39:12 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/23 15:58:14 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,13 +57,5 @@ int	ft_putnbr_fd(int n, int fd)
 
 // int main()
 // {
-// 	int fd = open("test.txt", O_WRONLY);
-// 	ft_putnbr_fd(INT_MIN, fd); //-2147483648
-// 	ft_putchar_fd('\n', fd);
-// 	ft_putnbr_fd(INT_MAX, fd);// 2147483647
-// 	ft_putchar_fd('\n', fd);
-// 	ft_putnbr_fd(0, fd);// 0
-// 	ft_putchar_fd('\n', fd);
-// 	ft_putnbr_fd(-45678, fd);//-45678
-// 	ft_putchar_fd('\n', fd);
+// 	ft_putnbr_fd(3, 1);
 // }

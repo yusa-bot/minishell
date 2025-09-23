@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 14:45:06 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/19 17:12:27 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/23 14:29:46 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 void	exec_child(t_cmd *cmd, t_env **env_lst, t_shell *shell)
 {
+	printf("[[status code in exec_child: %d]]\n", shell->status);
 	setup_signals_child();
 	shell->status = apply_redirect(cmd, shell);
 	if (is_builtin_child(cmd->cmd_args))
@@ -35,6 +36,7 @@ int run_child(t_cmd *cmd, t_env **env_lst, t_shell *shell)
     pid_t pid;
     int   status;
 
+	printf("[[status code in run_child: %d]]\n", shell->status);
     pid = fork();
     if (pid < 0)
     {

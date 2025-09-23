@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 21:31:47 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/18 20:36:45 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/23 15:55:34 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,16 @@ int ft_echo(char **argv, int fd, t_shell *shell)
     //複数引数
     while (argv[i])
     {
+		if (argv[1] && ft_strcmp(argv[1], "$?") == 0)
+		{
+			if (ft_putnbr_fd(shell->status, fd) < 0)
+			{
+				perror("minishell: echo");
+				return (EXIT_FAILURE);
+			}
+			i++;
+			continue ;
+		}
 		if (ft_putstr_fd(argv[i], fd) < 0)
 		{
 			perror("minishell: echo");
@@ -43,14 +53,8 @@ int ft_echo(char **argv, int fd, t_shell *shell)
         perror("minishell: echo");
 		return (EXIT_FAILURE);
     }
-	if (argv[1] && ft_strcmp(argv[1], "$?") == 0)
-    {
-        if (ft_putnbr_fd(shell->status, fd) < 0)
-        {
-            perror("minishell: echo");
-            return (EXIT_FAILURE);
-        }
-    }
+
+
     return (EXIT_SUCCESS);
 }
 

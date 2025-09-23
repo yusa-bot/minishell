@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/23 12:19:49 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/23 15:28:20 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ int main(int argc, char **argv, char **envp)
 	char *line;
 	while (1)
 	{
+		printf("[[loop top shell status: %d]]\n", shell.status);
 		g_sig = 0;
 		line = readline("$ ");
 		if (line == NULL)//EOF(Ctrl-D)
@@ -84,7 +85,7 @@ int main(int argc, char **argv, char **envp)
 			continue_free(&token_lst, &cmd_lst, &env_lst);
 			continue;
 		}
-		cmd_lst = ft_parser(token_lst, env_lst);
+		cmd_lst = ft_parser(token_lst, env_lst, &shell);
 		if (!cmd_lst)
 		{
 			printf("cmd_lst null");//
@@ -162,7 +163,9 @@ int main(int argc, char **argv, char **envp)
 
         if (cmd_lst && cmd_lst->next)
 		{
+			printf("[[pipe in]]\n");
 			shell.status = run_pipe(cmd_lst, &env_lst, &shell);
+			printf("[[status code in main: %d]]\n", shell.status);
 			if (shell.status != EXIT_SUCCESS)
 			{
 				continue_free(&token_lst, &cmd_lst, &env_lst);
@@ -171,7 +174,9 @@ int main(int argc, char **argv, char **envp)
 		}
 		else if (is_builtin_parent(cmd_lst->cmd_args))
 		{
+			printf("[[parent in]]\n");
 			shell.status = run_parent(cmd_lst, &env_lst, &shell);
+			printf("[[status code in main: %d]]\n", shell.status);
 			if (shell.status != EXIT_SUCCESS)
 			{
 				continue_free(&token_lst, &cmd_lst, &env_lst);
@@ -180,7 +185,9 @@ int main(int argc, char **argv, char **envp)
 		}
 		else
 		{
+			printf("[[child in]]\n");
 			shell.status = run_child(cmd_lst, &env_lst, &shell);
+			printf("[[status code in main: %d]]\n", shell.status);
 			if (shell.status != EXIT_SUCCESS)
 			{
 				continue_free(&token_lst, &cmd_lst, &env_lst);
@@ -194,5 +201,6 @@ int main(int argc, char **argv, char **envp)
 		line = NULL;
 	}
 	ft_lst_clear(&env_lst);
+	shell.env = NULL;
 	return shell.status;
 }
