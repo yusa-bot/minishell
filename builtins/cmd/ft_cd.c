@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 21:47:51 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/18 22:27:48 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/23 22:02:49 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,18 @@ int ft_cd(char **argv, t_env **env_lst)
     char  *oldpwd;
     int         argc;
 
+	int i = 0;
+	while (argv[i])
+	{
+		printf("ft_cd argv[%d]: %s\n", i, argv[i]);
+		i++;
+	}
+
     argc = 0;
     while (argv[argc])
-        argc++;
+		argc++;
+	printf("argc=%d\n", argc);
+
     if (argc > 2) //valid
     {
         write(2, "minishell: cd: too many arguments\n", 34);

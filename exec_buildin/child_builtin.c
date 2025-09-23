@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 14:45:06 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/23 20:22:31 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/23 21:58:30 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ int	exec_child(t_cmd *cmd, t_env **env_lst, t_shell *shell)
 {
 	setup_signals_child();
 	shell->status = apply_redirect(cmd, shell);
+	if (shell->status != EXIT_SUCCESS)////
+        return shell->status;
 	if (is_builtin_child(cmd->cmd_args))
 		return (run_builtin(&cmd->cmd_args[0], env_lst, shell));
 	else //external
@@ -28,11 +30,14 @@ int	exec_child(t_cmd *cmd, t_env **env_lst, t_shell *shell)
 			write(STDERR_FILENO, ": command not found\n", 20);
 			return (127);
 		}
-		execve(path, cmd->cmd_args, env_to_array(*env_lst));
+		char **envp = env_to_array(*env_lst);
+		execve(path, cmd->cmd_args, envp);
 		free(path);
+		if (envp)
+			free_split(envp);
 
 		struct stat st;
-		if (stat(cmd->cmd_args[0], &st) == 0 && S_ISDIR(st.st_mode))
+		if (stat(path, &st) == 0 && S_ISDIR(st.st_mode))
 		{
 			write(STDERR_FILENO, "minishell: ", 11);
 			write(STDERR_FILENO, cmd->cmd_args[0], ft_strlen(cmd->cmd_args[0]));
@@ -61,12 +66,11 @@ int	exec_child(t_cmd *cmd, t_env **env_lst, t_shell *shell)
 int run_child(t_cmd *cmd, t_env **env_lst, t_shell *shell)
 {
     pid_t pid;
-    int   status;
 
     pid = fork();
     if (pid < 0)
     {
-		perror("pipe");
+		perror("fork");
 		exit(EXIT_FAILURE);
     }
     if (pid == 0)
@@ -75,17 +79,16 @@ int run_child(t_cmd *cmd, t_env **env_lst, t_shell *shell)
 		if (shell->status != EXIT_SUCCESS)
 			exit(shell->status);
 	}
-	//単独コマンドだったらこっちが親
-    else
+    else//単独コマンドだったらこっちが親
     {
-        waitpid(pid, &status, 0);
-        if (WIFEXITED(status))
-            return (WEXITSTATUS(status));
-        if (WIFSIGNALED(status))
-            return (128 + WTERMSIG(status));
+        waitpid(pid, &shell->status, 0);
+        if (WIFEXITED(shell->status))
+            return (WEXITSTATUS(shell->status));
+        if (WIFSIGNALED(shell->status))
+            return (128 + WTERMSIG(shell->status));
     }
 	return (shell->status);
-}//sehll->status??
+}
 
 //1. waitpid(pid, &status, 0)
 //&status: 子プロセスの終了状態

@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/23 17:32:29 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/23 21:51:47 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ int main(int argc, char **argv, char **envp)
 
 	env_lst = ft_set_env(envp);
 
+	cmd_lst = NULL;
+	token_lst = NULL;
 	shell.env = env_lst;
 	shell.status = 0;
 	rl_catch_signals = 0;
@@ -42,18 +44,13 @@ int main(int argc, char **argv, char **envp)
 		{
 			printf("EOF\n");
 			if (loop_count > 0)
-			{
 				rl_clear_history();
-				free(line);
-				continue_free(&token_lst, &cmd_lst, &env_lst);
-			}
 			write(1, "exit\n", 5);
-			exit(EXIT_SUCCESS);
+			break ;
 		}
 		if (*line == '\0')
 		{
 			free(line);
-			continue_free(&token_lst, &cmd_lst, &env_lst);
 			continue;
 		}
 		if (g_sig == SIGINT)//Ctrl-C
@@ -61,7 +58,6 @@ int main(int argc, char **argv, char **envp)
 			printf("SIGINT\n");
 			g_sig = 0;
 			free(line);
-			continue_free(&token_lst, &cmd_lst, &env_lst);
 			continue;
 		}
 		if (*line)
@@ -70,15 +66,17 @@ int main(int argc, char **argv, char **envp)
 		token_lst = tokenize_line(line);
 		if (!token_lst)
 		{
-			continue_free(&token_lst, &cmd_lst, &env_lst);
+			free(line);
 			continue;
 		}
 		cmd_lst = ft_parser(token_lst, env_lst, &shell);
 		if (!cmd_lst)
 		{
-			continue_free(&token_lst, &cmd_lst, &env_lst);
+			ft_tokenlst_clear(&token_lst);
+			free(line);
 			continue;
 		}
+
 
 	 	////HEREDOCのときのみ専用fdに入れ替える関数を通す。
 	 	////ここではcmd_lstを回す。
@@ -90,40 +88,17 @@ int main(int argc, char **argv, char **envp)
 	 	// ft_tokenlst_clear(&token_lst);
 
         if (cmd_lst && cmd_lst->next)
-		{
 			shell.status = run_pipe(cmd_lst, &env_lst, &shell);
-			// printf("[[status code in main: %d]]\n", shell.status);
-			if (shell.status != EXIT_SUCCESS)
-			{
-				continue_free(&token_lst, &cmd_lst, &env_lst);
-				continue;
-			}
-		}
 		else if (is_builtin_parent(cmd_lst->cmd_args))
 		{
 			shell.status = run_parent(cmd_lst, &env_lst, &shell);
-			// printf("[[status code in main: %d]]\n", shell.status);
-			if (shell.status != EXIT_SUCCESS)
-			{
-				continue_free(&token_lst, &cmd_lst, &env_lst);
-				continue;
-			}
+			printf("main");
 		}
 		else
-		{
 			shell.status = run_child(cmd_lst, &env_lst, &shell);
-			// printf("[[status code in main: %d]]\n", shell.status);
-			if (shell.status != EXIT_SUCCESS)
-			{
-				continue_free(&token_lst, &cmd_lst, &env_lst);
-				continue;
-			}
-		}
-		ft_tokenlst_clear(&token_lst);
-		ft_cmd_clear(&cmd_lst);
+		continue_free(&token_lst, &cmd_lst);
 		loop_count++;
 		free(line);
-		line = NULL;
 	}
 	ft_lst_clear(&env_lst);
 	shell.env = NULL;

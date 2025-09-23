@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 21:32:04 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/23 12:44:10 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/23 21:34:52 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ int ft_exit(char **argv, t_shell *shell)
 	argc = 0;
 	while (argv[argc])
 		argc++;
-	printf("argc=%d\n", argc);
 	if (argc > 2)
 	{
 		write(2, "minishell: exit: too many arguments\n", 26);
