@@ -6,13 +6,13 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 21:31:47 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/23 15:55:34 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/23 16:04:59 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-int ft_echo(char **argv, int fd, t_shell *shell)
+int ft_echo(char **argv, int fd)
 {
     int i = 1;
     int no_newline = 0;
@@ -24,18 +24,23 @@ int ft_echo(char **argv, int fd, t_shell *shell)
         i++;
     }
     //複数引数
+	while (argv[i])
+	{
+		printf("argv[%d]=%s\n", i, argv[i]);
+		i++;
+	}
     while (argv[i])
     {
-		if (argv[1] && ft_strcmp(argv[1], "$?") == 0)
-		{
-			if (ft_putnbr_fd(shell->status, fd) < 0)
-			{
-				perror("minishell: echo");
-				return (EXIT_FAILURE);
-			}
-			i++;
-			continue ;
-		}
+		// if (argv[1] && ft_strcmp(argv[1], "$?") == 0)
+		// {
+		// 	if (ft_putnbr_fd(shell->status, fd) < 0)
+		// 	{
+		// 		perror("minishell: echo");
+		// 		return (EXIT_FAILURE);
+		// 	}
+		// 	i++;
+		// 	continue ;
+		// }
 		if (ft_putstr_fd(argv[i], fd) < 0)
 		{
 			perror("minishell: echo");

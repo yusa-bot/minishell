@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 13:18:26 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/14 16:33:25 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/23 16:00:34 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ char *expand_key(char *key, t_token **token_lst, t_env *env_lst)
 	return (ft_strdup(""));
 }
 
-char *expand_vars(const t_token *original, t_token **token_lst, t_env *env_lst)
+char *expand_vars(const t_token *original, t_token **token_lst, t_env *env_lst, t_shell *shell)
 {
 	char *key;
 	char *res;
@@ -78,7 +78,7 @@ char *expand_vars(const t_token *original, t_token **token_lst, t_env *env_lst)
 			if (*current == '?')
 			{
 				// value = 直前の終了コード
-				res = ft_strjoin_safe(res, "0000");//仮
+				res = ft_strjoin_safe(res, ft_itoa(shell->status));
 				current += 1;
 			}
 			else
@@ -121,7 +121,7 @@ char *expand_vars(const t_token *original, t_token **token_lst, t_env *env_lst)
 }
 
 //t_cmd関連関数の前に完成させてテストする（その前にt_envを持ってきてファイル構成テストも）
-t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *env_lst)
+t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *env_lst, t_shell *shell)
 {
 	t_token *new_lst;
 	t_token *newnode;
@@ -164,7 +164,7 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 			{
 				//変数展開
 				char *old_str = current_lst->str;
-				char *expanded_str = expand_vars(current_lst, token_lst, env_lst);
+				char *expanded_str = expand_vars(current_lst, token_lst, env_lst, shell);
 				if (is_delimiter(ft_tokenlst_last(new_lst)->str))
 					original_var = ft_strjoin_safe(original_var, old_str);
 				current_lst->str = expanded_str;

@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 21:23:17 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/23 15:42:50 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/23 16:01:44 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,6 @@ void continue_free(t_token **token_lst, t_cmd **cmd_lst, t_env **env_lst);
 void ft_cmd_clear(t_cmd **cmd_lst);
 void	ft_token_clear(t_token **token_lst);
 
-int handle_ft_echo(char **argv, int fd, t_shell *shell);
 int ft_echo(char **argv, int fd);
 int ft_exit(char **argv, t_shell *shell);
 

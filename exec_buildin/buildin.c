@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 19:23:08 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/23 15:56:22 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/23 16:02:57 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int run_builtin(char **args, t_env **env_lst, t_shell *shell)
 	else if (!ft_strcmp(args[0], "exit"))
 		return (ft_exit(args, shell));
     else if (!ft_strcmp(args[0], "echo"))
-        return (ft_echo(args, STDOUT_FILENO, shell));
+        return (ft_echo(args, STDOUT_FILENO));
     else if (!ft_strcmp(args[0], "pwd"))
         return (ft_pwd(*env_lst, STDOUT_FILENO));
     else if (!ft_strcmp(args[0], "env"))
