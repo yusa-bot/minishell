@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 19:59:29 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/23 12:07:00 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/23 18:19:30 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,4 +89,15 @@ void continue_free(t_token **token_lst, t_cmd **cmd_lst, t_env **env_lst)
 		ft_cmd_clear(cmd_lst);
 	if (env_lst)
 		ft_lst_clear(env_lst);
+}
+
+
+void free_split(char **arr)
+{
+	int i = 0;
+	if (!arr)
+		return;
+	while (arr[i])
+		free(arr[i++]);
+	free(arr);
 }

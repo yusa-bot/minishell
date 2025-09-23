@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 21:23:17 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/23 16:01:44 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/23 20:23:24 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include <readline/history.h>
 # include <sys/wait.h>
 # include <limits.h>
+#include <sys/stat.h>
 
 # include "../libft/lst/lst.h"
 # include "../libft/libft.h"
@@ -34,6 +35,7 @@
 
 # define EXIT_SUCCESS 0
 # define EXIT_FAILURE 1
+# define EXIT_BUILTIN_MISUSE 2
 # define EXIT_CMD_NOT_FOUND 127
 # define EXIT_NO_EXEC 126
 # define EXIT_OUT_OF_RANGE 255
@@ -65,7 +67,7 @@ int is_builtin_child(char **args);
 int run_builtin(char **args, t_env **env_lst, t_shell *shell);
 
 int run_child(t_cmd *cmd, t_env **env_lst, t_shell *shell);
-void	exec_child(t_cmd *cmd, t_env **env_lst, t_shell *shell);
+int	exec_child(t_cmd *cmd, t_env **env_lst, t_shell *shell);
 int run_parent(t_cmd *cmd, t_env **env_lst, t_shell *shell);
 
 void continue_free(t_token **token_lst, t_cmd **cmd_lst, t_env **env_lst);
@@ -74,5 +76,6 @@ void	ft_token_clear(t_token **token_lst);
 
 int ft_echo(char **argv, int fd);
 int ft_exit(char **argv, t_shell *shell);
+void free_split(char **arr);
 
 #endif

@@ -6,12 +6,11 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 15:45:01 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/19 16:48:26 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/23 20:24:09 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
 
 static char	*build_full_path(const char *dir, const char *cmd)
 {
@@ -37,94 +36,45 @@ static char	*search_in_path(const char *cmd, const char *path_env)
 	int		i;
 
 	if (!path_env)
-	{
-		write(STDERR_FILENO, "minishell: command not found\n", 29);
-		exit(EXIT_CMD_NOT_FOUND);
-	}
+		return (NULL);
 	paths = ft_split(path_env, ':');
 	if (!paths)
 	{
 		perror("malloc");
 		exit(EXIT_FAILURE);
 	}
+
 	i = 0;
 	while (paths[i])
 	{
 		full_path = build_full_path(paths[i], cmd);
 		if (full_path && access(full_path, X_OK) == 0)
 		{
-			while (paths[i])
-				free(paths[i++]);
-			free(paths);
+			free_split(paths);
 			return (full_path);
 		}
 		free(full_path);
 		i++;
 	}
-	i = 0;
-	while (paths[i])
-	free(paths[i++]);
-	free(paths);
-	if (errno == EACCES)
-	{
-		perror(cmd);
-		exit(EXIT_NO_EXEC);
-	}
-	else
-	{
-		perror(cmd);
-		exit(EXIT_CMD_NOT_FOUND);
-	}
+	free_split(paths);
 	return (NULL);
 }
 
+// cmd : ls || /bin/ls
 char	*search_external_path(const char *cmd, t_env **env_lst)
 {
 	char	*path_env;
-	char	*result;
-	char	*cwd;
 
 	if (!cmd || !*cmd)
+		return (NULL);
+	if (ft_strcmp(cmd, ".") == 0)
 	{
-		write(STDERR_FILENO, "minishell: command not found\n", 29);
-		exit(EXIT_CMD_NOT_FOUND);
+		write(STDERR_FILENO, "minishell: .: filename argument required\n", 42);
+		write(STDERR_FILENO, ".: usage: . filename [arguments]\n", 33);
+		exit(EXIT_BUILTIN_MISUSE);
 	}
-	if (cmd[0] == '/')
-	{
-		if (access(cmd, X_OK) == 0)
-			return ft_strdup(cmd);
-		if (errno == EACCES)
-		{
-			perror(cmd);
-			exit(EXIT_NO_EXEC);
-		}
-		else
-		{
-			perror(cmd);
-			exit(EXIT_CMD_NOT_FOUND);
-		}
-	}
-	if (ft_strchr(cmd, '/'))// 相対パス
-	{
-		cwd = getcwd(NULL, 0);
-		if (cwd == NULL)
-			cwd = ft_get_env(*env_lst, "PWD");
-		result = build_full_path(cwd, cmd);//cwd+cmd
-		free(cwd);
-		if (result && access(result, X_OK) == 0)
-			return (result);
-		free(result);
-		if (errno == EACCES)
-		{
-			perror(cmd);
-			exit(EXIT_NO_EXEC);
-		}
-		else
-		{
-			perror(cmd);
-			exit(EXIT_CMD_NOT_FOUND);
-		}
-	}
+	if (ft_strchr(cmd, '/'))
+			return (ft_strdup(cmd));
 	// コマンド名のみの場合、PATHを検索
 	path_env = ft_get_env(*env_lst, "PATH");
 	return (search_in_path(cmd, path_env));

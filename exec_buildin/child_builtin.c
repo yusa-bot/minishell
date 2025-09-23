@@ -6,28 +6,55 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 14:45:06 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/23 14:29:46 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/23 20:22:31 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	exec_child(t_cmd *cmd, t_env **env_lst, t_shell *shell)
+int	exec_child(t_cmd *cmd, t_env **env_lst, t_shell *shell)
 {
-	printf("[[status code in exec_child: %d]]\n", shell->status);
 	setup_signals_child();
 	shell->status = apply_redirect(cmd, shell);
 	if (is_builtin_child(cmd->cmd_args))
-	{
-		shell->status = run_builtin(&cmd->cmd_args[0], env_lst, shell);
-		exit(shell->status);
-	}
+		return (run_builtin(&cmd->cmd_args[0], env_lst, shell));
 	else //external
 	{
 		char *path = search_external_path(cmd->cmd_args[0], env_lst);
+		if (!path)
+		{
+			write(STDERR_FILENO, "minishell: ", 11);
+			write(STDERR_FILENO, cmd->cmd_args[0], ft_strlen(cmd->cmd_args[0]));
+			write(STDERR_FILENO, ": command not found\n", 20);
+			return (127);
+		}
 		execve(path, cmd->cmd_args, env_to_array(*env_lst));
-		perror("execve");
-		exit(EXIT_NO_EXEC);
+		free(path);
+
+		struct stat st;
+		if (stat(cmd->cmd_args[0], &st) == 0 && S_ISDIR(st.st_mode))
+		{
+			write(STDERR_FILENO, "minishell: ", 11);
+			write(STDERR_FILENO, cmd->cmd_args[0], ft_strlen(cmd->cmd_args[0]));
+			write(STDERR_FILENO, ": Is a directory\n", 17);
+			return (126);
+		}
+
+		char *msg = ft_strjoin("minishell: ", cmd->cmd_args[0]);
+		if (!msg)
+		{
+			perror("malloc");
+			exit(EXIT_FAILURE);//?
+		}
+		perror(msg);
+		free(msg);
+
+		if (errno == EACCES || errno == EISDIR)
+			return (126); // Permission denied / Is a directory
+		else if (errno == ENOENT)
+			return (127); // command not found
+		else
+			return (126); // その他
 	}
 }
 
@@ -36,7 +63,6 @@ int run_child(t_cmd *cmd, t_env **env_lst, t_shell *shell)
     pid_t pid;
     int   status;
 
-	printf("[[status code in run_child: %d]]\n", shell->status);
     pid = fork();
     if (pid < 0)
     {
@@ -44,7 +70,11 @@ int run_child(t_cmd *cmd, t_env **env_lst, t_shell *shell)
 		exit(EXIT_FAILURE);
     }
     if (pid == 0)
-		exec_child(cmd, env_lst, shell);
+	{
+		shell->status = exec_child(cmd, env_lst, shell);
+		if (shell->status != EXIT_SUCCESS)
+			exit(shell->status);
+	}
 	//単独コマンドだったらこっちが親
     else
     {
@@ -55,7 +85,7 @@ int run_child(t_cmd *cmd, t_env **env_lst, t_shell *shell)
             return (128 + WTERMSIG(status));
     }
 	return (shell->status);
-}
+}//sehll->status??
 
 //1. waitpid(pid, &status, 0)
 //&status: 子プロセスの終了状態
