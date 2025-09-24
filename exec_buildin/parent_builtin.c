@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 20:24:47 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/23 21:59:41 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/24 20:16:15 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,6 @@ int run_parent(t_cmd *cmd, t_env **env_lst, t_shell *shell)
         return (0);
     }
     shell->status = run_builtin(cmd->cmd_args, env_lst, shell);
-	return (shell->status);
     fd_restore(save_in, save_out);
-    return (1);
+	return (shell->status);
 }

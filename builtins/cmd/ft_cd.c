@@ -6,37 +6,32 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 21:47:51 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/23 22:02:49 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/24 21:25:32 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int  update_pwd_vars(t_env **env_lst, const char *oldpwd)
+static int  update_pwd_vars(t_env **env_lst, char *oldpwd, char *newpwd)
 {
-
-    char buf[PATH_MAX];
     char *oldpwd_str;
-    char *pwd_str;
+	char *newpwd_str;
 
-    if (!getcwd(buf, sizeof(buf)))
-    {
-        perror("minishell: cd: getcwd");
-        return (EXIT_FAILURE);
-    }
+	if (!oldpwd || !newpwd)
+	{
+		return (EXIT_FAILURE);
+	}
+
     oldpwd_str = ft_strjoin("OLDPWD=", oldpwd);
     if (!oldpwd_str)
         return (EXIT_FAILURE);
-    pwd_str = ft_strjoin("PWD=", buf);
-    if (!pwd_str)
+    newpwd_str = ft_strjoin("PWD=", newpwd);
+    if (!newpwd_str)
     {
-        free(oldpwd_str);
         return (EXIT_FAILURE);
     }
     ft_add_env(env_lst, oldpwd_str, 1);
-    ft_add_env(env_lst, pwd_str, 1);
-    free(oldpwd_str);
-    free(pwd_str);
+    ft_add_env(env_lst, newpwd_str, 1);
     return (EXIT_SUCCESS);
 }
 
@@ -45,6 +40,8 @@ int ft_cd(char **argv, t_env **env_lst)
     const char  *path;
     char  *oldpwd;
     int         argc;
+	char *newpwd;
+	char	*pwd;
 
 	int i = 0;
 	while (argv[i])
@@ -58,14 +55,16 @@ int ft_cd(char **argv, t_env **env_lst)
 		argc++;
 	printf("argc=%d\n", argc);
 
-    if (argc > 2) //valid
+    if (argc > 2)
     {
         write(2, "minishell: cd: too many arguments\n", 34);
         return (EXIT_FAILURE);
     }
+
     else if (argc == 1) //home
     {
         path = ft_get_env(*env_lst, "HOME");
+		printf("HOME=%s\n", path);
         if (path == NULL)
         {
             write(2, "minishell: cd: HOME not set\n", 28);
@@ -86,10 +85,10 @@ int ft_cd(char **argv, t_env **env_lst)
     else
         path = argv[1];
 
+
     oldpwd = getcwd(NULL, 0);//malloc
     if (oldpwd == NULL)
     {
-        char	*pwd;
         pwd = ft_get_env(*env_lst, "PWD");//*
         if (pwd)
             oldpwd = ft_strdup(pwd);
@@ -98,7 +97,7 @@ int ft_cd(char **argv, t_env **env_lst)
     }
 
 
-    if (chdir(path) == -1)
+    if (chdir(path) == -1)//main func
     {
         free(oldpwd);
         write(2, "minishell: cd: ", 15);
@@ -107,15 +106,24 @@ int ft_cd(char **argv, t_env **env_lst)
         return (EXIT_FAILURE);
     }
 
+	newpwd = getcwd(NULL, 0);//malloc
+    if (newpwd == NULL)
+    {
+        pwd = ft_get_env(*env_lst, "PWD");
+        if (pwd)
+            newpwd = ft_strdup(pwd);
+        else
+            newpwd = ft_strdup("");
+    }
 
-    if (oldpwd == NULL)//更新
-	    oldpwd = ft_strdup("");
-    if (update_pwd_vars(env_lst, oldpwd) == EXIT_FAILURE)
+    if (update_pwd_vars(env_lst, oldpwd, newpwd) == EXIT_FAILURE)
     {
         free(oldpwd);
+		free(newpwd);
         return (EXIT_FAILURE);
     }
     free(oldpwd);
+	free(newpwd);
     return (EXIT_SUCCESS);
 }
 

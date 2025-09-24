@@ -162,6 +162,7 @@ char	**set_cmd_args(t_token *current_lst, int arg_count)
 		}
 		current_lst = current_lst->next;
 	}
+	cmd_args[i] = NULL;
 	return (cmd_args);
 }
 

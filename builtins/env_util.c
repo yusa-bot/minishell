@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:29:18 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/22 22:16:51 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/24 21:24:44 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ void ft_add_env(t_env **env_lst, char *str, int is_export)
 	char *key;
 	char *value;
 	char *equal_pos;
+	t_env *cur;
 
 	equal_pos = ft_strchr(str, '=');
 	if (equal_pos == NULL)// "export TEST" の場合（=がない）
@@ -122,10 +123,22 @@ void ft_add_env(t_env **env_lst, char *str, int is_export)
 		ft_lst_clear(env_lst);
 		return; // error_exit?
 	}
-	if (*env_lst == NULL)
-		*env_lst = ft_lst_new(key, value, is_export);
-	else
-		ft_lst_add_front(env_lst, ft_lst_new(key, value, is_export));
+
+	cur = *env_lst;
+	while (cur)
+    {
+        if (ft_strcmp(cur->key, key) == 0)
+        {
+            free(cur->value);
+            cur->value = value;
+            cur->is_export = is_export;
+            free(key);
+            return;
+        }
+        cur = cur->next;
+    }
+
+	ft_lst_add_front(env_lst, ft_lst_new(key, value, is_export));
 }
 
 
