@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/23 21:51:47 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/24 21:51:40 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,16 @@ int main(int argc, char **argv, char **envp)
 		{
 			printf("EOF\n");
 			if (loop_count > 0)
+			{
+				continue_free(&token_lst, &cmd_lst);
+				free(line);
+				ft_lst_clear(&env_lst);
+				shell.env = NULL;
 				rl_clear_history();
+			}
+
 			write(1, "exit\n", 5);
-			break ;
+			exit(shell.status);
 		}
 		if (*line == '\0')
 		{

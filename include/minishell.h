@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 21:23:17 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/23 21:21:06 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/24 21:59:06 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@
 # include <limits.h>
 #include <sys/stat.h>
 
-# include "../libft/lst/lst.h"
 # include "../libft/libft.h"
 
 # include "../include/builtins.h"

@@ -20,6 +20,7 @@ SRCS = \
 	child_external_saerch_path.c \
 	ft_free_handle.c \
 	builtins/env_util.c \
+	builtins/env_lst_utils.c \
 	builtins/cmd/ft_cd.c \
 	builtins/cmd/ft_echo.c \
 	builtins/cmd/ft_env.c \

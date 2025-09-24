@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:30:53 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/19 16:53:35 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/24 21:59:13 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@
 # include <stdlib.h>
 # include <stdio.h>
 
-#include "../libft/lst/lst.h"
 #include "../libft/libft.h"
 #include "struct.h"
 
@@ -34,6 +33,13 @@ int ft_export(t_env *env_lst, int fd);
 int ft_unset(t_env **env_lst, char *delkey);
 int ft_pwd(t_env *env_lst, int fd);
 int ft_cd(char **argv, t_env **env_lst);
+
+void	ft_lst_delone(t_env *lst);
+void	ft_lst_clear(t_env **lst);
+t_env	*ft_lst_last(t_env *lst);
+void	ft_lst_add_back(t_env **lst, t_env *new);
+void	ft_lst_add_front(t_env **lst, t_env *new);
+t_env	*ft_lst_new(char *key, char *value, int is_export);
 
 
 #endif
