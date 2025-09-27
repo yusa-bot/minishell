@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/27 21:59:52 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/27 22:33:48 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,8 +85,9 @@ int main(int argc, char **argv, char **envp)
 		}
 
 
-		if (cmd_lst->infile->token_type == HEREDOC)
-	 		run_heredoc(cmd_lst);
+		//fdの管理を追う
+		//heredocの場合、execで何を実行するのか？
+		prepare_heredocs(cmd_lst, env_lst);
 
 
         if (cmd_lst && cmd_lst->next)
@@ -99,6 +100,8 @@ int main(int argc, char **argv, char **envp)
 		else
 			shell.status = run_child(cmd_lst, &env_lst, &shell);
 		continue_free(&token_lst, &cmd_lst);
+		if (cmd_lst && cmd_lst->infile && cmd_lst->infile->heredoc_fd >= 0)
+			close(cmd_lst->infile->heredoc_fd);
 		loop_count++;
 		free(line);
 	}

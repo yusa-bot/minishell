@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:40:06 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/27 22:01:31 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/27 22:25:38 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,4 +48,21 @@ static int build_heredoc_fd(t_redirect *r)
     }
 	r->heredoc_fd = fds[0];
     // return fds[0];
+}
+
+int prepare_heredocs(t_cmd *cmds, t_env *env)
+{
+    for (t_cmd *cmd = cmds; cmd; cmd = cmd->next)
+    {
+        for (t_redirect *redir = cmd->infile; redir; redir = redir->next)
+        {
+            if (redir->token_type == HEREDOC)
+            {
+                redir->heredoc_fd = build_heredoc_fd(redir);
+                if (redir->heredoc_fd < 0)
+                    return (ERROR); // Ctrl-C や malloc fail などで中止
+            }
+        }
+    }
+    return (SUCCESS);
 }
