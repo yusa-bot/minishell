@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 21:23:17 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/24 21:59:06 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/27 19:20:58 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,5 +76,7 @@ void	ft_token_clear(t_token **token_lst);
 int ft_echo(char **argv, int fd);
 int ft_exit(char **argv, t_shell *shell);
 void free_split(char **arr);
+
+int prepare_heredoc_for_cmd(t_cmd *cmd, void *env);
 
 #endif

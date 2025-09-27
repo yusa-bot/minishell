@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/24 21:51:40 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/27 19:01:26 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,14 +85,14 @@ int main(int argc, char **argv, char **envp)
 		}
 
 
-	 	////HEREDOCのときのみ専用fdに入れ替える関数を通す。
-	 	////ここではcmd_lstを回す。
-	 	// while (cmd_lst)
-	 	// {
-	 	// 	prepare_heredoc_for_cmd(cmd_lst, env_lst);
-	 	// 	cmd_lst = cmd_lst->next;
-	 	// }
-	 	// ft_tokenlst_clear(&token_lst);
+	 	//内部でheredocを判定
+	 	//ここではcmd_lstを回す。
+	 	while (cmd_lst)
+	 	{
+	 		prepare_heredoc_for_cmd(cmd_lst, env_lst);
+	 		cmd_lst = cmd_lst->next;
+	 	}
+
 
         if (cmd_lst && cmd_lst->next)
 			shell.status = run_pipe(cmd_lst, &env_lst, &shell);
