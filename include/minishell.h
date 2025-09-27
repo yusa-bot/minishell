@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 21:23:17 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/27 19:20:58 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/27 20:45:26 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,6 @@ int ft_echo(char **argv, int fd);
 int ft_exit(char **argv, t_shell *shell);
 void free_split(char **arr);
 
-int prepare_heredoc_for_cmd(t_cmd *cmd, void *env);
+int prepare_heredoc_for_cmd(t_cmd *cmd);
 
 #endif

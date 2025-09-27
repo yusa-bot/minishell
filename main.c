@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/27 19:01:26 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/27 21:59:52 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,13 +85,8 @@ int main(int argc, char **argv, char **envp)
 		}
 
 
-	 	//内部でheredocを判定
-	 	//ここではcmd_lstを回す。
-	 	while (cmd_lst)
-	 	{
-	 		prepare_heredoc_for_cmd(cmd_lst, env_lst);
-	 		cmd_lst = cmd_lst->next;
-	 	}
+		if (cmd_lst->infile->token_type == HEREDOC)
+	 		run_heredoc(cmd_lst);
 
 
         if (cmd_lst && cmd_lst->next)

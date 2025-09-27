@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 21:23:17 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/25 18:50:27 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/27 21:22:54 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ typedef struct s_redirect
 	char *expanded_str;
 	t_token_type token_type;//<, >, >>, <<
 	struct s_redirect *next;//複数リダイレクト用
-	int prepared_fd; // HEREDOC用に準備されたFDを保持
+	int heredoc_fd; // HEREDOC用に準備されたFDを保持
 } t_redirect;
 
 typedef struct s_cmd
