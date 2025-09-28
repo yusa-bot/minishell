@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 20:24:47 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/24 20:16:15 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/28 09:52:32 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ int run_parent(t_cmd *cmd, t_env **env_lst, t_shell *shell)
         perror("dup");
         return (0);
     }
+	// 環境自体の入力/出力を変える
 	shell->status = apply_redirect(cmd, shell);
     if (shell->status != EXIT_SUCCESS)
     {

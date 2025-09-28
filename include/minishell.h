@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 21:23:17 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/27 20:45:26 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/28 11:39:04 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@
 # define EXIT_NO_EXEC 126
 # define EXIT_OUT_OF_RANGE 255
 
+# define STDERR 2
+
 # ifndef PATH_MAX
 #  define PATH_MAX 4096
 # endif
@@ -54,7 +56,7 @@ void	sigint_handler(int sig);
 
 void setup_signals_interactive(void);
 char	*search_external_path(const char *cmd, t_env **env_lst);
-int run_pipe(t_cmd *cmd, t_env **env_lst, t_shell *shell);
+int run_pipe(t_cmd *cmd_lst, t_env **env_lst, t_shell *shell);
 int apply_redirect(const t_cmd *cmd, t_shell *shell);
 
 void setup_signals_child(void);
@@ -77,6 +79,6 @@ int ft_echo(char **argv, int fd);
 int ft_exit(char **argv, t_shell *shell);
 void free_split(char **arr);
 
-int prepare_heredoc_for_cmd(t_cmd *cmd);
+int prepare_heredocs(t_cmd *cmd_lst);
 
 #endif

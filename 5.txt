@@ -1,0 +1,136 @@
+handle_redirect success, target_fd=1
+exec_child called: ls
+exec_child external: ls
+3.txt
+4.txtx
+5.txt
+builtins
+child_external_saerch_path.o
+child_external_search_path.c
+child_external_search_path.o
+exec_buildin
+ft_free_handle.c
+ft_free_handle.o
+heredoc.c
+heredoc.o
+include
+libft
+main.c
+main.o
+Makefile
+minishell
+out.txt
+parser
+pipe.c
+pipe.o
+redirect.c
+redirect.o
+signal.c
+signal.o
+tmp
+tokenizer
+txt2.txt
+txt.txt
+unused
+handle_redirect success, target_fd=1
+exec_child called: ls
+exec_child external: ls
+3.txt
+4.txtx
+5.txt
+builtins
+child_external_saerch_path.o
+child_external_search_path.c
+child_external_search_path.o
+exec_buildin
+ft_free_handle.c
+ft_free_handle.o
+heredoc.c
+heredoc.o
+include
+libft
+main.c
+main.o
+Makefile
+minishell
+out.txt
+parser
+pipe.c
+pipe.o
+redirect.c
+redirect.o
+signal.c
+signal.o
+tmp
+tokenizer
+txt2.txt
+txt.txt
+unused
+handle_redirect success, target_fd=1
+exec_child called: ls
+exec_child external: ls
+3.txt
+4.txtx
+5.txt
+builtins
+child_external_saerch_path.o
+child_external_search_path.c
+child_external_search_path.o
+exec_buildin
+ft_free_handle.c
+ft_free_handle.o
+heredoc.c
+heredoc.o
+include
+libft
+main.c
+main.o
+Makefile
+minishell
+out.txt
+parser
+pipe.c
+pipe.o
+redirect.c
+redirect.o
+signal.c
+signal.o
+tmp
+tokenizer
+txt2.txt
+txt.txt
+unused
+handle_redirect success, target_fd=1
+exec_child called: ls
+exec_child external: ls
+3.txt
+4.txtx
+5.txt
+builtins
+child_external_saerch_path.o
+child_external_search_path.c
+child_external_search_path.o
+exec_buildin
+ft_free_handle.c
+ft_free_handle.o
+heredoc.c
+heredoc.o
+include
+libft
+main.c
+main.o
+Makefile
+minishell
+out.txt
+parser
+pipe.c
+pipe.o
+redirect.c
+redirect.o
+signal.c
+signal.o
+tmp
+tokenizer
+txt2.txt
+txt.txt
+unused

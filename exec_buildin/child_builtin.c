@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 14:45:06 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/23 21:58:30 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/28 16:45:15 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,16 @@
 int	exec_child(t_cmd *cmd, t_env **env_lst, t_shell *shell)
 {
 	setup_signals_child();
-	shell->status = apply_redirect(cmd, shell);
+	if (!shell->is_pipe)
+		shell->status = apply_redirect(cmd, shell);
 	if (shell->status != EXIT_SUCCESS)////
         return shell->status;
+	printf("exec_child called: %s\n", cmd->cmd_args[0]);
 	if (is_builtin_child(cmd->cmd_args))
 		return (run_builtin(&cmd->cmd_args[0], env_lst, shell));
 	else //external
 	{
+		printf("exec_child external: %s\n", cmd->cmd_args[0]);
 		char *path = search_external_path(cmd->cmd_args[0], env_lst);
 		if (!path)
 		{

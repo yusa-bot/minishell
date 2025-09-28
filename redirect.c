@@ -6,32 +6,42 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 16:57:55 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/27 22:27:30 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/28 14:01:45 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int handle_redirect(const t_redirect *r, int target_fd, int oflags)
+// A.r->expanded_strを開いたfd(heredoc : pipe済みfd) -> B.STDIN/OUT に複製
+	// -> 環境自体の入力/出力を変える(Aは閉じても、環境にBが保存されている)
+int handle_redirect(const t_redirect *rdr, int target_fd, int oflags)
 {
     int fd = -1;
 
-    if (r->token_type == INFILE && r->heredoc_fd >= 0)
-        fd = r->heredoc_fd;
-	else if (r->token_type == INFILE)
-        fd = open(r->expanded_str, O_RDONLY);
+	printf("handle_redirect called\n");
+	printf("original_str=%s, expanded_str=%s\n", rdr->original_str, rdr->expanded_str);
+    if (rdr->token_type == INFILE && rdr->heredoc_fd >= 0)
+        fd = rdr->heredoc_fd;
+	else if (rdr->token_type == INFILE)
+        fd = open(rdr->expanded_str, O_RDONLY);
 	else //OUTFILE
-        fd = open(r->expanded_str, oflags, 0644);
+	{
+		printf("Opening outfile: %s\n", rdr->expanded_str);
+        fd = open(rdr->expanded_str, oflags, 0644);
+	}
     if (fd < 0)
 	{
-        write(STDERR_FILENO, "minishell: Invalid file descriptor\n", 36);
+		write(STDERR_FILENO, "minishell: Invalid file descriptor\n", 36);
         return (EXIT_FAILURE);
     }
+	printf("Opened fd: %d\n", fd);
     if (dup2(fd, target_fd) < 0)//開いたfdをstdi/oに複製
 	{
+		printf("dup2 failed\n");
         perror("dup2");//fdはosが回収
         return (EXIT_FAILURE);
     }
+	printf("handle_redirect success, target_fd=%d\n", target_fd);
     /////////////
     //// HEREDOCの場合とファイルの場合で異なる処理
     //if (r->token_type == INFILE && r->prepared_fd >= 0)
@@ -47,28 +57,33 @@ int handle_redirect(const t_redirect *r, int target_fd, int oflags)
 	return (EXIT_SUCCESS);
 }
 
+//in/outそれぞれでfd処理
 int apply_redirect(const t_cmd *cmd, t_shell *shell)
 {
-    t_redirect *r;
+    t_redirect *rdr;
+	rdr = NULL;
 
-    r = cmd->infile;
-    while (r)
+	if (cmd->infile)
+    	rdr = cmd->infile;
+    while (rdr)
     {
-        shell->status = handle_redirect(r, STDIN_FILENO, O_RDONLY);
+        shell->status = handle_redirect(rdr, STDIN_FILENO, O_RDONLY);
 		if (shell->status != EXIT_SUCCESS)
 			return (shell->status);
-        r = r->next;
+        rdr = rdr->next;
     }
-    r = cmd->outfile;
-    while (r)
+	if (!cmd->outfile)
+		return (EXIT_SUCCESS);
+    rdr = cmd->outfile;
+    while (rdr)
     {
         int flags = O_WRONLY | O_CREAT;
-        if (r->token_type == APPEND)
+        if (rdr->token_type == APPEND)
             flags |= O_APPEND;//追記
         else
             flags |= O_TRUNC;//上書き
-        handle_redirect(r, STDOUT_FILENO, flags);
-        r = r->next;
+        handle_redirect(rdr, STDOUT_FILENO, flags);
+        rdr = rdr->next;
     }
 	return (EXIT_SUCCESS);
 }

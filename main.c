@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/27 22:33:48 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/09/28 13:43:35 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ int main(int argc, char **argv, char **envp)
 	token_lst = NULL;
 	shell.env = env_lst;
 	shell.status = 0;
+	shell.is_pipe = 0;
 	rl_catch_signals = 0;
 	setup_signals_interactive();
 
@@ -85,20 +86,45 @@ int main(int argc, char **argv, char **envp)
 		}
 
 
-		//fdの管理を追う
-		//heredocの場合、execで何を実行するのか？
-		prepare_heredocs(cmd_lst, env_lst);
+		// while (cmd_lst)
+		// {
+		// 	printf("cmd_lst->cmd_args[0]: %s\n", cmd_lst->cmd_args[0]);
+		// 	cmd_lst = cmd_lst->next;
+		// }
 
+		// while (cmd_lst)
+		// {
+		// 	if (!cmd_lst->infile)
+		// 		continue;
+		// 	else
+		// 	{
+		// 		t_redirect *r = cmd_lst->infile;
+		// 		while (r)
+		// 		{
+		// 			printf("infile: %s\n", r->original_str);
+		// 			printf("expanded: %s\n", r->expanded_str);
+		// 			r = r->next;
+		// 		}
+		// 	}
+		// 	cmd_lst = cmd_lst->next;
+		// }
+
+
+
+		shell.status = prepare_heredocs(cmd_lst);
 
         if (cmd_lst && cmd_lst->next)
+		{
 			shell.status = run_pipe(cmd_lst, &env_lst, &shell);
+		}
 		else if (is_builtin_parent(cmd_lst->cmd_args))
 		{
 			shell.status = run_parent(cmd_lst, &env_lst, &shell);
-			printf("main");
 		}
 		else
+		{
 			shell.status = run_child(cmd_lst, &env_lst, &shell);
+		}
 		continue_free(&token_lst, &cmd_lst);
 		if (cmd_lst && cmd_lst->infile && cmd_lst->infile->heredoc_fd >= 0)
 			close(cmd_lst->infile->heredoc_fd);
