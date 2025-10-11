@@ -6,7 +6,7 @@
 #    By: rinka <rinka@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/08 19:14:52 by rinka             #+#    #+#              #
-#    Updated: 2025/08/29 14:29:50 by rinka            ###   ########.fr        #
+#    Updated: 2025/10/09 15:17:12 by rinka            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,8 +25,11 @@ SRCS = \
 	parser/join_expanded_tokens.c \
 	parser/ft_parser_utils.c \
 	parser/ft_parser.c \
+	parser/ft_redirectlst_utils.c \
+	parser/ft_globbing.c \
 	tokenizer/ft_tokenizer.c \
 	tokenizer/ft_tokenlst_utils.c \
+	tokenizer/ft_tokenlst_sort.c \
 	utils/ft_free.c \
 	utils/ft_utils.c \
 	main.c
@@ -60,5 +63,3 @@ fclean: clean
 re: fclean all
 
 .PHONY: all clean fclean re
-
-# current0:makefileテストできる状態にする

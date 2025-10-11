@@ -6,13 +6,13 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 18:58:26 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/09/24 18:24:06 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/10 12:54:51 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	handle_metacharacter(t_token **token_lst, char *line)
+static int	handle_metacharacter(t_token **token_lst, char *line, t_env *env_lst)
 {
 	t_token			*new;
 	t_quote_type	quote_type;
@@ -29,11 +29,15 @@ int	handle_metacharacter(t_token **token_lst, char *line)
 		new = ft_tokenlst_new(ft_strdup(">"), REDIRECT_OUT, quote_type, 0);
 	else
 		new = ft_tokenlst_new(ft_strdup("<"), REDIRECT_IN, quote_type, 0);
+	// ft_tokenlst_clear(&new);///mallocチェックokメモリリークまだ
+	// new = NULL;///
+	if (!new)
+		malloc_error(token_lst, NULL, &env_lst, NULL);
 	ft_tokenlst_add_back(token_lst, new);
 	return (ft_strlen(new->str));
 }
 
-int	handle_word(t_token **token_lst, char *line)
+int	handle_word(t_token **token_lst, char *line, t_env *env_lst)
 {
 	char			*p;
 	t_token			*new;
@@ -72,28 +76,29 @@ int	handle_word(t_token **token_lst, char *line)
 			word_len++;
 		p++;
 	}
-	if (word_len == 0)
-		return (in_quote * 2);
 	if (*p && *p != ' ' && *p != '\t')
 		is_joined_with_next = 1;
-	p = ft_strndup(line, word_len);
-	if (p == NULL)
-	{//mallocエラー処理
-		// ft_tokenlst_clear(token_lst);
-		// error_exit("malloc error");
-		return (0);
-	}
+	if (word_len == 0)
+		p = ft_strdup("");
+	else
+		p = ft_strndup(line, word_len);
 	new = ft_tokenlst_new(p, WORD, quote_type, is_joined_with_next);
+	// new = NULL;//mallocチェックokメモリリークまだ
+	if (new == NULL)
+		malloc_error(token_lst, NULL, &env_lst, NULL);
 	//↑tokeniseのじてんではファイル名や変数名もWORDとしておく
 	ft_tokenlst_add_back(token_lst, new);
 	return (ft_strlen(new->str) + in_quote * 2);
 }
 
-t_token	*tokenize_line(char *line)
+//current1009 : mallocないで解放してexitするように変更
+t_token	*tokenize_line(char *line, t_env *env_lst)
 {
 	t_token	*token_lst;
+	int len;
 
 	token_lst = NULL;
+	len = 0;
 	while (*line)
 	{
 		while (*line == ' ' || *line == '\t')
@@ -101,17 +106,20 @@ t_token	*tokenize_line(char *line)
 		if (*line == '\0')
 			break ;
 		if (*line == '|' || *line == '<' || *line == '>')
-			line += handle_metacharacter(&token_lst, line);
+		{
+			len = handle_metacharacter(&token_lst, line, env_lst);
+			//↑malloc_errorは処理済み
+			line += len;
+		}
 		else
-			line += handle_word(&token_lst, line);
+		{
+			len = handle_word(&token_lst, line, env_lst);
+			//↑malloc_errorは処理済み
+			line += len;
+		}
 	}
+	//line = ""の時、""を一つのトークンとする
 	return (token_lst);
 }
 
-/*
-current: code "handle_word"
-・he''lloにも対応するft_tokendupを作る
-・handle_word内で環境変数$に対応
-*/
-
-//ca''t'' -e の時、cat-eになってしまう
+//要修正 : ca''t'' -e の時、cat-eになってしまう

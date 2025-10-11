@@ -24,19 +24,25 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 
 //ft_parser_utils.c
 t_token *ft_tokenlst_dup(t_token *lst);
-void	ambiguous_redirect_error(char *original);
+void	*ambiguous_redirect_error(char *original, t_token *token_lst, t_token *single_token_lst, t_env *env_lst);
 
 //ft_cmdlst_utils.c 
+t_cmd *ft_cmdlst_init(void);
 t_cmd	*ft_cmdlst_new(char **cmd_args, char **env_vars, t_redirect *infile, t_redirect *outfile);
 void	ft_cmdlst_delone(t_cmd *lst);
 void	ft_cmdlst_clear(t_cmd **lst);
 t_cmd	*ft_cmdlst_last(t_cmd *lst);
 void	ft_cmdlst_add_back(t_cmd **lst, t_cmd *new);
+
 //ft_redirectlst
 t_redirect *ft_redirectlst_init(void);
 t_redirect	*ft_redirectlst_new(char *expanded_filename, char *original_filename, t_token_type token_type);
 void	ft_redirectlst_clear(t_redirect **lst);
 t_redirect	*ft_redirectlst_last(t_redirect *lst);
 void	ft_redirectlst_add_back(t_redirect **lst, t_redirect *new);
+
+//ft_globbing..c
+t_token *glob_single_token(char *pattern);
+void ft_globbing(t_token **token_list_ptr, int *arg_count);
 
 #endif

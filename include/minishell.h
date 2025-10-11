@@ -7,6 +7,7 @@
 # include <string.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <dirent.h>
 
 # include "libft.h"
 # include "builtins.h"
@@ -22,8 +23,8 @@ char *ft_strjoin_safe(char *s1, char *s2);
 void	ft_free_str_array(char **arr);
 
 //ft_error.c
-void malloc_error();
-void	syntax_error(char *unexpected_token, t_token **token_lst, t_env **env_lst);
+void malloc_error(t_token **token_lst, t_cmd **cmd_lst,t_env **env_lst, t_token **single_token_lst);
+void	*syntax_error(char *unexpected_token, t_token **token_lst, t_env **env_lst);
 
 
 #endif

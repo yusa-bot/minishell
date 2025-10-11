@@ -117,6 +117,18 @@ bash: nonexist: No such file or directory
 bash-5.3$ < main.c < $TEST < $TSET2 < main.c wc -l
 bash: $TSET2: ambiguous redirect
 
+（補足２）
+bash-5.3$ < * < Makefile cat | echo hello
+hello
+bash: *: ambiguous redirect
+↑ファイル名に関してはt_cmd作成後、ececuve実行直前にワールドカードの展開をpした方が良さそう
+
 */
+
+↓先に環境変数の展開をする
+bash-5.3$ env | grep TEST
+TEST=*
+bash-5.3$ ls *
+test    test2
 
 メモ：delimiterのtoken_lst->strをどこで解放したか忘れた。関数に渡した時に変更されたのかも

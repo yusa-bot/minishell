@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 18:55:49 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/09/04 13:53:26 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/09 16:12:21 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,20 @@ void	ft_tokenlst_clear(t_token **lst)
 		current = nextnode;
 	}
 	*lst = NULL;
+}
+int	ft_tokenlst_size(t_token *lst)
+{
+	t_token *tmp;
+	int	res;
+
+	tmp = lst;
+	res = 0;
+	while (tmp)
+	{
+		res++;
+		tmp = tmp->next;
+	}
+	return (res);
 }
 
 t_token	*ft_tokenlst_last(t_token *lst)
@@ -76,6 +90,8 @@ t_token	*ft_tokenlst_new(char *str, t_token_type token_type,
 {
 	t_token	*new;
 
+	if (!str)
+		return (NULL);
 	new = malloc(sizeof(t_token));
 	if (new == NULL)
 	{

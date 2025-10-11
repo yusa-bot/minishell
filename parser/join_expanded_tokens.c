@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 13:18:26 by rinka             #+#    #+#             */
-/*   Updated: 2025/09/04 13:57:12 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/10 13:04:37 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,11 @@ static char *ft_dupkey(char *str)//hello$TEST"world"の$TEST抜き出し
 	while(str[i] && (ft_isalpha(str[i]) || str[i] == '_'))
 		i++;
 	key = ft_strndup(str, i);
+		//呼び出し元でmallocエラー処理
 	return (key);
 }
 
-char *expand_key(char *key, t_token **token_lst, t_env *env_lst)
+char *expand_key(char *key, t_env *env_lst)
 {
 	char *res;
 
@@ -48,17 +49,14 @@ char *expand_key(char *key, t_token **token_lst, t_env *env_lst)
 		if (ft_strcmp(env_lst->key, key) == 0)
 		{
 			res = ft_strdup(env_lst->value);
-			if (res == NULL)
-			{//mallocエラー
-				ft_tokenlst_clear(token_lst);
-				ft_envlst_clear(&env_lst);
-			 malloc_error();
-			}////////
+			//呼び出し元でmallocエラー処理
 			return (res);
 		}
 		env_lst = env_lst->next;
 	}
-	return (ft_strdup(""));
+	res = ft_strdup("");
+	//呼び出し元でmallocエラー処理
+	return (res);
 }
 
 char *expand_vars(const t_token *original, t_token **token_lst, t_env *env_lst)
@@ -78,15 +76,29 @@ char *expand_vars(const t_token *original, t_token **token_lst, t_env *env_lst)
 			if (*current == '?')
 			{
 				// value = 直前の終了コード
-				res = ft_strjoin_safe(res, "0000");//仮
+				res = ft_strjoin_safe(res, "[code]");//仮
+				if (!res)
+				{//malloc_error
+					malloc_error(token_lst, NULL, &env_lst, NULL);
+				}
 				current += 1;
 			}
 			else
 			{
 				//keyを抜きとってexpense_keyで一つ変数展開
 				key = ft_dupkey(current);
-				value = expand_key(key, token_lst, env_lst);
+				value = expand_key(key, env_lst);
 				res = ft_strjoin_safe(res, value);
+				if (!key || !value || !res)
+				{
+					if (key)
+						free(key);
+					if (value)
+						free(value);
+					if (res)
+						free (res);
+					malloc_error(token_lst, NULL, &env_lst, NULL);
+				}
 				current += ft_strlen(key);
 				free(key);
 				free(value);
@@ -95,7 +107,11 @@ char *expand_vars(const t_token *original, t_token **token_lst, t_env *env_lst)
 		else if (*current == '$')
 		{
 			if (*(current + 1) || original->quote_type != NONE || !original->is_joined_with_next)
+			{
 				res = ft_strjoin_safe(res, "$");
+				if (res)
+					malloc_error(token_lst, NULL, &env_lst, NULL);
+			}
 			current += 1;
 		}
 		else
@@ -109,6 +125,14 @@ char *expand_vars(const t_token *original, t_token **token_lst, t_env *env_lst)
 				value = ft_strdup(current);
 			}
 			res = ft_strjoin_safe(res, value);
+			if (!value || !res)
+			{
+				if (value)
+					free(value);
+				if (res)
+					free(res);
+				malloc_error(token_lst, NULL, &env_lst, NULL);
+			}
 			current += ft_strlen(value);
 			free (value);
 		}
@@ -116,6 +140,8 @@ char *expand_vars(const t_token *original, t_token **token_lst, t_env *env_lst)
 	if (!res)
 	{
 		res = ft_calloc(sizeof(char), 1);
+		if (!res)
+			malloc_error(token_lst, NULL, &env_lst, NULL);
 	}
 	return (res);
 }
@@ -132,13 +158,12 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 
 	new_lst = NULL;
 	current_lst = *cmd_start;
-	// token_type = WORD;ß
+	// token_type = WORD;
 	if (current_lst->token_type == PIPE)//どこでチェックが最適か
-		syntax_error("|", token_lst,&env_lst);
-	// while (current_lst && current_lst->quote_type != NONE && ft_strchr(current_lst->str, '='))
-	// {
-
-	// }
+	{//syntax_error
+		syntax_error("|", token_lst, &env_lst);
+		return (NULL);
+	}
 	while (current_lst && current_lst->token_type != PIPE)//is_joined結合
 	{
 		original_var = NULL;
@@ -147,12 +172,7 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 		{
 			newnode = ft_tokenlst_dup(current_lst);
 			if (newnode == NULL)
-			{//mallocエラー
-				ft_tokenlst_clear(&new_lst);
-				ft_tokenlst_clear(token_lst);
-				ft_envlst_clear(&env_lst);
-			 malloc_error();
-			}////////
+			 malloc_error(token_lst, NULL, &env_lst, &new_lst);
 			ft_tokenlst_add_back(&new_lst, newnode);
 			current_lst = current_lst->next;
 			continue ;
@@ -166,7 +186,15 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 				char *old_str = current_lst->str;
 				char *expanded_str = expand_vars(current_lst, token_lst, env_lst);
 				if (is_delimiter(ft_tokenlst_last(new_lst)->str))
+				{
 					original_var = ft_strjoin_safe(original_var, old_str);
+					if (!original_var)
+					{
+						free(old_str);
+						free(expanded_str);
+						malloc_error(token_lst, NULL, &env_lst, &new_lst);
+					}
+				}
 				current_lst->str = expanded_str;
 				free(old_str);
 			}
@@ -178,10 +206,7 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 				new_str = ft_strjoin_safe(new_str, current_lst->str);
 			if (new_str == NULL)
 			{//mallocエラー
-			 ft_tokenlst_clear(&new_lst);
-				ft_tokenlst_clear(token_lst);
-				ft_envlst_clear(&env_lst);
-			 malloc_error();
+			 malloc_error(token_lst, NULL, &env_lst, &new_lst);
 			}///////
 			if (current_lst->is_joined_with_next == 0)
 			{
@@ -194,10 +219,7 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 		newnode = ft_tokenlst_new(new_str, token_type, 0, 0);
 		if (newnode == NULL)
 		{//mallocエラー処理
-			ft_tokenlst_clear(&new_lst);
-			ft_tokenlst_clear(token_lst);
-			ft_envlst_clear(&env_lst);
-			malloc_error();
+			malloc_error(token_lst, NULL, &env_lst, &new_lst);
 		}///
 		if (original_var)//current : redirectでnex_str == ""でoriginal_varの時、元の変数名を保存これをparser.cでも引き継ぐ
 		{

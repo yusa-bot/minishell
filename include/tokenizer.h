@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 19:11:30 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/09/04 13:52:22 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/10 13:01:28 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,15 +45,18 @@ typedef struct s_token
 	struct s_token	*next;
 }	t_token;
 
-t_token	*tokenize_line(char *line);
+t_token	*tokenize_line(char *line, t_env *env_lst);
 
 //ft_tokenlst_utils.c
 void	ft_tokenlst_delone(t_token *lst);
 void	ft_tokenlst_clear(t_token **lst);
+int	ft_tokenlst_size(t_token *lst);
 t_token	*ft_tokenlst_last(t_token *lst);
 void	ft_tokenlst_add_back(t_token **lst, t_token *new);
 void	ft_tokenlst_add_front(t_token **lst, t_token *new);
 t_token	*ft_tokenlst_new(char *str, t_token_type token_type,
 			t_quote_type quote_type, int is_joined_with_next);
+
+t_token	*ft_tokenlst_sort(t_token* lst);
 
 #endif
