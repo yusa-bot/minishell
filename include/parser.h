@@ -18,7 +18,7 @@ typedef struct s_cmd
 	struct s_cmd	*next;
 }	t_cmd;
 
-t_cmd *ft_parser(t_token *token_lst, t_env *env_lst);
+t_cmd *ft_parser(t_token *token_lst, t_env *env_lst, char ***tmpfiles);
 
 t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *env_lst);
 
@@ -44,5 +44,7 @@ void	ft_redirectlst_add_back(t_redirect **lst, t_redirect *new);
 //ft_globbing..c
 t_token *glob_single_token(char *pattern);
 void ft_globbing(t_token **token_list_ptr, int *arg_count);
+
+char *ft_heredoc(char *eof, t_cmd *cmd_lst, t_env *env_lst, char ***tmpfiles);
 
 #endif

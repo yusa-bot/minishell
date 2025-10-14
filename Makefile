@@ -6,7 +6,7 @@
 #    By: rinka <rinka@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/08 19:14:52 by rinka             #+#    #+#              #
-#    Updated: 2025/10/09 15:17:12 by rinka            ###   ########.fr        #
+#    Updated: 2025/10/13 13:13:14 by rinka            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,6 +27,7 @@ SRCS = \
 	parser/ft_parser.c \
 	parser/ft_redirectlst_utils.c \
 	parser/ft_globbing.c \
+	parser/ft_heredoc.c \
 	tokenizer/ft_tokenizer.c \
 	tokenizer/ft_tokenlst_utils.c \
 	tokenizer/ft_tokenlst_sort.c \

@@ -65,7 +65,8 @@ static int	free_filename(t_redirect **infile, t_redirect **outfile, t_redirect *
 	return (1);
 }
 
-int	set_infile_name(t_token *lst, t_redirect **infile, t_redirect **outfile)
+//呼び出し元でmalloc_errorの処理予定だったけどopenエラーと区別するためその場で解放の方がいいかも
+int	set_infile_name(t_token *lst, t_redirect **infile, t_redirect **outfile, char ***tmpfiles)
 {
 	t_redirect *new_file;
 	t_redirect **add_to;
@@ -92,9 +93,20 @@ int	set_infile_name(t_token *lst, t_redirect **infile, t_redirect **outfile)
 				if (new_file->original_filename == NULL)
 					return (free_filename(infile, outfile, new_file));
 			}
-			new_file->expanded_filename = ft_strdup((lst->next)->str);
-			if (new_file->expanded_filename == NULL)
-				return (free_filename(infile, outfile, new_file));
+			if (lst->token_type == HEREDOC)
+			{
+				new_file->expanded_filename = ft_heredoc((lst->next)->str, NULL, NULL, tmpfiles);//エラー処理いったん仮
+				if (new_file->expanded_filename)
+				{
+					//openfileエラー
+				}
+			}
+			else
+			{
+				new_file->expanded_filename = ft_strdup((lst->next)->str);
+				if (new_file->expanded_filename == NULL)
+					return (free_filename(infile, outfile, new_file));
+			}
 			new_file->token_type = lst->token_type;
 			ft_redirectlst_add_back(add_to, new_file);
 			lst = lst->next;
@@ -132,7 +144,7 @@ char	**set_cmd_args(t_token *current_lst, int arg_count)
 }
 
 //コマンド一個分の情報格納する関数
-t_cmd	*ft_parse_single_cmd(t_token *single_token_lst, t_token *token_lst, t_env *env_lst)
+t_cmd	*ft_parse_single_cmd(t_token *single_token_lst, t_token *token_lst, t_env *env_lst, char ***tmpfiles)
 {
 	(void)env_lst;
 	t_cmd *res;
@@ -149,7 +161,7 @@ t_cmd	*ft_parse_single_cmd(t_token *single_token_lst, t_token *token_lst, t_env 
 		if (res->env_vars == NULL)
 			malloc_error(&token_lst, NULL, &env_lst, &single_token_lst);
 	}
-	if (set_infile_name(current_lst, &(res->infile), (&res->outfile)))
+	if (set_infile_name(current_lst, &(res->infile), (&res->outfile), tmpfiles))
 		malloc_error(&token_lst, &res, &env_lst, &single_token_lst);
 	ft_globbing(&current_lst, &arg_count);
 	if (arg_count)
@@ -161,7 +173,7 @@ t_cmd	*ft_parse_single_cmd(t_token *single_token_lst, t_token *token_lst, t_env 
 	return (res);
 	}
 
-t_cmd *ft_parser(t_token *token_lst, t_env *env_lst)
+t_cmd *ft_parser(t_token *token_lst, t_env *env_lst, char ***tmpfiles)
 {
 	t_cmd *cmd_lst;
 	t_cmd *new;
@@ -170,24 +182,25 @@ t_cmd *ft_parser(t_token *token_lst, t_env *env_lst)
 
 	cmd_lst = NULL;///
 	current_lst = token_lst;
+	joined_token_lst = NULL;
 	while (current_lst)
 	{
 		joined_token_lst = join_expanded_tokens(&current_lst, &token_lst, env_lst);//
 		if (!joined_token_lst)///syntax_errorのみ
 			return (NULL);
-		t_token *tmp = joined_token_lst;
-		while (tmp)/////
-		{
-			printf("str: %s\n", tmp->str);
-			printf("original_str: %s\n", tmp->original_str);
-			printf("token_type: %d\n", tmp->token_type);
-			printf("quote_type: %d\n", tmp->quote_type);
-			printf("joint_next: %d\n\n", tmp->is_joined_with_next);
-			tmp = tmp->next;
-		}
-		printf("\n");
-		if (tmp == NULL) 
-			printf("null tarminated\n");///////
+		// t_token *tmp = joined_token_lst;
+		// while (tmp)/////
+		// {
+		// 	printf("str: %s\n", tmp->str);
+		// 	printf("original_str: %s\n", tmp->original_str);
+		// 	printf("token_type: %d\n", tmp->token_type);
+		// 	printf("quote_type: %d\n", tmp->quote_type);
+		// 	printf("joint_next: %d\n\n", tmp->is_joined_with_next);
+		// 	tmp = tmp->next;
+		// }
+		// printf("\n");
+		// if (tmp == NULL) 
+		// 	printf("null tarminated\n");///////
 	
 		if (is_delimiter(ft_tokenlst_last(joined_token_lst)->str))
 		{
@@ -197,7 +210,7 @@ t_cmd *ft_parser(t_token *token_lst, t_env *env_lst)
 			ft_tokenlst_clear(&joined_token_lst);
 			return(NULL);
 		}
-		new = ft_parse_single_cmd(joined_token_lst, token_lst, env_lst);
+		new = ft_parse_single_cmd(joined_token_lst, token_lst, env_lst, tmpfiles);
 		ft_cmdlst_add_back(&cmd_lst, new);
 	}
 	return (cmd_lst);

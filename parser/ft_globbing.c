@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 15:11:28 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/11 09:40:23 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/14 22:08:07 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,14 +89,15 @@ void ft_globbing(t_token **token_list_ptr, int *arg_count)
 			{
 				//エラー処理
 			}
-			printf("ok2\n");
 			to_add = ft_tokenlst_sort(to_add);
-			printf("ok3\n");
 			*arg_count += ft_tokenlst_size(to_add) - 1;
 			// ↓展開前のノード一つを消し、そこにglob_single_tokenの返したリストを挿入する
 			next = current->next;
 			ft_tokenlst_delone(current);
-			prev->next = to_add;
+			if (prev)
+				prev->next = to_add;
+			else
+				*token_list_ptr = to_add;
 			ft_tokenlst_last(to_add)->next = next;
 		}
 		prev = current;

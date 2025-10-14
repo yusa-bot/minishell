@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/10 13:30:35 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/14 22:21:30 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		int j = 0;
-		line = readline("$ ");
+		line = readline("minishell$ ");
 		if (line == NULL)
 		{
 			printf("exit\n");
@@ -59,8 +59,10 @@ int main(int argc, char **argv, char **envp)
 		// if (tmp == NULL) 
 		// 	printf("null tarminated\n");///////
 
+		char **tmpfiles;
+		tmpfiles = NULL;
 		
-		t_cmd	*cmd_lst = ft_parser(token_lst, env_lst);
+		t_cmd	*cmd_lst = ft_parser(token_lst, env_lst, &tmpfiles);
 		if (cmd_lst == NULL)//syntax or ambiguous error（malloc）は各関数で即free&exit
 		{
 			ft_tokenlst_clear(&token_lst);
@@ -78,7 +80,7 @@ int main(int argc, char **argv, char **envp)
 			printf("args:");
 			while (args && args[i])
 			{
-				printf("args%d %s\n", i, args[i]);
+				printf(" %s", args[i]);
 				i++;
 			}
 			printf("\n");
@@ -90,12 +92,15 @@ int main(int argc, char **argv, char **envp)
 				printf(" %s", args[i]);
 				i++;
 			}
-			printf("\n");
+			printf("\n\n");
+			printf("files:\n");
 			if (tmp_cmd->infile)
 			{
 				t_redirect *tmp_fileinfo = tmp_cmd->infile;
 				while (tmp_fileinfo)
 				{
+					if (tmp_fileinfo->token_type == HEREDOC)
+						printf("<");
 					printf("< %s\n", tmp_fileinfo->expanded_filename);
 					tmp_fileinfo = tmp_fileinfo->next;
 				}
@@ -105,9 +110,9 @@ int main(int argc, char **argv, char **envp)
 				t_redirect *tmp_fileinfo = tmp_cmd->outfile;
 				while (tmp_fileinfo)
 				{
-					printf("> %s\n", tmp_fileinfo->expanded_filename);
 					if (tmp_fileinfo->token_type == APPEND)
-						printf("(Append)\n");
+						printf(">");
+					printf("> %s\n", tmp_fileinfo->expanded_filename);
 					tmp_fileinfo = tmp_fileinfo->next;
 				}
 			}
@@ -117,11 +122,29 @@ int main(int argc, char **argv, char **envp)
 		printf("\n");
 		// if (tmp == NULL) 
 		// 	printf("null tarminated\n");
-		printf("%s\n", line);////////////////////
 		free(line);
 
 		ft_cmdlst_clear(&cmd_lst);
 		ft_tokenlst_clear(&token_lst);
+		int i = 0;
+
+		while (tmpfiles &&  tmpfiles[i])
+		{
+			printf("↓↓隠しファイル%d個目（%s）に書き込まれた内容↓↓\n", i+1, tmpfiles[i]);
+			FILE* fp = fopen(tmpfiles[i], "r");
+			int c;
+			c = fgetc(fp);
+			while (c != EOF)
+			{
+				write(1, &c, 1);
+				c = fgetc(fp);
+			}
+			printf("\n");
+			fclose(fp);
+			if (unlink(tmpfiles[i++]) == -1)
+				perror("minishell: unlink");//unlink失敗時
+		}
+		ft_free_str_array(tmpfiles);
 	}
 
 	//parserでt_cmdに

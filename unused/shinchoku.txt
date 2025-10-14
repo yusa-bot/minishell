@@ -21,12 +21,25 @@
 その場でメモリ解放してexit()
 ・その他エラー
 env_lstを残してmainに戻る
-	
-
+◇ヒアドキュメント（ft_heredoc.c）
+・create_heredoc_filename()で固有の隠しファイル名を作成（ファイル名は/tmp/hd_XX_XXの形式にしてる）
+↓
+・access()で既に存在するファイルでないことを確認
+↓
+・作成したファイルをopen()
+↓
+・readline()で標準入力から書き込み
+↓
+・いったんclose()
+↓
+・他ファイルと同じようにコマンドの実行やpipe()に使用
+↓
+・t_cmd*などと同じタイミングでunlink()
+※open()した全てのfdを閉じ、unlink()するとそのファイルは自動で削除される
 
 
 ＜これから実装＞
+・heredocの入力内容がrlのhistoryに残るようにする
 ・ファイル名はt_cmd作成後、ececuve実行直前にワールドカードの展開
-・heredocument
 ・ambiguous redirectとNo such file or directoryをチェックしながらファイルopenし、パイプに繋がないファイルも含めてintの配列にfdを格納（execve()実行前にまとめてclose）
 ・norminette対応
