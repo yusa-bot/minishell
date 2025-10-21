@@ -6,16 +6,16 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 13:48:40 by ayusa             #+#    #+#             */
-/*   Updated: 2025/09/28 17:01:11 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/21 16:20:18 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	pipe_apply_redirect()
-{
-	//pipe専用のfd作る？
-}
+// int	pipe_apply_redirect()
+// {
+// 	//pipe専用のfd作る？
+// }
 
 int run_pipe(t_cmd *cmd_lst, t_env **env_lst, t_shell *shell)
 {
@@ -66,7 +66,7 @@ int run_pipe(t_cmd *cmd_lst, t_env **env_lst, t_shell *shell)
                 }
 				close(pipefd[1]);
             }
-			shell->status = pipe_apply_redirect(cmd_lst, shell);
+			shell->status = apply_redirect(cmd_lst, shell);
 			if (shell->status != EXIT_SUCCESS)
 				exit(shell->status);
             exec_child(cmd_lst, env_lst, shell);
