@@ -36,10 +36,10 @@ env_lstを残してmainに戻る
 ↓
 ・t_cmd*などと同じタイミングでunlink()
 ※open()した全てのfdを閉じ、unlink()するとそのファイルは自動で削除される
-
+※課題要件より、heredocの入力内容がrlのhistoryに残るようにはしなくていい
 
 ＜これから実装＞
-・heredocの入力内容がrlのhistoryに残るようにする
-・ファイル名はt_cmd作成後、ececuve実行直前にワールドカードの展開
 ・ambiguous redirectとNo such file or directoryをチェックしながらファイルopenし、パイプに繋がないファイルも含めてintの配列にfdを格納（execve()実行前にまとめてclose）
+↑t_redirectにint *fdsを作る？
+・ファイル名はt_cmd作成後、ececuve実行直前にワールドカードの展開
 ・norminette対応

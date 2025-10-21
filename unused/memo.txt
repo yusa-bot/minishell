@@ -123,6 +123,16 @@ hello
 bash: *: ambiguous redirect
 ↑ファイル名に関してはt_cmd作成後、ececuve実行直前にワールドカードの展開をpした方が良さそう
 
+（補足３）
+bash-5.3$ < $NON < non  sleep 2 | echo hello
+bash: $NON: ambiguous redirect
+hello
+bash-5.3$ < non < $NON  sleep 2 | echo hello
+bash: non: No such file or directory
+hello
+↑この時両方sleepは実行されないため、子プロセス内ではファイル名チェックが優先
+
+
 */
 
 ↓先に環境変数の展開をする
@@ -130,5 +140,3 @@ bash-5.3$ env | grep TEST
 TEST=*
 bash-5.3$ ls *
 test    test2
-
-メモ：delimiterのtoken_lst->strをどこで解放したか忘れた。関数に渡した時に変更されたのかも
