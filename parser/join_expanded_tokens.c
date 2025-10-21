@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 13:18:26 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/10 13:04:37 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/21 17:09:36 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,7 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 				//変数展開
 				char *old_str = current_lst->str;
 				char *expanded_str = expand_vars(current_lst, token_lst, env_lst);
-				if (is_delimiter(ft_tokenlst_last(new_lst)->str))
+				if (new_lst && ft_tokenlst_last(new_lst)->str)
 				{
 					original_var = ft_strjoin_safe(original_var, old_str);
 					if (!original_var)
