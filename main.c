@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/14 22:21:30 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/23 08:44:25 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@ int main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 
-	env_lst = set_env(envp);
-	
+	env_lst = ft_set_env(envp);
+
 	//------------------以下、tokenizer--------------------------------
 
 	char *line;
@@ -41,7 +41,7 @@ int main(int argc, char **argv, char **envp)
 			free(line);
 			break ;
 		}
-		
+
 		t_token *token_lst = tokenize_line(line, env_lst);//mallocチェックokメモリリークまだ
 		// printf("-----------first_token------------\n");
 		// t_token *tmp = token_lst;
@@ -56,12 +56,12 @@ int main(int argc, char **argv, char **envp)
 		// }
 		// printf("-----------first_token_end------------\n");
 		// printf("\n");/////
-		// if (tmp == NULL) 
+		// if (tmp == NULL)
 		// 	printf("null tarminated\n");///////
 
 		char **tmpfiles;
 		tmpfiles = NULL;
-		
+
 		t_cmd	*cmd_lst = ft_parser(token_lst, env_lst, &tmpfiles);
 		if (cmd_lst == NULL)//syntax or ambiguous error（malloc）は各関数で即free&exit
 		{
@@ -120,7 +120,7 @@ int main(int argc, char **argv, char **envp)
 			tmp_cmd = tmp_cmd->next;
 		}
 		printf("\n");
-		// if (tmp == NULL) 
+		// if (tmp == NULL)
 		// 	printf("null tarminated\n");
 		free(line);
 
@@ -151,6 +151,6 @@ int main(int argc, char **argv, char **envp)
 	// t_cmd *cmd_lst = parse_tokens(token_lst, env_lst);
 
 	//t_envのfree
-	ft_envlst_clear(&env_lst);
+	ft_lst_clear(&env_lst);
 	return (0);
 }

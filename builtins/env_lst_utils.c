@@ -1,19 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_envlst__utils.c                                     :+:      :+:    :+:   */
+/*   env_lst_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/10 00:30:45 by rinka             #+#    #+#             */
-/*   Updated: 2025/08/11 14:54:17 by rinka            ###   ########.fr       */
+/*   Created: 2025/09/24 21:53:18 by ayusa             #+#    #+#             */
+/*   Updated: 2025/10/23 08:39:49 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_envlst_delone(t_env *lst)
+void	ft_lst_add_front(t_env **lst, t_env *new)
 {
+	if (!lst || !new)
+	return ;
+	new->next = *lst;
+	*lst = new;
+}
+
+void	ft_lst_delone(t_env *lst)
+{
+	if (!lst)
+	return ;
 	if (lst)
 	{
 		free(lst->key);
@@ -22,7 +32,7 @@ void	ft_envlst_delone(t_env *lst)
 	}
 }
 
-void	ft_envlst_clear(t_env **lst)
+void	ft_lst_clear(t_env **lst)
 {
 	t_env	*current;
 	t_env	*nextnode;
@@ -33,32 +43,37 @@ void	ft_envlst_clear(t_env **lst)
 	while (current)
 	{
 		nextnode = current->next;
-		ft_envlst_delone(current);
+		ft_lst_delone(current);
 		current = nextnode;
 	}
 	*lst = NULL;
 }
 
-t_env *ft_envlst_last(t_env *lst)
+
+t_env   *ft_lst_last(t_env *lst)
 {
+	if (!lst)
+	return (NULL);
 	while (lst)
 	{
 		if (!lst->next)
-			return (lst);
+		return (lst);
 		lst = lst->next;
 	}
 	return (lst);
 }
 
-void	ft_envlst_add_back(t_env **lst, t_env *new)
+void	ft_lst_add_back(t_env **lst, t_env *new)
 {
 	t_env	*last;
 
+	if (!lst || !new)
+		return ;
 	if (lst)
 	{
 		if (*lst)
 		{
-			last = ft_envlst_last(*lst);
+			last = ft_lst_last(*lst);
 			last->next = new;
 		}
 		else
@@ -66,13 +81,7 @@ void	ft_envlst_add_back(t_env **lst, t_env *new)
 	}
 }
 
-void	ft_envlst_add_front(t_env **lst, t_env *new)
-{
-	new->next = *lst;
-	*lst = new;
-}
-
-t_env *ft_envlst_new(char *key, char *value, int is_export)
+t_env *ft_lst_new(char *key, char *value, int is_export)
 {
 	t_env	*new;
 
@@ -81,7 +90,7 @@ t_env *ft_envlst_new(char *key, char *value, int is_export)
 	{
 		free(key);
 		free(value);
-		return (NULL);
+		exit(EXIT_FAILURE);
 	}
 	new->key = key;
 	new->value = value;
@@ -89,12 +98,3 @@ t_env *ft_envlst_new(char *key, char *value, int is_export)
 	new->is_export = is_export;
 	return (new);
 }
-
-// t_env ft_envlst_get(t_env *lst, char *key)
-// {
-// 	while(lst)
-// 	{
-// 		if (ft_strcmp(lst->key, key) == 0)
-// 			return (lst)
-// 	}
-// }

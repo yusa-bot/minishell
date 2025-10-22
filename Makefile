@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: rinka <rinka@student.42.fr>                +#+  +:+       +#+         #
+#    By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/08 19:14:52 by rinka             #+#    #+#              #
-#    Updated: 2025/10/13 13:13:14 by rinka            ###   ########.fr        #
+#    Updated: 2025/10/23 08:50:40 by ayusa            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,11 +16,11 @@ CFLAGS = -Wall -Wextra -Werror
 
 SRCS = \
 	builtins/ft_add_env.c \
-	builtins/ft_envlst_utils.c \
-	builtins/ft_put_envs.c \
-	builtins/ft_put_exports.c \
+	builtins/ft_lst_utils.c \
+	builtins/ft_env.c \
+	builtins/ft_exports.c \
 	builtins/ft_unset.c \
-	builtins/set_env.c \
+	builtins/ft_set_env.c \
 	parser/ft_cmdlst_utils.c \
 	parser/join_expanded_tokens.c \
 	parser/ft_parser_utils.c \

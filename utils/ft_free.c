@@ -6,7 +6,7 @@ void malloc_error(t_token **token_lst, t_cmd **cmd_lst,t_env **env_lst, t_token 
 	ft_putendl_fd("minishell: Fatal error: Could not allocate memory for error message.", 2);
 	ft_tokenlst_clear(token_lst);
 	ft_cmdlst_clear(cmd_lst);
-	ft_envlst_clear(env_lst);
+	ft_lst_clear(env_lst);
 	ft_tokenlst_clear(single_token_lst);
 	// g_exit_status = 2;
 	exit(2);
