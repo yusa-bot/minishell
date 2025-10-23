@@ -1,28 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putchar_fd.c                                    :+:      :+:    :+:   */
+/*   ft_strjoin_safe.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/28 13:20:58 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/10/23 09:43:35 by ayusa            ###   ########.fr       */
+/*   Created: 2025/09/14 21:15:07 by ayusa             #+#    #+#             */
+/*   Updated: 2025/10/23 09:46:18 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int ft_putchar_fd(char c, int fd)
+char *ft_strjoin_safe(char *s1, char *s2)
 {
-    if (write(fd, &c, 1) < 0)
-        return (-1);
-    return (1);
-}
+	char *new_str;
 
-// int main()
-// {
-// 	int fd = open("test.txt", O_WRONLY);
-// 	ft_putchar_fd('A', fd);
-// 	ft_putchar_fd('c', fd);
-// 	ft_putchar_fd('B', fd);
-// }
+	if (!s1)
+		return ft_strdup(s2);
+	new_str= ft_strjoin(s1, s2);
+	free(s1);
+	return new_str;
+}

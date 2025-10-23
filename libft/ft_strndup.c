@@ -1,28 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putchar_fd.c                                    :+:      :+:    :+:   */
+/*   ft_strndup.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/28 13:20:58 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/10/23 09:43:35 by ayusa            ###   ########.fr       */
+/*   Created: 2025/09/14 20:42:08 by ayusa             #+#    #+#             */
+/*   Updated: 2025/10/23 09:46:41 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int ft_putchar_fd(char c, int fd)
+char	*ft_strndup(const char *s, size_t n)
 {
-    if (write(fd, &c, 1) < 0)
-        return (-1);
-    return (1);
-}
+	char	*res;
+	size_t	i;
 
-// int main()
-// {
-// 	int fd = open("test.txt", O_WRONLY);
-// 	ft_putchar_fd('A', fd);
-// 	ft_putchar_fd('c', fd);
-// 	ft_putchar_fd('B', fd);
-// }
+	i = 0;
+	res = malloc(sizeof(char) * (n + 1));
+	if (res == NULL)
+		return (NULL);
+	while (i < n)
+	{
+		res[i] = s[i];
+		i++;
+	}
+	res[i] = '\0';
+	return (res);
+}

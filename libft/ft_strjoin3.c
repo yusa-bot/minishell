@@ -1,28 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putchar_fd.c                                    :+:      :+:    :+:   */
+/*   ft_strjoin3.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/28 13:20:58 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/10/23 09:43:35 by ayusa            ###   ########.fr       */
+/*   Created: 2025/09/15 22:20:25 by ayusa             #+#    #+#             */
+/*   Updated: 2025/10/23 09:46:00 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int ft_putchar_fd(char c, int fd)
+char *ft_strjoin3(const char *s1, const char *s2, const char *s3)
 {
-    if (write(fd, &c, 1) < 0)
-        return (-1);
-    return (1);
+    size_t len1 = ft_strlen(s1);
+    size_t len2 = ft_strlen(s2);
+    size_t len3 = ft_strlen(s3);
+    char *res = malloc(len1 + len2 + len3 + 1);
+    if (!res)
+		return NULL;
+    ft_memcpy(res, s1, len1);
+    ft_memcpy(res + len1, s2, len2);
+    ft_memcpy(res + len1 + len2, s3, len3);
+    res[len1 + len2 + len3] = '\0';
+    return res;
 }
-
-// int main()
-// {
-// 	int fd = open("test.txt", O_WRONLY);
-// 	ft_putchar_fd('A', fd);
-// 	ft_putchar_fd('c', fd);
-// 	ft_putchar_fd('B', fd);
-// }

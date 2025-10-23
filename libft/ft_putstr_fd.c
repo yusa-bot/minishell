@@ -3,25 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   ft_putstr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rtakayam <rtakayam@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 13:36:56 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/05/14 14:15:37 by rtakayam         ###   ########.fr       */
+/*   Updated: 2025/10/23 09:44:57 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_putstr_fd(char *s, int fd)
+int ft_putstr_fd(char *s, int fd)
 {
-	size_t	i;
+    size_t i;
 
-	i = 0;
-	while (s[i] != '\0')
-	{
-		ft_putchar_fd(s[i], fd);
-		i++;
-	}
+    if (!s)
+        return (0);
+    i = 0;
+    while (s[i] != '\0')
+    {
+        if (ft_putchar_fd(s[i], fd) < 0)
+            return (-1); // write失敗を伝える
+        i++;
+    }
+    return (i); // 書き込んだ文字数（または成功フラグとして 0 でもOK）
 }
 
 // int main(int argc, char *argv[])
