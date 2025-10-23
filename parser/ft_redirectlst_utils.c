@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_redirectlst_utils.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 15:15:58 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/09 15:19:44 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/23 09:10:23 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,10 @@ static void	ft_redirectlst_delone(t_redirect *file)
 {
 	if (!file)
 		return ;
-	if (file->original_filename)
-		free(file->original_filename);
-	if (file->expanded_filename)
-		free(file->expanded_filename);
+	if (file->original_arg)
+		free(file->original_arg);
+	if (file->expanded_argi)
+		free(file->expanded_argi);
 	free (file);
 }
 
@@ -47,21 +47,21 @@ t_redirect *ft_redirectlst_init(void)
 	new_redirect = malloc(sizeof(t_redirect));
 	if (new_redirect == NULL)
 		return (NULL);
-	new_redirect->expanded_filename = NULL;
-	new_redirect->original_filename = NULL;
+	new_redirect->expanded_argi = NULL;
+	new_redirect->original_arg = NULL;
 	new_redirect->token_type = REDIRECT_IN;
 	return (new_redirect);
 }
 
-t_redirect	*ft_redirectlst_new(char *expanded_filename, char *original_filename, t_token_type token_type)
+t_redirect	*ft_redirectlst_new(char *expanded_argi, char *original_arg, t_token_type token_type)
 {
 	t_redirect	*new;
 
 	new = ft_redirectlst_init();//t_cmd初期化
 	if (new == NULL)
 		return (NULL);
-	new->expanded_filename = expanded_filename;
-	new->original_filename = original_filename;
+	new->expanded_argi = expanded_argi;
+	new->original_arg = original_arg;
 	new->token_type = token_type;
 	return (new);
 }

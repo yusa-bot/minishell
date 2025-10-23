@@ -87,24 +87,24 @@ int	set_infile_name(t_token *lst, t_redirect **infile, t_redirect **outfile, cha
 			new_file = ft_redirectlst_init();
 			if (add_to == NULL)
 				return (free_filename(infile, outfile, new_file));
-			if ((lst->next)->original_str)
+			if ((lst->next)->original_arg)
 			{
-				new_file->original_filename = ft_strdup((lst->next)->original_str);
-				if (new_file->original_filename == NULL)
+				new_file->original_arg = ft_strdup((lst->next)->original_arg);
+				if (new_file->original_arg == NULL)
 					return (free_filename(infile, outfile, new_file));
 			}
 			if (lst->token_type == HEREDOC)
 			{
-				new_file->expanded_filename = ft_heredoc((lst->next)->str, NULL, NULL, tmpfiles);//エラー処理いったん仮
-				if (new_file->expanded_filename)
+				new_file->expanded_argi = ft_heredoc((lst->next)->str, NULL, NULL, tmpfiles);//エラー処理いったん仮
+				if (new_file->expanded_argi)
 				{
 					//openfileエラー
 				}
 			}
 			else
 			{
-				new_file->expanded_filename = ft_strdup((lst->next)->str);
-				if (new_file->expanded_filename == NULL)
+				new_file->expanded_argi = ft_strdup((lst->next)->str);
+				if (new_file->expanded_argi == NULL)
 					return (free_filename(infile, outfile, new_file));
 			}
 			new_file->token_type = lst->token_type;
@@ -199,9 +199,9 @@ t_cmd *ft_parser(t_token *token_lst, t_env *env_lst, char ***tmpfiles)
 		// 	tmp = tmp->next;
 		// }
 		// printf("\n");
-		// if (tmp == NULL) 
+		// if (tmp == NULL)
 		// 	printf("null tarminated\n");///////
-	
+
 		if (is_delimiter(ft_tokenlst_last(joined_token_lst)->str))
 		{
 			if (!current_lst)

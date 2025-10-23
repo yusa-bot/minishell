@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   join_expanded_tokens.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 13:18:26 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/21 17:09:36 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/23 09:08:36 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,18 +184,18 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 			{
 				//変数展開
 				char *old_str = current_lst->str;
-				char *expanded_str = expand_vars(current_lst, token_lst, env_lst);
+				char *expanded_argi = expand_vars(current_lst, token_lst, env_lst);
 				if (new_lst && ft_tokenlst_last(new_lst)->str)
 				{
 					original_var = ft_strjoin_safe(original_var, old_str);
 					if (!original_var)
 					{
 						free(old_str);
-						free(expanded_str);
+						free(expanded_argi);
 						malloc_error(token_lst, NULL, &env_lst, &new_lst);
 					}
 				}
-				current_lst->str = expanded_str;
+				current_lst->str = expanded_argi;
 				free(old_str);
 			}
 			if (!new_str && current_lst->quote_type == NONE && ft_strchr(current_lst->str, '=') && is_valid_assignment(current_lst->str))

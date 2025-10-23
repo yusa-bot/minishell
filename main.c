@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/23 08:44:25 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/23 09:08:36 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ int main(int argc, char **argv, char **envp)
 				{
 					if (tmp_fileinfo->token_type == HEREDOC)
 						printf("<");
-					printf("< %s\n", tmp_fileinfo->expanded_filename);
+					printf("< %s\n", tmp_fileinfo->expanded_argi);
 					tmp_fileinfo = tmp_fileinfo->next;
 				}
 			}
@@ -112,7 +112,7 @@ int main(int argc, char **argv, char **envp)
 				{
 					if (tmp_fileinfo->token_type == APPEND)
 						printf(">");
-					printf("> %s\n", tmp_fileinfo->expanded_filename);
+					printf("> %s\n", tmp_fileinfo->expanded_argi);
 					tmp_fileinfo = tmp_fileinfo->next;
 				}
 			}
