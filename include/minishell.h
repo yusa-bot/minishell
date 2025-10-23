@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/23 09:03:13 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/23 09:35:34 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/23 10:52:14 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,10 @@
 
 # include "../libft/libft.h"
 
-# include "./builtins.h"
-# include "./tokenizer.h"
-# include "./parser.h"
-# include "./struct.h"
+# include "builtins.h"
+# include "tokenizer.h"
+# include "parser.h"
+# include "struct.h"
 
 # define EXIT_SUCCESS 0
 # define EXIT_FAILURE 1

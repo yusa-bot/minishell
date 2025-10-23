@@ -66,7 +66,6 @@ typedef struct s_redirect
 	char				*expanded_arg;
 	t_token_type		token_type;//<, >, >>, <<
 	struct s_redirect	*next;//複数リダイレクト用
-	int					heredoc_fd; // HEREDOC用に準備されたFDを保持 -> 不要かも
 } t_redirect;
 
 typedef struct s_cmd

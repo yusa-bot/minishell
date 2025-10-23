@@ -15,7 +15,7 @@
 		t_token ⇨ [<] [infile.txt] [cat] [|] [wc] [-l] [>] [outfile.txt]
 		↓
 		t_cmd ⇨ [< infile.txt cat] | [wc -l > outfile.txt]
-	・ワイルドカードの展開("echo *.c"など)	
+	・ワイルドカードの展開("echo *.c"など)
 ◇エラー処理
 ・malloc
 その場でメモリ解放してexit()
@@ -36,10 +36,11 @@ env_lstを残してmainに戻る
 ↓
 ・t_cmd*などと同じタイミングでunlink()
 ※open()した全てのfdを閉じ、unlink()するとそのファイルは自動で削除される
-※課題要件より、heredocの入力内容がrlのhistoryに残るようにはしなくていい
+※課題要件より、heredocの入力内容がrlのhistoryに残るようにはしなくていい (なるほど~！)
 
 ＜これから実装＞
-・ambiguous redirectとNo such file or directoryをチェックしながらファイルopenし、パイプに繋がないファイルも含めてintの配列にfdを格納（execve()実行前にまとめてclose）
-↑t_redirectにint *fdsを作る？
+・ambiguous redirect(展開結果が複数値)とNo such file or directoryをチェックしながらファイルopenし、パイプに繋がないファイルも含めてintの配列にfdを格納（execve()実行前にまとめてclose）
+↑ft_redirectにint *fdsを作る？ -> 一括で閉じられるから？
 ・ファイル名はt_cmd作成後、ececuve実行直前にワールドカードの展開
 ・norminette対応
+

@@ -87,24 +87,24 @@ int	set_infile_name(t_token *lst, t_redirect **infile, t_redirect **outfile, cha
 			new_file = ft_redirectlst_init();
 			if (add_to == NULL)
 				return (free_filename(infile, outfile, new_file));
-			if ((lst->next)->original_arg)
+			if ((lst->next)->original_str)
 			{
-				new_file->original_arg = ft_strdup((lst->next)->original_arg);
+				new_file->original_arg = ft_strdup((lst->next)->original_str);
 				if (new_file->original_arg == NULL)
 					return (free_filename(infile, outfile, new_file));
 			}
 			if (lst->token_type == HEREDOC)
 			{
-				new_file->expanded_argi = ft_heredoc((lst->next)->str, NULL, NULL, tmpfiles);//エラー処理いったん仮
-				if (new_file->expanded_argi)
+				new_file->expanded_arg = ft_heredoc((lst->next)->str, NULL, NULL, tmpfiles);//エラー処理いったん仮
+				if (new_file->expanded_arg)
 				{
 					//openfileエラー
 				}
 			}
 			else
 			{
-				new_file->expanded_argi = ft_strdup((lst->next)->str);
-				if (new_file->expanded_argi == NULL)
+				new_file->expanded_arg = ft_strdup((lst->next)->str);
+				if (new_file->expanded_arg == NULL)
 					return (free_filename(infile, outfile, new_file));
 			}
 			new_file->token_type = lst->token_type;
