@@ -6,11 +6,15 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/23 17:35:29 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/23 19:19:04 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	token_debag(t_token *token_lst);
+void	cmd_debag(t_cmd *cmd_lst, int j);
+void	heredoc_debag(char **tmpfiles);
 
 int main(int argc, char **argv, char **envp)
 {
@@ -29,7 +33,7 @@ int main(int argc, char **argv, char **envp)
 	shell.status = 0;
 	shell.is_pipe = 0; // heredoc由来のredirect 謎 不要かも
 
-	rl_catch_signals = 0;
+	rl_catch_signals = 0; // シグナルをreadlineではなく自作で制御するため。
 	setup_signals_interactive();
 
 	char *line;
@@ -38,7 +42,6 @@ int main(int argc, char **argv, char **envp)
 
 	while (1)
 	{
-		int j = 0;
 		line = readline("minishell$ ");
 		if (line == NULL)//EOF(Ctrl-D)
 		{
@@ -65,6 +68,10 @@ int main(int argc, char **argv, char **envp)
 			printf("SIGINT\n");
 			g_sig = 0;
 			free(line);
+			//readline() は内部でエラー復帰する（rl_done などで）
+			//g_signal == SIGINT
+			//continue_free(&token_lst, &cmd_lst);は？
+			//		ループ側で if (g_signal == SIGINT) を検出 -> その時点で安全にメモリをfreeして、新しいプロンプトを出す
 			continue;
 		}
 		if (*line)
@@ -92,7 +99,7 @@ int main(int argc, char **argv, char **envp)
 			free (line);
 			continue ;
 		}
-		cmd_debag(cmd_lst, j); //debag
+		cmd_debag(cmd_lst, loop_count); //debag
 		heredoc_debag(tmpfiles); //debag
 
 
@@ -125,7 +132,7 @@ int main(int argc, char **argv, char **envp)
 
 void	token_debag(t_token *token_lst)
 {
-	printf("-----------first_token------------\n");
+	printf("-----------token debag------------\n");
 	t_token *tmp = token_lst;
 	while (tmp)
 	{
@@ -136,7 +143,6 @@ void	token_debag(t_token *token_lst)
 		printf("joint_next: %d\n\n", tmp->is_joined_with_next);
 		tmp = tmp->next;
 	}
-	printf("-----------first_token_end------------\n");
 	printf("\n");
 	if (tmp == NULL)
 		printf("null tarminated\n");
@@ -145,7 +151,7 @@ void	token_debag(t_token *token_lst)
 void	cmd_debag(t_cmd *cmd_lst, int j)
 {
 	t_cmd	*tmp_cmd = cmd_lst;
-	printf("\n↓↓↓以下、パイプ区切りで分けてt_cmdに格納した値↓↓↓\n");
+	printf("----------cmd debag------------\n");
 	while (tmp_cmd)
 	{
 		char **args = tmp_cmd->cmd_args;
@@ -201,6 +207,7 @@ void	heredoc_debag(char **tmpfiles)
 	int i = 0;
 	while (tmpfiles &&  tmpfiles[i])
 	{
+		printf("-----------heredoc debag------------\n");
 		printf("↓↓隠しファイル%d個目（%s）に書き込まれた内容↓↓\n", i+1, tmpfiles[i]);
 		FILE* fp = fopen(tmpfiles[i], "r");
 		int	c = fgetc(fp);

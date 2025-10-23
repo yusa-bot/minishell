@@ -163,7 +163,7 @@ t_cmd	*ft_parse_single_cmd(t_token *single_token_lst, t_token *token_lst, t_env 
 	}
 	if (set_infile_name(current_lst, &(res->infile), (&res->outfile), tmpfiles))
 		malloc_error(&token_lst, &res, &env_lst, &single_token_lst);
-	ft_globbing(&current_lst, &arg_count);
+	//ft_globbing(&current_lst, &arg_count);
 	if (arg_count)
 	{
 		res->cmd_args = set_cmd_args(current_lst, arg_count);

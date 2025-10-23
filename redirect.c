@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 16:57:55 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/23 10:07:02 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/23 18:28:29 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,30 +18,21 @@ int handle_redirect(const t_redirect *rdr, int target_fd, int oflags)
 {
     int fd = -1;
 
-	printf("handle_redirect called\n");
-	printf("original_str=%s, expanded_str=%s\n", rdr->original_str, rdr->expanded_str);
-    if (rdr->token_type == INFILE && rdr->heredoc_fd >= 0)
-        fd = rdr->heredoc_fd;
-	else if (rdr->token_type == INFILE)
-        fd = open(rdr->expanded_str, O_RDONLY);
+	if (rdr->token_type == INFILE)
+        fd = open(rdr->expanded_arg, O_RDONLY);
 	else //OUTFILE
-	{
-		printf("Opening outfile: %s\n", rdr->expanded_str);
-        fd = open(rdr->expanded_str, oflags, 0644);
-	}
+        fd = open(rdr->expanded_arg, oflags, 0644);
     if (fd < 0)
 	{
 		write(STDERR_FILENO, "minishell: Invalid file descriptor\n", 36);
         return (EXIT_FAILURE);
     }
-	printf("Opened fd: %d\n", fd);
     if (dup2(fd, target_fd) < 0)//開いたfdをstdi/oに複製
 	{
 		printf("dup2 failed\n");
         perror("dup2");//fdはosが回収
         return (EXIT_FAILURE);
     }
-	printf("handle_redirect success, target_fd=%d\n", target_fd);
     /////////////
     //// HEREDOCの場合とファイルの場合で異なる処理
     //if (r->token_type == INFILE && r->prepared_fd >= 0)

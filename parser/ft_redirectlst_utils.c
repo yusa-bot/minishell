@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 15:15:58 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/23 09:10:23 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/23 18:31:29 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@ static void	ft_redirectlst_delone(t_redirect *file)
 		return ;
 	if (file->original_arg)
 		free(file->original_arg);
-	if (file->expanded_argi)
-		free(file->expanded_argi);
+	if (file->expanded_arg)
+		free(file->expanded_arg);
 	free (file);
 }
 
@@ -47,7 +47,7 @@ t_redirect *ft_redirectlst_init(void)
 	new_redirect = malloc(sizeof(t_redirect));
 	if (new_redirect == NULL)
 		return (NULL);
-	new_redirect->expanded_argi = NULL;
+	new_redirect->expanded_arg = NULL;
 	new_redirect->original_arg = NULL;
 	new_redirect->token_type = REDIRECT_IN;
 	return (new_redirect);
@@ -60,7 +60,7 @@ t_redirect	*ft_redirectlst_new(char *expanded_argi, char *original_arg, t_token_
 	new = ft_redirectlst_init();//t_cmd初期化
 	if (new == NULL)
 		return (NULL);
-	new->expanded_argi = expanded_argi;
+	new->expanded_arg = expanded_argi;
 	new->original_arg = original_arg;
 	new->token_type = token_type;
 	return (new);

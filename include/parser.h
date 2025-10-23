@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/23 09:04:36 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/23 17:09:24 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/23 18:47:30 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,8 @@ t_redirect	*ft_redirectlst_last(t_redirect *lst);
 void		ft_redirectlst_add_back(t_redirect **lst, t_redirect *new);
 
 //ft_globbing..c
-t_token	*glob_single_token(char *pattern);
-void	ft_globbing(t_token **token_list_ptr, int *arg_count);
+//t_token	*glob_single_token(char *pattern);
+//void	ft_globbing(t_token **token_list_ptr, int *arg_count);
 
 char	*ft_heredoc(char *eof, t_cmd *cmd_lst, t_env *env_lst, char ***tmpfiles);
 

@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 13:18:26 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/23 17:09:58 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/23 18:31:03 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,7 +147,7 @@ char *expand_vars(const t_token *original, t_token **token_lst, t_env *env_lst, 
 }
 
 //t_cmd関連関数の前に完成させてテストする（その前にt_envを持ってきてファイル構成テストも）
-t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *env_lst, t_shell shell)
+t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *env_lst, t_shell *shell)
 {
 	t_token *new_lst;
 	t_token *newnode;

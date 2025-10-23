@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 10:15:09 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/10/23 09:48:27 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/23 18:59:21 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <fcntl.h>
 # include <unistd.h>
 # include <limits.h>
+#include <stddef.h>
 
 int		ft_isalpha(int c);
 int		ft_isdigit(int c);

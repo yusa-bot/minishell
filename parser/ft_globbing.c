@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_globbing.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 15:11:28 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/14 22:08:07 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/23 18:31:51 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ t_token *glob_single_token(char *pattern)
 {
 	t_token *res_lst;
 	DIR	*dirp;
- struct dirent	*dp;
+	struct dirent	*dp;
 	char *new_str;
 
 	res_lst = NULL;
@@ -76,7 +76,7 @@ void ft_globbing(t_token **token_list_ptr, int *arg_count)
 	t_token *to_add;
 	t_token *next;
 	t_token *prev;
-	
+
 	current = *token_list_ptr;
 	prev = NULL;
 	while (current)

@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/23 09:03:13 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/23 10:52:14 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/23 18:29:47 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@
 # include <sys/wait.h>
 # include <limits.h>
 #include <sys/stat.h>
-
 # include "../libft/libft.h"
+# include <sys/errno.h>
 
 # include "builtins.h"
 # include "tokenizer.h"

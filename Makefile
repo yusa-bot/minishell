@@ -6,7 +6,7 @@
 #    By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/08 19:14:52 by rinka             #+#    #+#              #
-#    Updated: 2025/10/23 10:22:59 by ayusa            ###   ########.fr        #
+#    Updated: 2025/10/23 18:48:26 by ayusa            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,13 +36,13 @@ SRCS = \
 	parser/ft_parser_utils.c \
 	parser/ft_parser.c \
 	parser/ft_redirectlst_utils.c \
-	parser/ft_globbing.c \
 	parser/ft_heredoc.c \
 	tokenizer/ft_tokenizer.c \
 	tokenizer/ft_tokenlst_utils.c \
 	tokenizer/ft_tokenlst_sort.c \
 	utils/ft_free.c \
 	utils/ft_utils.c \
+	#parser/ft_globbing.c \
 
 OBJS = $(SRCS:.c=.o)
 
@@ -53,12 +53,12 @@ LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
 # linux
-INCLUDE = -I./include
-LDFLAGS = -lreadline
+#INCLUDE = -I./include
+#LDFLAGS = -lreadline
 
 # mac
-# INCLUDE = -I./include -I/opt/homebrew/opt/readline/include
-# LDFLAGS = -L/opt/homebrew/opt/readline/lib -lreadline
+ INCLUDE = -I./include -I/opt/homebrew/opt/readline/include
+ LDFLAGS = -L/opt/homebrew/opt/readline/lib -lreadline
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@

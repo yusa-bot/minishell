@@ -6,18 +6,20 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 15:45:41 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/10/23 09:45:24 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/23 19:02:25 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stddef.h>
+#include "libft.h"
 
-int	ft_strcmp(const char *s1, const char *s2)
+int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
 	size_t	i;
 
 	i = 0;
-	while (s1[i] && s2[i])
+	if (n == 0)
+		return (0);
+	while (i < n - 1 && s1[i] && s2[i])
 	{
 		if (s1[i] != s2[i])
 			return (((unsigned char *)s1)[i] - ((unsigned char *)s2)[i]);
@@ -25,6 +27,7 @@ int	ft_strcmp(const char *s1, const char *s2)
 	}
 	return (((unsigned char *)s1)[i] - ((unsigned char *)s2)[i]);
 }
+
 // #include <stdio.h>
 // #include <string.h>
 
