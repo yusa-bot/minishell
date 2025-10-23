@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/23 09:04:36 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/23 09:32:44 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/23 17:09:24 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@
 # include "struct.h"
 # include "minishell.h"
 
-t_cmd	*ft_parser(t_token *token_lst, t_env *env_lst, char ***tmpfiles);
+t_cmd	*ft_parser(t_token *token_lst, t_env *env_lst, char ***tmpfiles, t_shell *shell);
 
-t_token	*join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *env_lst);
+t_token	*join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *env_lst, t_shell *shell);
 
 //ft_parser_utils.c
 t_token	*ft_tokenlst_dup(t_token *lst);

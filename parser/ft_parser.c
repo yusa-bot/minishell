@@ -173,7 +173,7 @@ t_cmd	*ft_parse_single_cmd(t_token *single_token_lst, t_token *token_lst, t_env 
 	return (res);
 	}
 
-t_cmd *ft_parser(t_token *token_lst, t_env *env_lst, char ***tmpfiles)
+t_cmd *ft_parser(t_token *token_lst, t_env *env_lst, char ***tmpfiles, t_shell *shell)
 {
 	t_cmd *cmd_lst;
 	t_cmd *new;
@@ -185,7 +185,7 @@ t_cmd *ft_parser(t_token *token_lst, t_env *env_lst, char ***tmpfiles)
 	joined_token_lst = NULL;
 	while (current_lst)
 	{
-		joined_token_lst = join_expanded_tokens(&current_lst, &token_lst, env_lst);//
+		joined_token_lst = join_expanded_tokens(&current_lst, &token_lst, env_lst, shell);//
 		if (!joined_token_lst)///syntax_errorのみ
 			return (NULL);
 		// t_token *tmp = joined_token_lst;
