@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/24 13:40:59 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/24 15:29:10 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ void	minishell_init(t_shell *sh, char **envp, char ***tmpfiles)
 	sh->cmd = NULL;
 	sh->env = ft_set_env(envp);
 	sh->status = 0;
+	sh->line = NULL;
 	tmpfiles = NULL;
 }
 
@@ -33,92 +34,111 @@ void	set_sigint(t_shell *sh)
 	rl_redisplay();//入力待ち状態を再表示
 }
 
-int main(int argc, char **argv, char **envp)
+after_oneloop(t_shell *sh, char	**tmpfiles)
+{
+	int i;
+
+	i = 0;
+	while (tmpfiles &&  tmpfiles[i])
+	{
+		if (unlink(tmpfiles[i++]) == -1)
+			perror("minishell: unlink");//unlink失敗時
+	}
+	ft_free_str_array(tmpfiles);
+
+	continue_free(sh); // before:ft_parser()直後だった after:ここで良いかな？(yusa)
+	free(sh->line); //ここで解放しないと、どこかの内部(忘れた)でまだline使っててセグフォになる。
+	sh->line = NULL;
+}
+
+after_minishell(t_shell *sh)
+{
+	cear_history();
+	if (sh->line)
+		free(sh->line);
+	continue_free(&sh);
+	ft_lst_clear(&sh->env);
+	sh->env = NULL;
+}
+
+int	read_prompt(t_shell *sh)
 {
 	char	*line;
+
+	setup_signals_interactive();
+	g_sig = 0;
+	line = readline("minishell$ ");
+	if (!line || (ft_strcmp(line, "exit") == 0)) //EOF(Ctrl-D)
+	{
+		write(1, "exit\n", 5);
+		sh->status = 0;
+		return (1);
+	}
+	if (g_sig == SIGINT)//Ctrl-C
+	{
+		set_sigint(&sh);
+		free(line);
+		return (0);
+	}
+	if (*line == '\0')
+		return (free(line), 0);
+	sh->line = line;
+	add_history(line);
+	return (0);
+}
+
+exec_cmd_handler(t_shell *sh)
+{
+	if (sh->cmd && sh->cmd->next)
+		sh->status = run_pipe(&sh);
+	else if (is_builtin_parent(sh->cmd->cmd_args))
+		sh->status = run_parent(&sh);
+	else
+		sh->status = run_child(&sh);
+}
+
+int main(int argc, char **argv, char **envp)
+{
 	char	**tmpfiles;
-	int		loop_count = 0;
+	int		is_continue;
+	int		loop_count;
+	t_shell	sh;
 
 	(void)argc;
 	(void)argv;
-	t_shell	sh;
 	minishell_init(&sh, envp, &tmpfiles);
-
+	loop_count = 0;
+	is_continue = 0;
 	rl_catch_signals = 0; // シグナルをreadlineではなく自作で制御するため。
-
-
 	while (1)
 	{
-		setup_signals_interactive();
-		g_sig = 0;
-		line = readline("minishell$ ");
-		if (!line || (ft_strcmp(line, "exit") == 0)) //EOF(Ctrl-D)
-		{
-			write(1, "exit\n", 5);
-			sh.status = 0;
+		is_continue = read_prompt(&sh);
+		if (read_prompt(&sh))
 			break ;
-		}
-		if (g_sig == SIGINT)//Ctrl-C
-		{
-			set_sigint(&sh);
-			free(line);
-			continue;
-		}
-		if (*line == '\0')
-		{
-			free(line);
-			continue;
-		}
-		if (*line)
-			add_history(line);
-		sh.token = tokenize_line(line, sh.env);//mallocチェックokメモリリークまだ
+		else if (!sh.line)
+			continue ;
+		sh.token = tokenize_line(sh.line, sh.env);//mallocチェックokメモリリークまだ
 		if (!sh.token)
 		{
-			free(line);
+			free(sh.line);
 			continue;
 		}
-		token_debag(sh.token); //debag
-
+		//token_debag(sh.token); //debag
 		sh.cmd = ft_parser(&sh, &tmpfiles);
 		if (!sh.cmd)//syntax or ambiguous error（malloc）は各関数で即free&exit
 		{
 			ft_tokenlst_clear(&sh.token);
-			free (line);
+			free (sh.line);
 			continue ;
 		}
-		cmd_debag(sh.cmd, loop_count); //debag
-		heredoc_debag(tmpfiles); //debag
-
-
-		// コマンド実行群追加
-		if (sh.cmd && sh.cmd->next)
-			sh.status = run_pipe(&sh);
-		else if (is_builtin_parent(sh.cmd->cmd_args))
-			sh.status = run_parent(&sh);
-		else
-			sh.status = run_child(&sh);
-
-
-		// 1loopごとの後処理↓
-		int i = 0;
-		while (tmpfiles &&  tmpfiles[i])
-		{
-			if (unlink(tmpfiles[i++]) == -1)
-				perror("minishell: unlink");//unlink失敗時
-		}
-		ft_free_str_array(tmpfiles);
+		//cmd_debag(sh.cmd, loop_count); //debag
+		//heredoc_debag(tmpfiles); //debag
+		exec_cmd_handler(&sh);
+		after_oneloop(&sh, tmpfiles); // 1loopごとの後処理↓
 		loop_count++;
-		continue_free(&sh); // before:ft_parser()直後だった after:ここで良いかな？(yusa)
-		free(line); //ここで解放しないと、どこかの内部(忘れた)でまだline使っててセグフォになる。
-		line = NULL;
 	}
-	rl_clear_history();
-	if (line) //上でline = NULL;してる？
-		free(line);
-	continue_free(&sh);
-	ft_lst_clear(&sh.env);
-	sh.env = NULL;
-	return (0);
+	after_minishell(&sh);
+	return (sh.status);
 }
 
 

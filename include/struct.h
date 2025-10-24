@@ -77,6 +77,7 @@ typedef struct s_shell{
 	t_env	*env;
 	t_token	*token;
 	t_cmd	*cmd;
+	char	*line; //prompt
 } t_shell;
 
 #endif

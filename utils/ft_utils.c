@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 23:04:52 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/09 18:44:42 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/24 15:17:36 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ char	*ft_strndup(const char *s, size_t n)
 char *ft_strjoin_safe(char *s1, char *s2)
 {
 	char *new_str;
-	
+
 	if (!s1)
 		return ft_strdup(s2);
 	new_str= ft_strjoin(s1, s2);
@@ -73,5 +73,6 @@ void	ft_free_str_array(char **arr)
 		i++;
 	}
 	free(arr);
+	arr = NULL;
 }
 
