@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 13:18:26 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/23 18:31:03 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/24 13:20:52 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ char *expand_key(char *key, t_env *env_lst)
 	return (res);
 }
 
-char *expand_vars(const t_token *original, t_token **token_lst, t_env *env_lst, t_shell *shell)
+char *expand_vars(t_shell *sh, const t_token *original)
 {
 	char *key;
 	char *res;
@@ -76,10 +76,10 @@ char *expand_vars(const t_token *original, t_token **token_lst, t_env *env_lst, 
 			if (*current == '?')
 			{
 				// value = 直前の終了コード 変えた。合ってるかな？(yusa)
-				res = ft_strjoin_safe(res, ft_itoa(shell->status));
+				res = ft_strjoin_safe(res, ft_itoa(sh->status));
 				if (!res)
 				{//malloc_error
-					malloc_error(token_lst, NULL, &env_lst, NULL);
+					malloc_error(sh, NULL);
 				}
 				current += 1;
 			}
@@ -87,7 +87,7 @@ char *expand_vars(const t_token *original, t_token **token_lst, t_env *env_lst, 
 			{
 				//keyを抜きとってexpense_keyで一つ変数展開
 				key = ft_dupkey(current);
-				value = expand_key(key, env_lst);
+				value = expand_key(key, sh->env);
 				res = ft_strjoin_safe(res, value);
 				if (!key || !value || !res)
 				{
@@ -97,7 +97,7 @@ char *expand_vars(const t_token *original, t_token **token_lst, t_env *env_lst, 
 						free(value);
 					if (res)
 						free (res);
-					malloc_error(token_lst, NULL, &env_lst, NULL);
+					malloc_error(sh, NULL);
 				}
 				current += ft_strlen(key);
 				free(key);
@@ -110,7 +110,7 @@ char *expand_vars(const t_token *original, t_token **token_lst, t_env *env_lst, 
 			{
 				res = ft_strjoin_safe(res, "$");
 				if (res)
-					malloc_error(token_lst, NULL, &env_lst, NULL);
+					malloc_error(sh, NULL);
 			}
 			current += 1;
 		}
@@ -131,7 +131,7 @@ char *expand_vars(const t_token *original, t_token **token_lst, t_env *env_lst, 
 					free(value);
 				if (res)
 					free(res);
-				malloc_error(token_lst, NULL, &env_lst, NULL);
+				malloc_error(sh, NULL);
 			}
 			current += ft_strlen(value);
 			free (value);
@@ -141,13 +141,13 @@ char *expand_vars(const t_token *original, t_token **token_lst, t_env *env_lst, 
 	{
 		res = ft_calloc(sizeof(char), 1);
 		if (!res)
-			malloc_error(token_lst, NULL, &env_lst, NULL);
+			malloc_error(sh, NULL);
 	}
 	return (res);
 }
 
 //t_cmd関連関数の前に完成させてテストする（その前にt_envを持ってきてファイル構成テストも）
-t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *env_lst, t_shell *shell)
+t_token	*join_expanded_tokens(t_shell *sh, t_token **cmd_start)
 {
 	t_token *new_lst;
 	t_token *newnode;
@@ -161,7 +161,7 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 	// token_type = WORD;
 	if (current_lst->token_type == PIPE)//どこでチェックが最適か
 	{//syntax_error
-		syntax_error("|", token_lst, &env_lst);
+		syntax_error(sh, "|");
 		return (NULL);
 	}
 	while (current_lst && current_lst->token_type != PIPE)//is_joined結合
@@ -172,7 +172,7 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 		{
 			newnode = ft_tokenlst_dup(current_lst);
 			if (newnode == NULL)
-			 malloc_error(token_lst, NULL, &env_lst, &new_lst);
+			 malloc_error(sh, &new_lst);
 			ft_tokenlst_add_back(&new_lst, newnode);
 			current_lst = current_lst->next;
 			continue ;
@@ -184,7 +184,7 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 			{
 				//変数展開
 				char *old_str = current_lst->str;
-				char *expanded_argi = expand_vars(current_lst, token_lst, env_lst, shell);
+				char *expanded_argi = expand_vars(sh, current_lst);
 				if (new_lst && ft_tokenlst_last(new_lst)->str)
 				{
 					original_var = ft_strjoin_safe(original_var, old_str);
@@ -192,7 +192,7 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 					{
 						free(old_str);
 						free(expanded_argi);
-						malloc_error(token_lst, NULL, &env_lst, &new_lst);
+						malloc_error(sh, &new_lst);
 					}
 				}
 				current_lst->str = expanded_argi;
@@ -206,7 +206,7 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 				new_str = ft_strjoin_safe(new_str, current_lst->str);
 			if (new_str == NULL)
 			{//mallocエラー
-			 malloc_error(token_lst, NULL, &env_lst, &new_lst);
+			 malloc_error(sh, &new_lst);
 			}///////
 			if (current_lst->is_joined_with_next == 0)
 			{
@@ -219,7 +219,7 @@ t_token *join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *e
 		newnode = ft_tokenlst_new(new_str, token_type, 0, 0);
 		if (newnode == NULL)
 		{//mallocエラー処理
-			malloc_error(token_lst, NULL, &env_lst, &new_lst);
+			malloc_error(sh, &new_lst);
 		}///
 		if (original_var)//current : redirectでnex_str == ""でoriginal_varの時、元の変数名を保存これをparser.cでも引き継ぐ
 		{

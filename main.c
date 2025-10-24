@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/23 22:55:32 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/24 13:40:59 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,100 +16,87 @@ void	token_debag(t_token *token_lst);
 void	cmd_debag(t_cmd *cmd_lst, int j);
 void	heredoc_debag(char **tmpfiles);
 
+void	minishell_init(t_shell *sh, char **envp, char ***tmpfiles)
+{
+	sh->env = NULL; //初期化をrinkaがやっているか確認
+	sh->cmd = NULL;
+	sh->env = ft_set_env(envp);
+	sh->status = 0;
+	tmpfiles = NULL;
+}
+
+void	set_sigint(t_shell *sh)
+{
+	sh->status = 130; //マクロ化
+	rl_replace_line("", 0);//readline の入力行をクリア
+	rl_on_new_line();//readline ライブラリに「カーソルが新しい行に移動した」ことを通知
+	rl_redisplay();//入力待ち状態を再表示
+}
+
 int main(int argc, char **argv, char **envp)
 {
+	char	*line;
+	char	**tmpfiles;
+	int		loop_count = 0;
+
 	(void)argc;
 	(void)argv;
-
-	t_env *env_lst;
-	t_token *token_lst;
-	t_cmd	*cmd_lst;
-	t_shell	shell;
-
-	env_lst = ft_set_env(envp);
-	cmd_lst = NULL;
-	token_lst = NULL;
-	shell.env = env_lst;
-	shell.status = 0;
-	shell.is_pipe = 0; // heredoc由来のredirect 謎 不要かも
+	t_shell	sh;
+	minishell_init(&sh, envp, &tmpfiles);
 
 	rl_catch_signals = 0; // シグナルをreadlineではなく自作で制御するため。
-	setup_signals_interactive();
 
-	char *line;
-	char **tmpfiles;
-	int loop_count = 0;
 
 	while (1)
 	{
+		setup_signals_interactive();
+		g_sig = 0;
 		line = readline("minishell$ ");
-		if (line == NULL)//EOF(Ctrl-D)
+		if (!line || (ft_strcmp(line, "exit") == 0)) //EOF(Ctrl-D)
 		{
-			printf("EOF\n");
-			if (loop_count > 0)
-			{
-				continue_free(&token_lst, &cmd_lst);
-				free(line);
-				ft_lst_clear(&env_lst);
-				shell.env = NULL;
-				rl_clear_history();
-			}
-
 			write(1, "exit\n", 5);
-			exit(shell.status);
+			sh.status = 0;
+			break ;
+		}
+		if (g_sig == SIGINT)//Ctrl-C
+		{
+			set_sigint(&sh);
+			free(line);
+			continue;
 		}
 		if (*line == '\0')
 		{
 			free(line);
 			continue;
 		}
-		if (g_sig == SIGINT)//Ctrl-C
-		{
-			printf("SIGINT\n");
-			g_sig = 0;
-			free(line);
-			//readline() は内部でエラー復帰する（rl_done などで）
-			//g_signal == SIGINT
-			//continue_free(&token_lst, &cmd_lst);は？
-			//		ループ側で if (g_signal == SIGINT) を検出 -> その時点で安全にメモリをfreeして、新しいプロンプトを出す
-			continue;
-		}
 		if (*line)
 			add_history(line);
-
-		if (ft_strcmp(line, "exit") == 0) // これ別途処理されてないか確認する
-		{
-			free(line);
-			break ;
-		}
-
-		token_lst = tokenize_line(line, env_lst);//mallocチェックokメモリリークまだ
-		if (!token_lst)
+		sh.token = tokenize_line(line, sh.env);//mallocチェックokメモリリークまだ
+		if (!sh.token)
 		{
 			free(line);
 			continue;
 		}
-		token_debag(token_lst); //debag
+		token_debag(sh.token); //debag
 
-		tmpfiles = NULL;
-		cmd_lst = ft_parser(token_lst, env_lst, &tmpfiles, &shell);
-		if (!cmd_lst)//syntax or ambiguous error（malloc）は各関数で即free&exit
+		sh.cmd = ft_parser(&sh, &tmpfiles);
+		if (!sh.cmd)//syntax or ambiguous error（malloc）は各関数で即free&exit
 		{
-			ft_tokenlst_clear(&token_lst);
+			ft_tokenlst_clear(&sh.token);
 			free (line);
 			continue ;
 		}
-		cmd_debag(cmd_lst, loop_count); //debag
+		cmd_debag(sh.cmd, loop_count); //debag
 		heredoc_debag(tmpfiles); //debag
 
 
 		// コマンド実行群追加
-		if (cmd_lst && cmd_lst->next)
-			shell.status = run_pipe(cmd_lst, &env_lst, &shell);
-		else if (is_builtin_parent(cmd_lst->cmd_args))
-			shell.status = run_parent(cmd_lst, &env_lst, &shell);
+		if (sh.cmd && sh.cmd->next)
+			sh.status = run_pipe(&sh);
+		else if (is_builtin_parent(sh.cmd->cmd_args))
+			sh.status = run_parent(&sh);
 		else
-			shell.status = run_child(cmd_lst, &env_lst, &shell);
+			sh.status = run_child(&sh);
 
 
 		// 1loopごとの後処理↓
@@ -121,11 +108,16 @@ int main(int argc, char **argv, char **envp)
 		}
 		ft_free_str_array(tmpfiles);
 		loop_count++;
-		continue_free(&token_lst, &cmd_lst); // before:ft_parser()直後だった after:ここで良いかな？(yusa)
+		continue_free(&sh); // before:ft_parser()直後だった after:ここで良いかな？(yusa)
 		free(line); //ここで解放しないと、どこかの内部(忘れた)でまだline使っててセグフォになる。
+		line = NULL;
 	}
-	ft_lst_clear(&env_lst);
-	shell.env = NULL;
+	rl_clear_history();
+	if (line) //上でline = NULL;してる？
+		free(line);
+	continue_free(&sh);
+	ft_lst_clear(&sh.env);
+	sh.env = NULL;
 	return (0);
 }
 

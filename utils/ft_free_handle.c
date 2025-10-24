@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 19:59:29 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/23 10:05:14 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/24 13:39:11 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,14 +60,14 @@ void ft_cmd_clear(t_cmd **cmd_lst)
     *cmd_lst = NULL;
 }
 
-void continue_free(t_token **token_lst, t_cmd **cmd_lst)
+void continue_free(t_shell *sh)
 {
-    if (!cmd_lst && !token_lst)
+    if (!sh->cmd && !sh->token)
         return;
-    if (*token_lst)
-		ft_tokenlst_clear(token_lst);
-    if (*cmd_lst)
-        ft_cmd_clear(cmd_lst);
+    if (sh->token)
+		ft_tokenlst_clear(sh->token);
+    if (sh->cmd)
+        ft_cmd_clear(sh->cmd);
 }
 
 void free_split(char **arr)

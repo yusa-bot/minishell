@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 19:23:08 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/23 09:53:25 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/24 13:30:58 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,25 +31,25 @@ int is_builtin_child(char **args)
 		 || !ft_strcmp(args[0], "env"));
 }
 
-int run_builtin(char **args, t_env **env_lst, t_shell *shell)
+int run_builtin(t_shell *sh, char **args)
 {
 	if (!args || !args[0])
-		return (shell->status);
+		return (sh->status);
 	if (!ft_strcmp(args[0], "cd"))
-		return (ft_cd(args, env_lst));
+		return (ft_cd(args, sh->env));
 	else if (!ft_strcmp(args[0], "export"))
-		return (ft_export(*env_lst, STDOUT_FILENO));
+		return (ft_export(sh->env, STDOUT_FILENO));
 	else if (!ft_strcmp(args[0], "unset"))
-		return (ft_unset(env_lst, args[1]));
+		return (ft_unset(sh->env, args[1]));
 	else if (!ft_strcmp(args[0], "exit"))
-		return (ft_exit(args, shell));
+		return (ft_exit(args, sh));
     else if (!ft_strcmp(args[0], "echo"))
         return (ft_echo(args, STDOUT_FILENO));
     else if (!ft_strcmp(args[0], "pwd"))
-        return (ft_pwd(*env_lst, STDOUT_FILENO));
+        return (ft_pwd(sh->env, STDOUT_FILENO));
     else if (!ft_strcmp(args[0], "env"))
-        return (ft_env(*env_lst, STDOUT_FILENO));
+        return (ft_env(sh->env, STDOUT_FILENO));
 	else
-		return (shell->status);
+		return (sh->status);
 }
 // STDOUT_FILENO けしても　-> txtとかもいける.

@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 21:38:45 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/23 18:56:30 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/24 12:51:28 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,26 +21,24 @@ void setup_signals_child(void)
     signal(SIGQUIT, SIG_DFL);
 }
 
-//Ctrl+C
-void	sigint_handler(int signo)
-{
-	(void)signo; //この関数はSIGINT専用のため不要
-	g_sig = SIGINT;
-	write(STDOUT_FILENO, "\n", 1);//標準出力に改行を出力
 
-	//Readline ライブラリが提供する既存の関数↓
-	rl_replace_line("", 0);//readline の入力行をクリア
-	rl_on_new_line();//readline ライブラリに「カーソルが新しい行に移動した」ことを通知
-	rl_redisplay();//入力待ち状態を再表示
+
+//Ctrl+C
+void	handler_interactive(int signo)
+{
+	g_sig = signo;
+	if (signo == SIGINT)
+        write(STDOUT_FILENO, "\n", 1);
 }
 
 //ctrl-C & ctrl-\ 設定
 void setup_signals_interactive(void)
 {
 	struct sigaction sa;
-	ft_memset(&sa, 0, sizeof(sa));//
-	sa.sa_handler = sigint_handler;
+	ft_memset(&sa, 0, sizeof(sa));
+	sa.sa_handler = handler_interactive;
 	sigemptyset(&sa.sa_mask);
+	// readline絡みで再始動させると扱いが楽
 	sa.sa_flags = SA_RESTART;//Ctrl+Cを押してもreadlineが中断されず、シェルのプロンプトが正常に継続する
 	sigaction(SIGINT, &sa, NULL);   // ctrl-Cのみ細かくsigaction -> sigint_handler()
 	signal(SIGQUIT, SIG_IGN);       // ctrl-\ 何もしない

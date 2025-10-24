@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 16:57:55 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/23 18:28:29 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/24 13:34:44 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,23 +49,23 @@ int handle_redirect(const t_redirect *rdr, int target_fd, int oflags)
 }
 
 //in/outそれぞれでfd処理
-int apply_redirect(const t_cmd *cmd, t_shell *shell)
+int apply_redirect(t_shell *sh)
 {
     t_redirect *rdr;
 	rdr = NULL;
 
-	if (cmd->infile)
-    	rdr = cmd->infile;
+	if (sh->cmd->infile)
+    	rdr = sh->cmd->infile;
     while (rdr)
     {
-        shell->status = handle_redirect(rdr, STDIN_FILENO, O_RDONLY);
-		if (shell->status != EXIT_SUCCESS)
-			return (shell->status);
+        sh->status = handle_redirect(rdr, STDIN_FILENO, O_RDONLY);
+		if (sh->status != EXIT_SUCCESS)
+			return (sh->status);
         rdr = rdr->next;
     }
-	if (!cmd->outfile)
+	if (!sh->cmd->outfile)
 		return (EXIT_SUCCESS);
-    rdr = cmd->outfile;
+    rdr = sh->cmd->outfile;
     while (rdr)
     {
         int flags = O_WRONLY | O_CREAT;

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: rinka <rinka@student.42.fr>                +#+  +:+       +#+         #
+#    By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/08 19:14:52 by rinka             #+#    #+#              #
-#    Updated: 2025/10/23 23:14:11 by rinka            ###   ########.fr        #
+#    Updated: 2025/10/24 09:44:42 by ayusa            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -52,7 +52,7 @@ CFLAGS = -Wall -Wextra -Werror
 LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
-# linux
+# 42linux
 # INCLUDE = -I./include
 # LDFLAGS = -lreadline
 
@@ -60,7 +60,7 @@ LIBFT = $(LIBFT_DIR)/libft.a
  INCLUDE = -I./include -I/opt/homebrew/opt/readline/include
  LDFLAGS = -L/opt/homebrew/opt/readline/lib -lreadline
 
-#	rinka_mac
+# rinka_mac
 # INCLUDE = -I./include -I/usr/local/opt/readline/include
 # LDFLAGS = -L/usr/local/opt/readline/lib -lreadline
 
