@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_heredoc.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 13:12:13 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/14 22:15:39 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/24 16:35:37 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,17 @@ char *ft_heredoc(char *eof, t_cmd *cmd_lst, t_env *env_lst, char ***tmpfiles)
 	while (1)
 	{
 		line = readline("> ");
+		if (g_sig == SIGINT)//Ctrl-C ////////////編集する。 //「入力を中断してシェルに戻る」
+		{
+			printf("SIGINT\n");
+			g_sig = 0; //0/2 どっち？
+			free(line);
+			//readline() は内部でエラー復帰する（rl_done などで）
+			//		ループ側で if (g_signal == SIGINT) を検出 -> その時点で安全にメモリをfreeして、新しいプロンプトを出す
+			continue;
+		}
+		//Ctrl-D（EOF）で入力が終了した場合 →
+		//bash と同じように「warning: here-document delimited by end-of-file (wanted'EOF')」を出すか、そのまま終了
 		if (ft_strcmp(line, eof) == 0)
 		{
 			free(line);
