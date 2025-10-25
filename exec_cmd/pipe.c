@@ -6,19 +6,29 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 13:48:40 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/25 13:36:27 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/25 13:50:31 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int run_pipe(t_shell *sh)
+void	exec_cmd_handler(t_shell *sh)
+{
+	if (sh->cmd && sh->cmd->next)
+		sh->status = exec_pipe(sh);
+	else if (is_builtin_parent(sh->cmd->cmd_args))
+		sh->status = exec_parent(sh);
+	else
+		sh->status = exec_child_handler(sh);
+}
+
+int exec_pipe(t_shell *sh)
 {
     int pipefd[2];
     int in_fd = STDIN_FILENO;
     pid_t pid;
 
-	printf("run_pipe called\n");
+	printf("exec_pipe called\n");
     while (sh->cmd)
     {
         if (sh->cmd->next)
@@ -58,9 +68,6 @@ int run_pipe(t_shell *sh)
                 }
 				close(pipefd[1]);
             }
-			sh->status = apply_redirect(sh);
-			if (sh->status != EXIT_SUCCESS)
-				exit(sh->status);
             exec_child(sh);
             exit(EXIT_SUCCESS);
         }

@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/23 09:03:13 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/25 13:37:20 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/25 13:52:14 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	sigint_handler(int sig);
 
 void	setup_signals_interactive(void);
 char	*search_external_path(const char *cmd, t_env **env_lst);
-int		run_pipe(t_shell *sh);
+int		exec_pipe(t_shell *sh);
 int		apply_redirect(t_shell *sh);
 
 void	setup_signals_child(void);
@@ -67,9 +67,9 @@ int		is_builtin_parent(char **args);
 int		is_builtin_child(char **args);
 int		run_builtin(t_shell *sh, char **args);
 
-int		run_child(t_shell *sh);
+int		exec_child_handler(t_shell *sh);
 int		exec_child(t_shell *sh);
-int		run_parent(t_shell *sh);
+int		exec_parent(t_shell *sh);
 
 void	continue_free(t_shell *sh);
 void	ft_cmd_clear(t_cmd **cmd_lst);
@@ -86,5 +86,7 @@ int		read_prompt(t_shell *sh);
 void	minishell_init(t_shell *sh, char **envp);
 void	after_oneloop(t_shell *sh);
 void	after_minishell(t_shell *sh);
+
+void	exec_cmd_handler(t_shell *sh);
 
 #endif

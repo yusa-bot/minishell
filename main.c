@@ -6,27 +6,17 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/25 13:35:04 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/25 13:44:41 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+volatile sig_atomic_t g_sig = 0;
+
 void	token_debag(t_token *token_lst);
 void	cmd_debag(t_cmd *cmd_lst, int j);
 void	heredoc_debag(char **tmpfiles);
-
-volatile sig_atomic_t g_sig = 0;
-
-void	exec_cmd_handler(t_shell *sh)
-{
-	if (sh->cmd && sh->cmd->next)
-		sh->status = run_pipe(sh);
-	else if (is_builtin_parent(sh->cmd->cmd_args))
-		sh->status = run_parent(sh);
-	else
-		sh->status = run_child(sh);
-}
 
 int	prompt_to_struct(t_shell *sh)
 {

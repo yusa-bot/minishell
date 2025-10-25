@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 14:45:06 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/25 13:37:12 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/25 13:49:22 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int	exec_child(t_shell *sh)
 	}
 }
 
-int run_child(t_shell *sh)
+int exec_child_handler(t_shell *sh)
 {
     pid_t pid;
 

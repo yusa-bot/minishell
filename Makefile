@@ -6,7 +6,7 @@
 #    By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/08 19:14:52 by rinka             #+#    #+#              #
-#    Updated: 2025/10/25 13:35:32 by ayusa            ###   ########.fr        #
+#    Updated: 2025/10/25 13:54:20 by ayusa            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,9 +16,6 @@ SRCS = \
 	main.c \
 	minishell_util.c \
 	signal.c \
-	pipe.c \
-	redirect.c \
-	child_external_search_path.c \
 	builtins/env_util.c \
 	builtins/env_lst_utils.c \
 	builtins/cmd/ft_cd.c \
@@ -28,9 +25,12 @@ SRCS = \
 	builtins/cmd/ft_export.c \
 	builtins/cmd/ft_pwd.c \
 	builtins/cmd/ft_unset.c \
-	exec_buildin/buildin.c \
-	exec_buildin/child_builtin.c \
-	exec_buildin/parent_builtin.c \
+	exec_cmd/pipe.c \
+	exec_cmd/buildin.c \
+	exec_cmd/redirect.c \
+	exec_cmd/parent_builtin.c \
+	exec_cmd/child_builtin.c \
+	exec_cmd/child_external_search_path.c \
 	parser/ft_cmdlst_utils.c \
 	parser/join_expanded_tokens.c \
 	parser/ft_parser_utils.c \

@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 20:24:47 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/24 13:37:29 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/25 13:49:07 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static void fd_restore(int save_stdin, int save_stdout)
     }
 }
 
-int run_parent(t_shell *sh)
+int exec_parent(t_shell *sh)
 {
     int save_in = -1;
     int save_out = -1;
