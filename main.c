@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/24 17:04:31 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/25 13:35:04 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,60 +16,28 @@ void	token_debag(t_token *token_lst);
 void	cmd_debag(t_cmd *cmd_lst, int j);
 void	heredoc_debag(char **tmpfiles);
 
-void	set_sigint(t_shell *sh)
-{
-	sh->status = 130; //マクロ化
-	rl_replace_line("", 0);//readline の入力行をクリア
-	rl_on_new_line();//readline ライブラリに「カーソルが新しい行に移動した」ことを通知
-	rl_redisplay();//入力待ち状態を再表示
-}
-
-int	read_prompt(t_shell *sh)
-{
-	char	*line;
-
-	setup_signals_interactive();
-	g_sig = 0;
-	line = readline("minishell$ ");
-	if (!line || (ft_strcmp(line, "exit") == 0)) //EOF(Ctrl-D)
-	{
-		write(1, "exit\n", 5);
-		sh->status = 0;
-		return (1);
-	}
-	if (g_sig == SIGINT)//Ctrl-C
-	{
-		set_sigint(&sh);
-		free(line);
-		return (0);
-	}
-	if (*line == '\0')
-		return (free(line), 0);
-	sh->line = line;
-	add_history(line);
-	return (0);
-}
+volatile sig_atomic_t g_sig = 0;
 
 void	exec_cmd_handler(t_shell *sh)
 {
 	if (sh->cmd && sh->cmd->next)
-		sh->status = run_pipe(&sh);
+		sh->status = run_pipe(sh);
 	else if (is_builtin_parent(sh->cmd->cmd_args))
-		sh->status = run_parent(&sh);
+		sh->status = run_parent(sh);
 	else
-		sh->status = run_child(&sh);
+		sh->status = run_child(sh);
 }
 
-int	prompt_to_struct(t_shell *sh, char	**tmpfiles)
+int	prompt_to_struct(t_shell *sh)
 {
-	sh->token = tokenize_line(sh);//mallocチェックokメモリリークまだ
+	tokenize_line(sh);//mallocチェックokメモリリークまだ
 	if (!sh->token)
 	{
 		free(sh->line);
 		return (0);
 	}
 	//token_debag(sh.token); //debag
-	sh->cmd = ft_parser(sh, &tmpfiles); //syntax or ambiguous error（malloc）は各関数で即free&exit
+	ft_parser(sh); //syntax or ambiguous error（malloc）は各関数で即free&exit
 	if (!sh->cmd)
 	{
 		ft_tokenlst_clear(&sh->token);
@@ -79,27 +47,20 @@ int	prompt_to_struct(t_shell *sh, char	**tmpfiles)
 	return (1);
 }
 
-void	minishell_loop(t_shell *sh, char	**tmpfiles)
+void	minishell_loop(t_shell *sh)
 {
-	int		is_continue;
-	int		loop_count;
-
-	loop_count = 0;
-	is_continue = 0;
 	while (1)
 	{
-		is_continue = read_prompt(sh);
-		if (read_prompt(&sh))
+		if (read_prompt(sh))
 			break ;
 		else if (!sh->line)
 			continue ;
-		if (!prompt_to_struct(sh, tmpfiles))
+		if (!prompt_to_struct(sh))
 			continue;
 		//cmd_debag(sh.cmd, loop_count); //debag
 		//heredoc_debag(tmpfiles); //debag
 		exec_cmd_handler(sh);
-		after_oneloop(sh, tmpfiles); // 1loopごとの後処理↓
-		loop_count++;
+		after_oneloop(sh); // 1loopごとの後処理↓
 	}
 	after_minishell(sh);
 }
@@ -107,14 +68,13 @@ void	minishell_loop(t_shell *sh, char	**tmpfiles)
 int main(int argc, char **argv, char **envp)
 {
 	t_shell	sh;
-	char	**tmpfiles;
 
 	(void)argc;
 	(void)argv;
-	minishell_init(&sh, envp, &tmpfiles);
+	minishell_init(&sh, envp);
 	g_sig = 0;
 	rl_catch_signals = 0; // シグナルをreadlineではなく自作で制御するため。
-	minishel_loop(&sh, tmpfiles);
+	minishell_loop(&sh);
 	return (sh.status);
 }
 

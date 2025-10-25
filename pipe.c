@@ -6,23 +6,17 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 13:48:40 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/24 13:26:52 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/25 13:36:27 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-// int	pipe_apply_redirect()
-// {
-// 	//pipe専用のfd作る？
-// }
 
 int run_pipe(t_shell *sh)
 {
     int pipefd[2];
     int in_fd = STDIN_FILENO;
     pid_t pid;
-
 
 	printf("run_pipe called\n");
     while (sh->cmd)
@@ -43,7 +37,6 @@ int run_pipe(t_shell *sh)
         }
         if (pid == 0)
         {
-			// dup2にて、STDI/Oで繋がる。
             setup_signals_child();
             if (in_fd != STDIN_FILENO)//最初ではなかったらdup
             {

@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/23 09:03:13 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/24 13:41:25 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/25 13:37:20 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@
 #  define PATH_MAX 4096
 # endif
 
-extern volatile sig_atomic_t g_sig = 0;
+extern volatile sig_atomic_t g_sig;
 
 //ft_error.c
 void	malloc_error(t_shell *sh, t_token **single_token_lst);
@@ -80,5 +80,11 @@ int		ft_exit(char **argv, t_shell *shell);
 void	free_split(char **arr);
 
 int		prepare_heredocs(t_cmd *cmd_lst);
+
+// minishell_util
+int		read_prompt(t_shell *sh);
+void	minishell_init(t_shell *sh, char **envp);
+void	after_oneloop(t_shell *sh);
+void	after_minishell(t_shell *sh);
 
 #endif

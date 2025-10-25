@@ -66,7 +66,7 @@ static int	free_filename(t_redirect **infile, t_redirect **outfile, t_redirect *
 }
 
 //呼び出し元でmalloc_errorの処理予定だったけどopenエラーと区別するためその場で解放の方がいいかも
-int	set_infile_name(t_token *lst, t_redirect **infile, t_redirect **outfile, char ***tmpfiles)
+int	set_infile_name(t_shell *sh, t_token *lst, t_redirect **infile, t_redirect **outfile)
 {
 	t_redirect *new_file;
 	t_redirect **add_to;
@@ -95,7 +95,8 @@ int	set_infile_name(t_token *lst, t_redirect **infile, t_redirect **outfile, cha
 			}
 			if (lst->token_type == HEREDOC)
 			{
-				new_file->expanded_arg = ft_heredoc((lst->next)->str, NULL, NULL, tmpfiles);//エラー処理いったん仮
+				new_file->expanded_arg = ft_heredoc(sh, (lst->next)->str);//エラー処理いったん仮
+				//「失敗（SIGINTとか）なら -1 を返して、そのコマンド列全体をスキップ」してる？
 				if (new_file->expanded_arg)
 				{
 					//openfileエラー
@@ -144,9 +145,9 @@ char	**set_cmd_args(t_token *current_lst, int arg_count)
 }
 
 //コマンド一個分の情報格納する関数
-t_cmd	*ft_parse_single_cmd(t_token *single_token_lst, t_token *token_lst, t_env *env_lst, char ***tmpfiles)
+t_cmd	*ft_parse_single_cmd(t_shell *sh, t_token *single_token_lst)
 {
-	(void)env_lst;
+	(void)sh->env;
 	t_cmd *res;
 	t_token *current_lst;
 	int arg_count = 0;
@@ -159,33 +160,31 @@ t_cmd	*ft_parse_single_cmd(t_token *single_token_lst, t_token *token_lst, t_env 
 	{
 		res->env_vars = set_env_vars(&current_lst, var_count);//current_lst->str);//
 		if (res->env_vars == NULL)
-			malloc_error(&token_lst, NULL, &env_lst, &single_token_lst);
+			malloc_error(sh, &single_token_lst);
 	}
-	if (set_infile_name(current_lst, &(res->infile), (&res->outfile), tmpfiles))
-		malloc_error(&token_lst, &res, &env_lst, &single_token_lst);
+	if (set_infile_name(sh, current_lst, &(res->infile), (&res->outfile)))
+		malloc_error(sh, &single_token_lst);
 	//ft_globbing(&current_lst, &arg_count);
 	if (arg_count)
 	{
 		res->cmd_args = set_cmd_args(current_lst, arg_count);
 		if (res->cmd_args == NULL)
-			malloc_error(&token_lst, &res, &env_lst, &single_token_lst);
+			malloc_error(sh, &single_token_lst);
 	}
 	return (res);
-	}
+}
 
-t_cmd *ft_parser(t_token *token_lst, t_env *env_lst, char ***tmpfiles, t_shell *shell)
+t_cmd	*ft_parser(t_shell *sh)
 {
-	t_cmd *cmd_lst;
 	t_cmd *new;
 	t_token *current_lst;
 	t_token *joined_token_lst;
 
-	cmd_lst = NULL;///
-	current_lst = token_lst;
+	current_lst = sh->token;
 	joined_token_lst = NULL;
 	while (current_lst)
 	{
-		joined_token_lst = join_expanded_tokens(&current_lst, &token_lst, env_lst, shell);//
+		joined_token_lst = join_expanded_tokens(sh, &current_lst);//
 		if (!joined_token_lst)///syntax_errorのみ
 			return (NULL);
 		// t_token *tmp = joined_token_lst;
@@ -205,15 +204,15 @@ t_cmd *ft_parser(t_token *token_lst, t_env *env_lst, char ***tmpfiles, t_shell *
 		if (is_delimiter(ft_tokenlst_last(joined_token_lst)->str))
 		{
 			if (!current_lst)
-				syntax_error("newline", &token_lst,&env_lst);
-			syntax_error("|", &token_lst,&env_lst);
+				syntax_error(sh, "newline");
+			syntax_error(sh, "|");
 			ft_tokenlst_clear(&joined_token_lst);
-			return(NULL);
+			return (NULL);
 		}
-		new = ft_parse_single_cmd(joined_token_lst, token_lst, env_lst, tmpfiles);
-		ft_cmdlst_add_back(&cmd_lst, new);
+		new = ft_parse_single_cmd(sh, joined_token_lst);
+		ft_cmdlst_add_back(&sh->cmd, new); //ここで構造体と新規内容繋げる
 	}
-	return (cmd_lst);
+	return (sh->cmd);
 }
 
 ////TEST=test TEST2=test2 < infile.txt cat | grep $PATH | wc -l >> outfile.txt | echo *

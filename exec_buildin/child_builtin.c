@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 14:45:06 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/24 13:34:00 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/25 13:37:12 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	exec_child(t_shell *sh)
 	else //external
 	{
 		printf("exec_child external: %s\n", sh->cmd->cmd_args[0]);
-		char *path = search_external_path(sh->cmd->cmd_args[0], sh->env);
+		char *path = search_external_path(sh->cmd->cmd_args[0], &sh->env);
 		if (!path)
 		{
 			write(STDERR_FILENO, "minishell: ", 11);
@@ -83,7 +83,7 @@ int run_child(t_shell *sh)
 	}
     else//単独コマンドだったらこっちが親
     {
-        waitpid(pid, &sh->status, 0);
+        waitpid(pid, &sh->status, 0); // sh->statusに子プロセスの終了コードを保存
         if (WIFEXITED(sh->status))
             return (WEXITSTATUS(sh->status));
         if (WIFSIGNALED(sh->status))

@@ -6,7 +6,7 @@
 #    By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/08 19:14:52 by rinka             #+#    #+#              #
-#    Updated: 2025/10/24 09:44:42 by ayusa            ###   ########.fr        #
+#    Updated: 2025/10/25 13:35:32 by ayusa            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,11 +14,11 @@ NAME = minishell
 
 SRCS = \
 	main.c \
+	minishell_util.c \
 	signal.c \
 	pipe.c \
 	redirect.c \
 	child_external_search_path.c \
-	ft_free_handle.c \
 	builtins/env_util.c \
 	builtins/env_lst_utils.c \
 	builtins/cmd/ft_cd.c \
@@ -57,8 +57,8 @@ LIBFT = $(LIBFT_DIR)/libft.a
 # LDFLAGS = -lreadline
 
 # yusa_mac
- INCLUDE = -I./include -I/opt/homebrew/opt/readline/include
- LDFLAGS = -L/opt/homebrew/opt/readline/lib -lreadline
+INCLUDE = -I./include -I/opt/homebrew/opt/readline/include
+LDFLAGS = -L/opt/homebrew/opt/readline/lib -lreadline
 
 # rinka_mac
 # INCLUDE = -I./include -I/usr/local/opt/readline/include

@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 13:18:26 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/24 13:20:52 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/24 16:44:52 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ char *expand_vars(t_shell *sh, const t_token *original)
 			if (*(current + 1) || original->quote_type != NONE || !original->is_joined_with_next)
 			{
 				res = ft_strjoin_safe(res, "$");
-				if (res)
+				if (!res)
 					malloc_error(sh, NULL);
 			}
 			current += 1;
@@ -172,7 +172,7 @@ t_token	*join_expanded_tokens(t_shell *sh, t_token **cmd_start)
 		{
 			newnode = ft_tokenlst_dup(current_lst);
 			if (newnode == NULL)
-			 malloc_error(sh, &new_lst);
+				malloc_error(sh, &new_lst);
 			ft_tokenlst_add_back(&new_lst, newnode);
 			current_lst = current_lst->next;
 			continue ;

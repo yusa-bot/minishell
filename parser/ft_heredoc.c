@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 13:12:13 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/24 16:35:37 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/25 13:37:49 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ char *create_heredoc_filename(void) //呼び出し元でaccessチェック→既
 }
 
 
-char *ft_heredoc(char *eof, t_cmd *cmd_lst, t_env *env_lst, char ***tmpfiles)
+char	*ft_heredoc(t_shell *sh, char *eof)
 {
 	char *hd_filename;
 	int hd_fd;
@@ -98,7 +98,7 @@ char *ft_heredoc(char *eof, t_cmd *cmd_lst, t_env *env_lst, char ***tmpfiles)
 			free(hd_filename);
 		hd_filename = create_heredoc_filename();
 		if (!hd_filename)
-			malloc_error(NULL, &cmd_lst, &env_lst, NULL);
+			malloc_error(sh, NULL);
 	}
 	// printf("hd_fn : %s\n", hd_filename);//////
 	hd_fd = open(hd_filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
@@ -107,7 +107,7 @@ char *ft_heredoc(char *eof, t_cmd *cmd_lst, t_env *env_lst, char ***tmpfiles)
 		perror(hd_filename);
 		// g_exit_status = 1;
 		close(hd_fd);
-		ft_cmdlst_clear(&cmd_lst);
+		ft_cmdlst_clear(&sh->cmd);
 		return (NULL);
 	}
 	while (1)
@@ -134,7 +134,7 @@ char *ft_heredoc(char *eof, t_cmd *cmd_lst, t_env *env_lst, char ***tmpfiles)
 		free(line);
 	}
 	close(hd_fd);
-	*tmpfiles = ft_strarr_add(*tmpfiles, hd_filename);
+	*sh->tmpfiles = ft_strarr_add(*sh->tmpfiles, hd_filename);
 	return (hd_filename);
 }
 
