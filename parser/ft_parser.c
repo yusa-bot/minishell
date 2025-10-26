@@ -56,7 +56,7 @@ char	**set_env_vars(t_token **lst, int var_count)
 		env_vars[i] = ft_strdup((*lst)->str);
 		if (env_vars[i] == NULL)
 		{
-			ft_free_str_array(env_vars);
+			free_split(env_vars);
 			return (NULL);
 		}
 		i++;
@@ -106,7 +106,11 @@ static int set_filename(t_redirect **new_file, t_token *lst, char ***tmpfiles)
 
 
 //呼び出し元でmalloc_errorの処理予定だったけどopenエラーと区別するためその場で解放の方がいいかも
-static int	set_redirect_info(t_token *lst, t_redirect **infile, t_redirect **outfile, char ***tmpfiles)
+
+int	set_infile_name(t_shell *sh, t_token *lst, t_redirect **infile, t_redirect **outfile)
+
+// static int	set_redirect_info(t_token *lst, t_redirect **infile, t_redirect **outfile, char ***tmpfiles)
+
 {
 	t_redirect *new_file;
 	t_redirect **add_to;
@@ -123,8 +127,32 @@ static int	set_redirect_info(t_token *lst, t_redirect **infile, t_redirect **out
 			new_file = ft_redirectlst_init();
 			if (add_to == NULL)
 				return (free_filename(infile, outfile, new_file));
-			if (!set_filename(&new_file, lst, tmpfiles))
-				return (free_filename(infile, outfile, new_file));
+
+			if ((lst->next)->original_str)
+			{
+				new_file->original_arg = ft_strdup((lst->next)->original_str);
+				if (new_file->original_arg == NULL)
+					return (free_filename(infile, outfile, new_file));
+			}
+			if (lst->token_type == HEREDOC)
+			{
+				new_file->expanded_arg = ft_heredoc(sh, (lst->next)->str);//エラー処理いったん仮
+				//「失敗（SIGINTとか）なら -1 を返して、そのコマンド列全体をスキップ」してる？
+				if (new_file->expanded_arg)
+				{
+					//openfileエラー
+				}
+			}
+			else
+			{
+				new_file->expanded_arg = ft_strdup((lst->next)->str);
+				if (new_file->expanded_arg == NULL)
+					return (free_filename(infile, outfile, new_file));
+			}
+
+// 			if (!set_filename(&new_file, lst, tmpfiles))
+// 				return (free_filename(infile, outfile, new_file));
+
 			new_file->token_type = lst->token_type;
 			ft_redirectlst_add_back(add_to, new_file);
 			lst = lst->next;
@@ -150,7 +178,7 @@ char	**set_cmd_args(t_token *current_lst, int arg_count)
 			cmd_args[i] = ft_strdup(current_lst->str);
 			if (cmd_args[i] == NULL)
 			{
-				ft_free_str_array(cmd_args);
+				free_split(cmd_args);
 				return (NULL);
 			}
 			i++;
@@ -162,9 +190,9 @@ char	**set_cmd_args(t_token *current_lst, int arg_count)
 }
 
 //コマンド一個分の情報格納する関数
-t_cmd	*ft_parse_single_cmd(t_token *single_token_lst, t_token *token_lst, t_env *env_lst, char ***tmpfiles)
+t_cmd	*ft_parse_single_cmd(t_shell *sh, t_token *single_token_lst)
 {
-	(void)env_lst;
+	(void)sh->env;
 	t_cmd *res;
 	t_token *current_lst;
 	int arg_count = 0;
@@ -177,33 +205,35 @@ t_cmd	*ft_parse_single_cmd(t_token *single_token_lst, t_token *token_lst, t_env 
 	{
 		res->env_vars = set_env_vars(&current_lst, var_count);//current_lst->str);//
 		if (res->env_vars == NULL)
-			malloc_error(&token_lst, NULL, &env_lst, &single_token_lst);
+			malloc_error(sh, &single_token_lst);
 	}
-	if (set_redirect_info(current_lst, &(res->infile), (&res->outfile), tmpfiles))
-		malloc_error(&token_lst, &res, &env_lst, &single_token_lst);
+
+	if (set_infile_name(sh, current_lst, &(res->infile), (&res->outfile)))
+		malloc_error(sh, &single_token_lst);
+// 	if (set_redirect_info(current_lst, &(res->infile), (&res->outfile), tmpfiles))
+// 		malloc_error(&token_lst, &res, &env_lst, &single_token_lst);
 	//ft_globbing(&current_lst, &arg_count);
 	if (arg_count)
 	{
 		res->cmd_args = set_cmd_args(current_lst, arg_count);
 		if (res->cmd_args == NULL)
-			malloc_error(&token_lst, &res, &env_lst, &single_token_lst);
+			malloc_error(sh, &single_token_lst);
 	}
+	ft_tokenlst_clear(&single_token_lst);
 	return (res);
-	}
+}
 
-t_cmd *ft_parser(t_token *token_lst, t_env *env_lst, char ***tmpfiles, t_shell *shell)
+t_cmd	*ft_parser(t_shell *sh)
 {
-	t_cmd *cmd_lst;
 	t_cmd *new;
 	t_token *current_lst;
 	t_token *joined_token_lst;
 
-	cmd_lst = NULL;///
-	current_lst = token_lst;
+	current_lst = sh->token;
 	joined_token_lst = NULL;
 	while (current_lst)
 	{
-		joined_token_lst = join_expanded_tokens(&current_lst, &token_lst, env_lst, shell);//
+		joined_token_lst = join_expanded_tokens(sh, &current_lst);//
 		if (!joined_token_lst)///syntax_errorのみ
 			return (NULL);
 		// t_token *tmp = joined_token_lst;
@@ -223,15 +253,15 @@ t_cmd *ft_parser(t_token *token_lst, t_env *env_lst, char ***tmpfiles, t_shell *
 		if (is_delimiter(ft_tokenlst_last(joined_token_lst)->str))
 		{
 			if (!current_lst)
-				syntax_error("newline", &token_lst,&env_lst);
-			syntax_error("|", &token_lst,&env_lst);
+				syntax_error(sh, "newline");
+			syntax_error(sh, "|");
 			ft_tokenlst_clear(&joined_token_lst);
-			return(NULL);
+			return (NULL);
 		}
-		new = ft_parse_single_cmd(joined_token_lst, token_lst, env_lst, tmpfiles);
-		ft_cmdlst_add_back(&cmd_lst, new);
+		new = ft_parse_single_cmd(sh, joined_token_lst);
+		ft_cmdlst_add_back(&sh->cmd, new); //ここで構造体と新規内容繋げる
 	}
-	return (cmd_lst);
+	return (sh->cmd);
 }
 
 ////TEST=test TEST2=test2 < infile.txt cat | grep $PATH | wc -l >> outfile.txt | echo *

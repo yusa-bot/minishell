@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_heredoc.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 13:12:13 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/14 22:15:39 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/25 22:03:21 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char **ft_strarr_add(char **arr, char *new_str)
 	res = malloc(sizeof(char *) * (i + 2));
 	if(res == NULL)
 	{
-		ft_free_str_array(arr);
+		free_split(arr);
 		return (NULL);
 	}
 	i = 0;
@@ -35,7 +35,7 @@ char **ft_strarr_add(char **arr, char *new_str)
 	res[i] = ft_strdup(new_str);
 	if(res[i] == NULL)
 	{
-		ft_free_str_array(res);
+		free_split(res);
 		free(arr);
 		return (NULL);
 	}
@@ -73,10 +73,10 @@ char *create_heredoc_filename(void) //呼び出し元でaccessチェック→既
 	res = ft_strjoin("/tmp/.hd_", tty_str);
 	if (res == NULL)
 		return(free_hdfile_info(tty_str, counter_str));
-	res = ft_strjoin_safe(res, "_");
+	res = ft_strjoin_oneptr(res, "_");
 	if (res == NULL)
 		return(free_hdfile_info(tty_str, counter_str));
-	res = ft_strjoin_safe(res, counter_str);
+	res = ft_strjoin_oneptr(res, counter_str);
 	if (res == NULL)
 		return(free_hdfile_info(tty_str, counter_str));
 	free(tty_str);
@@ -85,7 +85,7 @@ char *create_heredoc_filename(void) //呼び出し元でaccessチェック→既
 }
 
 
-char *ft_heredoc(char *eof, t_cmd *cmd_lst, t_env *env_lst, char ***tmpfiles)
+char	*ft_heredoc(t_shell *sh, char *eof)
 {
 	char *hd_filename;
 	int hd_fd;
@@ -98,7 +98,7 @@ char *ft_heredoc(char *eof, t_cmd *cmd_lst, t_env *env_lst, char ***tmpfiles)
 			free(hd_filename);
 		hd_filename = create_heredoc_filename();
 		if (!hd_filename)
-			malloc_error(NULL, &cmd_lst, &env_lst, NULL);
+			malloc_error(sh, NULL);
 	}
 	// printf("hd_fn : %s\n", hd_filename);//////
 	hd_fd = open(hd_filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
@@ -107,12 +107,23 @@ char *ft_heredoc(char *eof, t_cmd *cmd_lst, t_env *env_lst, char ***tmpfiles)
 		perror(hd_filename);
 		// g_exit_status = 1;
 		close(hd_fd);
-		ft_cmdlst_clear(&cmd_lst);
+		ft_cmdlst_clear(&sh->cmd);
 		return (NULL);
 	}
 	while (1)
 	{
 		line = readline("> ");
+		if (g_sig == SIGINT)//Ctrl-C ////////////編集する。 //「入力を中断してシェルに戻る」
+		{
+			printf("SIGINT\n");
+			g_sig = 0; //0/2 どっち？
+			free(line);
+			//readline() は内部でエラー復帰する（rl_done などで）
+			//		ループ側で if (g_signal == SIGINT) を検出 -> その時点で安全にメモリをfreeして、新しいプロンプトを出す
+			continue;
+		}
+		//Ctrl-D（EOF）で入力が終了した場合 →
+		//bash と同じように「warning: here-document delimited by end-of-file (wanted'EOF')」を出すか、そのまま終了
 		if (ft_strcmp(line, eof) == 0)
 		{
 			free(line);
@@ -123,7 +134,7 @@ char *ft_heredoc(char *eof, t_cmd *cmd_lst, t_env *env_lst, char ***tmpfiles)
 		free(line);
 	}
 	close(hd_fd);
-	*tmpfiles = ft_strarr_add(*tmpfiles, hd_filename);
+	sh->tmpfiles = ft_strarr_add(sh->tmpfiles, hd_filename);
 	return (hd_filename);
 }
 

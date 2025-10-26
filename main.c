@@ -3,130 +3,90 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/23 22:55:32 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/26 12:41:35 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+volatile sig_atomic_t g_sig = 0;
+
 void	token_debag(t_token *token_lst);
 void	cmd_debag(t_cmd *cmd_lst, int j);
 void	heredoc_debag(char **tmpfiles);
 
-int main(int argc, char **argv, char **envp)
+void	exec_cmd_handler(t_shell *sh)
 {
-	(void)argc;
-	(void)argv;
+	fprintf(stderr, "exec_cmd_handler\n");
+	if (sh->cmd && sh->cmd->next)
+		sh->status = exec_pipe(sh);
+	else if (is_builtin_parent(sh->cmd->cmd_args))
+		sh->status = exec_parent(sh);
+	else
+		sh->status = exec_child_handler(sh);
+}
 
-	t_env *env_lst;
-	t_token *token_lst;
-	t_cmd	*cmd_lst;
-	t_shell	shell;
+int	prompt_to_struct(t_shell *sh)
+{
+	tokenize_line(sh);//mallocチェックokメモリリークまだ
+	if (!sh->token)
+	{
+		free(sh->line);
+		sh->line = NULL;
+		return (0);
+	}
+	//token_debag(sh.token); //debag
+	ft_parser(sh); //syntax or ambiguous error（malloc）は各関数で即free&exit
+	if (!sh->cmd)
+	{
+		ft_tokenlst_clear(&sh->token);
+		free(sh->line);
+		sh->line = NULL;
+		return (0);
+	}
+	return (1);
+}
 
-	env_lst = ft_set_env(envp);
-	cmd_lst = NULL;
-	token_lst = NULL;
-	shell.env = env_lst;
-	shell.status = 0;
-	shell.is_pipe = 0; // heredoc由来のredirect 謎 不要かも
-
-	rl_catch_signals = 0; // シグナルをreadlineではなく自作で制御するため。
-	setup_signals_interactive();
-
-	char *line;
-	char **tmpfiles;
-	int loop_count = 0;
-
+void	minishell_loop(t_shell *sh)
+{
 	while (1)
 	{
-		line = readline("minishell$ ");
-		if (line == NULL)//EOF(Ctrl-D)
+		if (read_prompt(sh))
 		{
-			printf("EOF\n");
-			if (loop_count > 0)
-			{
-				continue_free(&token_lst, &cmd_lst);
-				free(line);
-				ft_lst_clear(&env_lst);
-				shell.env = NULL;
-				rl_clear_history();
-			}
-
-			write(1, "exit\n", 5);
-			exit(shell.status);
-		}
-		if (*line == '\0')
-		{
-			free(line);
-			continue;
-		}
-		if (g_sig == SIGINT)//Ctrl-C
-		{
-			printf("SIGINT\n");
-			g_sig = 0;
-			free(line);
-			//readline() は内部でエラー復帰する（rl_done などで）
-			//g_signal == SIGINT
-			//continue_free(&token_lst, &cmd_lst);は？
-			//		ループ側で if (g_signal == SIGINT) を検出 -> その時点で安全にメモリをfreeして、新しいプロンプトを出す
-			continue;
-		}
-		if (*line)
-			add_history(line);
-
-		if (ft_strcmp(line, "exit") == 0) // これ別途処理されてないか確認する
-		{
-			free(line);
+			fprintf(stderr, "exit debag\n");
 			break ;
 		}
-
-		token_lst = tokenize_line(line, env_lst);//mallocチェックokメモリリークまだ
-		if (!token_lst)
-		{
-			free(line);
-			continue;
-		}
-		token_debag(token_lst); //debag
-
-		tmpfiles = NULL;
-		cmd_lst = ft_parser(token_lst, env_lst, &tmpfiles, &shell);
-		if (!cmd_lst)//syntax or ambiguous error（malloc）は各関数で即free&exit
-		{
-			ft_tokenlst_clear(&token_lst);
-			free (line);
+		else if (!sh->line)
 			continue ;
-		}
-		cmd_debag(cmd_lst, loop_count); //debag
-		heredoc_debag(tmpfiles); //debag
-
-
-		// コマンド実行群追加
-		if (cmd_lst && cmd_lst->next)
-			shell.status = run_pipe(cmd_lst, &env_lst, &shell);
-		else if (is_builtin_parent(cmd_lst->cmd_args))
-			shell.status = run_parent(cmd_lst, &env_lst, &shell);
-		else
-			shell.status = run_child(cmd_lst, &env_lst, &shell);
-
-
-		// 1loopごとの後処理↓
-		int i = 0;
-		while (tmpfiles &&  tmpfiles[i])
-		{
-			if (unlink(tmpfiles[i++]) == -1)
-				perror("minishell: unlink");//unlink失敗時
-		}
-		ft_free_str_array(tmpfiles);
-		loop_count++;
-		continue_free(&token_lst, &cmd_lst); // before:ft_parser()直後だった after:ここで良いかな？(yusa)
-		free(line); //ここで解放しないと、どこかの内部(忘れた)でまだline使っててセグフォになる。
+		if (!prompt_to_struct(sh))
+			continue;
+		//cmd_debag(sh.cmd, loop_count); //debag
+		//heredoc_debag(tmpfiles); //debag
+		exec_cmd_handler(sh);
+		after_oneloop_cleanup(sh); // 1loopごとの後処理↓
 	}
-	ft_lst_clear(&env_lst);
-	shell.env = NULL;
-	return (0);
+	after_oneloop_cleanup(sh);
+	rl_clear_history();
+	ft_lst_clear(&sh->env);
+	sh->env = NULL;
+	fprintf(stderr, "exit debag2\n");
+}
+
+int main(int argc, char **argv, char **envp)
+{
+	t_shell	sh;
+
+	(void)argc;
+	(void)argv;
+	minishell_init(&sh, envp);
+	g_sig = 0;
+	rl_catch_signals = 0; // シグナルをreadlineではなく自作で制御するため。
+	minishell_loop(&sh);
+	fprintf(stderr, "exit debag3\n");
+	return (sh.status);
 }
 
 

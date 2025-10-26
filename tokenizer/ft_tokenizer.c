@@ -3,123 +3,128 @@
 /*                                                        :::      ::::::::   */
 /*   ft_tokenizer.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 18:58:26 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/10/10 12:54:51 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/26 14:21:13 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	handle_metacharacter(t_token **token_lst, char *line, t_env *env_lst)
+static int	handle_metacharacter(t_shell *sh)
 {
 	t_token			*new;
 	t_quote_type	quote_type;
 
 	new = NULL;
 	quote_type = NONE;
-	if (ft_strncmp(line, ">>", 2) == 0)
+	if (ft_strncmp(sh->line, ">>", 2) == 0)
 		new = ft_tokenlst_new(ft_strdup(">>"), APPEND, quote_type, 0);
-	else if (ft_strncmp(line, "<<", 2) == 0)
+	else if (ft_strncmp(sh->line, "<<", 2) == 0)
 		new = ft_tokenlst_new(ft_strdup("<<"), HEREDOC, quote_type, 0);
-	else if (*line == '|')
+	else if (*sh->line == '|')
 		new = ft_tokenlst_new(ft_strdup("|"), PIPE, quote_type, 0);
-	else if (*line == '>')
+	else if (*sh->line == '>')
 		new = ft_tokenlst_new(ft_strdup(">"), REDIRECT_OUT, quote_type, 0);
 	else
 		new = ft_tokenlst_new(ft_strdup("<"), REDIRECT_IN, quote_type, 0);
 	// ft_tokenlst_clear(&new);///mallocチェックokメモリリークまだ
 	// new = NULL;///
 	if (!new)
-		malloc_error(token_lst, NULL, &env_lst, NULL);
-	ft_tokenlst_add_back(token_lst, new);
+		malloc_error(sh, NULL);
+	ft_tokenlst_add_back(&sh->token, new);
 	return (ft_strlen(new->str));
 }
 
-int	handle_word(t_token **token_lst, char *line, t_env *env_lst)
+int	handle_word(t_shell *sh)
 {
-	char			*p;
+	char			*prm;
 	t_token			*new;
 	t_quote_type	quote_type;
 	int				in_quote;
 	int				word_len;
 	int				is_joined_with_next;
+	const char	*cur_line;
 
-	p = line;
+	cur_line = sh->line;
+	prm = sh->line;
 	new = NULL;
 	word_len = 0;
 	quote_type = NONE;
 	is_joined_with_next = 0;
 	in_quote = 0;
-	while (*p)
+
+	while (*prm)
 	{
 		if (word_len && !in_quote
-			&& (*p == ' ' || *p == '\t' || *p == '"' || *p == '\''))
+			&& (*prm == ' ' || *prm == '\t' || *prm == '"' || *prm == '\''
+				|| *prm == '|' || *prm == '<' || *prm == '>'))
 			break ;
-		if ((quote_type != SINGLE && *p == '"')
-			|| (quote_type != DOUBLE && *p == '\''))
+		if ((quote_type != SINGLE && *prm == '"')
+			|| (quote_type != DOUBLE && *prm == '\''))
 		{
 			if (in_quote)
 			{
-				p++;
-				line++;//クオート分スキップ
+				prm++;
+				cur_line++;//クオート分スキップ
 				break ;
 			}
 			in_quote = 1;
-			if (*p == '\'')
+			if (*prm == '\'')
 				quote_type = SINGLE;
-			else if (*p == '"')
+			else if (*prm == '"')
 				quote_type = DOUBLE;
 		}
 		else
 			word_len++;
-		p++;
+		prm++;
 	}
-	if (*p && *p != ' ' && *p != '\t')
+	if (*prm && *prm != ' ' && *prm != '\t'
+		&& *prm != '|' && *prm != '<' && *prm != '>')
 		is_joined_with_next = 1;
 	if (word_len == 0)
-		p = ft_strdup("");
+		prm = ft_strdup("");
 	else
-		p = ft_strndup(line, word_len);
-	new = ft_tokenlst_new(p, WORD, quote_type, is_joined_with_next);
+		prm = ft_strndup(cur_line, word_len);
+	new = ft_tokenlst_new(prm, WORD, quote_type, is_joined_with_next);
 	// new = NULL;//mallocチェックokメモリリークまだ
 	if (new == NULL)
-		malloc_error(token_lst, NULL, &env_lst, NULL);
-	//↑tokeniseのじてんではファイル名や変数名もWORDとしておく
-	ft_tokenlst_add_back(token_lst, new);
+		malloc_error(sh, NULL);
+	ft_tokenlst_add_back(&sh->token, new);
 	return (ft_strlen(new->str) + in_quote * 2);
 }
 
+// line が進んでしまってfree(line)の時promptの先頭をfreできなくなっていたので修正
+// -> ここが都度挙動が変わってしまう原因だったと思われる
 //current1009 : mallocないで解放してexitするように変更
-t_token	*tokenize_line(char *line, t_env *env_lst)
+void	tokenize_line(t_shell *sh)
 {
-	t_token	*token_lst;
-	int len;
+	char	*cursor;
+	char	*original_line;
+	int		len;
 
-	token_lst = NULL;
-	len = 0;
-	while (*line)
+	if (!sh || !sh->line)
+		return ;
+	original_line = sh->line;
+	cursor = sh->line;
+	while (cursor && *cursor)
 	{
-		while (*line == ' ' || *line == '\t')
-			line++;
-		if (*line == '\0')
+		while (*cursor == ' ' || *cursor == '\t')
+			cursor++;
+		if (*cursor == '\0')
 			break ;
-		if (*line == '|' || *line == '<' || *line == '>')
-		{
-			len = handle_metacharacter(&token_lst, line, env_lst);
-			//↑malloc_errorは処理済み
-			line += len;
-		}
-		else
-		{
-			len = handle_word(&token_lst, line, env_lst);
-			//↑malloc_errorは処理済み
-			line += len;
-		}
-	}
-	//line = ""の時、""を一つのトークンとする
-	return (token_lst);
-}
 
-//要修正 : ca''t'' -e の時、cat-eになってしまう
+		sh->line = cursor;
+		if (*cursor == '|' || *cursor == '<' || *cursor == '>')
+			len = handle_metacharacter(sh);//malloc_errorは処理済み
+		else
+			len = handle_word(sh);//malloc_errorは処理済み
+		if (len <= 0)
+			cursor++;
+		else
+			cursor += len;
+	}
+	sh->line = original_line;
+	//line = ""の時、""を一つのトークンとする
+}

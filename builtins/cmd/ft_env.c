@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 17:41:21 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/23 08:37:25 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/25 17:07:56 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,7 @@ static int ft_putenv_fd(t_env *env_lst, int fd)
         || ft_putstr_fd("=", fd) < 0
         || ft_putstr_fd(env_lst->value, fd) < 0
         || ft_putstr_fd("\n", fd) < 0)
-    {
-        perror("minishell: env");
-		return (EXIT_FAILURE);
-    }
+            perror_exit("minishell: env");
     return (EXIT_SUCCESS);
 }
 

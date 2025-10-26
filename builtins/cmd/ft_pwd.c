@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 21:31:32 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/23 08:46:02 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/25 17:08:03 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,17 +21,13 @@ int ft_pwd(t_env *env_lst, int fd)
     {
         cwd = ft_get_env(env_lst, "PWD");
         if (cwd == NULL)
-        {
-            perror("minishell: pwd");
-            return (EXIT_FAILURE);
-        }
+            perror_exit("minishell: pwd");
     }
     if (ft_putstr_fd(cwd, fd) < 0 || ft_putstr_fd("\n", fd) < 0)
     {
-        perror("minishell: pwd");
         if (cwd && cwd != ft_get_env(env_lst, "PWD"))
             free(cwd);
-		return (EXIT_FAILURE);
+        perror_exit("minishell: pwd");
     }
     if (cwd && cwd != ft_get_env(env_lst, "PWD"))
         free(cwd);

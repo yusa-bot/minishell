@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_tokenlst_utils.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 18:55:49 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/10/09 16:12:21 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/25 20:13:51 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,17 @@ void	ft_tokenlst_delone(t_token *lst)
 	if (lst)
 	{
 		if (lst->str)
+		{
 			free(lst->str);
+			lst->str = NULL;
+		}
 		if (lst->original_str)
+		{
 			free(lst->original_str);
+			lst->original_str = NULL;
+		}
 		free(lst);
+		lst = NULL;
 	}
 }
 

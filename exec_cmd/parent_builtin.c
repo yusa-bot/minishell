@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 20:24:47 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/23 09:54:00 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/25 18:03:30 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,25 +37,26 @@ static void fd_restore(int save_stdin, int save_stdout)
     }
 }
 
-int run_parent(t_cmd *cmd, t_env **env_lst, t_shell *shell)
+int exec_parent(t_shell *sh)
 {
     int save_in = -1;
     int save_out = -1;
 
+    printf("exec_parent\n");
     if (fd_save(&save_in, &save_out) < 0)
     {
         perror("dup");
         return (0);
     }
 	// 環境自体の入力/出力を変える
-	shell->status = apply_redirect(cmd, shell);
-    if (shell->status != EXIT_SUCCESS)
+	sh->status = apply_redirect(sh);
+    if (sh->status != EXIT_SUCCESS)
     {
         fd_restore(save_in, save_out);
 		perror("redirect");
         return (0);
     }
-    shell->status = run_builtin(cmd->cmd_args, env_lst, shell);
+    sh->status = run_builtin(sh, sh->cmd->cmd_args);
     fd_restore(save_in, save_out);
-	return (shell->status);
+	return (sh->status);
 }

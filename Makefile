@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: rinka <rinka@student.42.fr>                +#+  +:+       +#+         #
+#    By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/08 19:14:52 by rinka             #+#    #+#              #
-#    Updated: 2025/10/23 23:14:11 by rinka            ###   ########.fr        #
+#    Updated: 2025/10/26 11:13:33 by ayusa            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,11 +14,8 @@ NAME = minishell
 
 SRCS = \
 	main.c \
+	minishell_util.c \
 	signal.c \
-	pipe.c \
-	redirect.c \
-	child_external_search_path.c \
-	ft_free_handle.c \
 	builtins/env_util.c \
 	builtins/env_lst_utils.c \
 	builtins/cmd/ft_cd.c \
@@ -28,9 +25,12 @@ SRCS = \
 	builtins/cmd/ft_export.c \
 	builtins/cmd/ft_pwd.c \
 	builtins/cmd/ft_unset.c \
-	exec_buildin/buildin.c \
-	exec_buildin/child_builtin.c \
-	exec_buildin/parent_builtin.c \
+	exec_cmd/pipe.c \
+	exec_cmd/buildin.c \
+	exec_cmd/redirect.c \
+	exec_cmd/parent_builtin.c \
+	exec_cmd/child_builtin.c \
+	exec_cmd/child_external_search_path.c \
 	parser/ft_cmdlst_utils.c \
 	parser/join_expanded_tokens.c \
 	parser/ft_parser_utils.c \
@@ -41,7 +41,6 @@ SRCS = \
 	tokenizer/ft_tokenlst_utils.c \
 	tokenizer/ft_tokenlst_sort.c \
 	utils/ft_free.c \
-	utils/ft_utils.c \
 	#parser/ft_globbing.c \
 
 OBJS = $(SRCS:.c=.o)
@@ -52,15 +51,15 @@ CFLAGS = -Wall -Wextra -Werror
 LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
-# linux
+# 42linux
 # INCLUDE = -I./include
 # LDFLAGS = -lreadline
 
 # yusa_mac
- INCLUDE = -I./include -I/opt/homebrew/opt/readline/include
- LDFLAGS = -L/opt/homebrew/opt/readline/lib -lreadline
+INCLUDE = -I./include -I/opt/homebrew/opt/readline/include
+LDFLAGS = -L/opt/homebrew/opt/readline/lib -lreadline
 
-#	rinka_mac
+# rinka_mac
 # INCLUDE = -I./include -I/usr/local/opt/readline/include
 # LDFLAGS = -L/usr/local/opt/readline/lib -lreadline
 

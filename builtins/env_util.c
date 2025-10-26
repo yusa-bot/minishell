@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:29:18 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/23 08:45:52 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/26 11:50:52 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ char **env_to_array(t_env *env_lst)
 {
     int     count = 0;
     char    **arr;
-    char    *tmp;
+    char    *str;
     t_env   *cur;
 
     cur = env_lst;
@@ -37,10 +37,13 @@ char **env_to_array(t_env *env_lst)
         if (cur->is_export)
         {
             if (cur->value)
-                tmp = ft_strjoin3(cur->key, "=", cur->value);
+            {
+                str = ft_strjoin_oneptr(cur->key, "=");
+                str = ft_strjoin_oneptr(str, cur->value);
+            }
             else
-                tmp = ft_strdup(cur->key);
-            arr[count++] = tmp;
+                str = ft_strdup(cur->key);
+            arr[count++] = str;
         }
         cur = cur->next;
     }

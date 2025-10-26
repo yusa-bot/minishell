@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 19:11:30 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/10/23 09:26:21 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/25 13:37:43 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include "struct.h"
 # include "minishell.h"
 
-t_token	*tokenize_line(char *line, t_env *env_lst);
+void	tokenize_line(t_shell *sh);
 
 //ft_tokenlst_utils.c
 void	ft_tokenlst_delone(t_token *lst);

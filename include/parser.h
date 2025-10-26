@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/23 09:04:36 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/23 18:47:30 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/26 11:08:21 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,13 @@
 # include "struct.h"
 # include "minishell.h"
 
-t_cmd	*ft_parser(t_token *token_lst, t_env *env_lst, char ***tmpfiles, t_shell *shell);
+t_cmd	*ft_parser(t_shell *sh);
 
-t_token	*join_expanded_tokens(t_token **cmd_start, t_token **token_lst, t_env *env_lst, t_shell *shell);
+t_token	*join_expanded_tokens(t_shell *sh, t_token **cmd_start);
 
 //ft_parser_utils.c
 t_token	*ft_tokenlst_dup(t_token *lst);
-void	*ambiguous_redirect_error(char *original, t_token *token_lst, t_token *single_token_lst, t_env *env_lst);
+void	*ambiguous_redirect_error(t_shell *sh, char *original, t_token *single_token_lst);
 
 //ft_cmdlst_utils.c
 t_cmd	*ft_cmdlst_init(void);
@@ -43,6 +43,8 @@ void		ft_redirectlst_add_back(t_redirect **lst, t_redirect *new);
 //t_token	*glob_single_token(char *pattern);
 //void	ft_globbing(t_token **token_list_ptr, int *arg_count);
 
-char	*ft_heredoc(char *eof, t_cmd *cmd_lst, t_env *env_lst, char ***tmpfiles);
+char	*ft_heredoc(t_shell *sh, char *eof);
+
+int	is_delimiter(char *str);
 
 #endif

@@ -23,12 +23,6 @@ typedef struct s_env {
 	struct s_env	*next;
 } t_env;
 
-typedef struct s_shell {
-	struct s_env	*env;
-	int			status;
-	int			is_pipe;
-} t_shell;
-
 typedef enum e_token_type
 {
 	PIPE,
@@ -74,8 +68,16 @@ typedef struct s_cmd
 	char			**env_vars;//一時的な環境変数
 	t_redirect		*infile;
 	t_redirect		*outfile;
-	struct s_cmd	*prev;//pipeline用
 	struct s_cmd	*next;//pipeline用
 }	t_cmd;
+
+typedef struct s_shell{
+	int		status;
+	t_env	*env;
+	t_token	*token;
+	t_cmd	*cmd;
+	char	*line; //prompt
+	char	**tmpfiles;
+} t_shell;
 
 #endif
