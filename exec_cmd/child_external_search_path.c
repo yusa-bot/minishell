@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 15:45:01 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/23 10:02:06 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/26 11:04:37 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,13 @@
 static char	*build_full_path(const char *dir, const char *cmd)
 {
 	char	*path;
-	char	*temp;
+	char	*tmp;
 
-	temp = ft_strjoin(dir, "/");
-	if (!temp)
-	{
-		perror("malloc");
-		exit(EXIT_FAILURE);
-	}
-	path = ft_strjoin(temp, cmd);
-	free(temp);
+	tmp = ft_strjoin(dir, "/");
+	if (!tmp)
+		perror_exit("malloc");
+	path = ft_strjoin(tmp, cmd);
+	free(tmp);
 	return (path);
 }
 
@@ -39,10 +36,7 @@ static char	*search_in_path(const char *cmd, const char *path_env)
 		return (NULL);
 	paths = ft_split(path_env, ':');
 	if (!paths)
-	{
-		perror("malloc");
-		exit(EXIT_FAILURE);
-	}
+		perror_exit("malloc");
 
 	i = 0;
 	while (paths[i])

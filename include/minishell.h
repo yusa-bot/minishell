@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/23 09:03:13 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/25 13:52:14 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/25 21:46:20 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ extern volatile sig_atomic_t g_sig;
 //ft_error.c
 void	malloc_error(t_shell *sh, t_token **single_token_lst);
 void	*syntax_error(t_shell *sh, char *unexpected_token);
+void	perror_exit(char *msg);
+void	err_wrt(int fd, char *str1, char *str2);
 
 void	setup_signals_interactive(void);
 void	sigint_handler(int sig);
@@ -77,14 +79,13 @@ void	ft_token_clear(t_token **token_lst);
 
 int		ft_echo(char **argv, int fd);
 int		ft_exit(char **argv, t_shell *shell);
-void	free_split(char **arr);
 
 int		prepare_heredocs(t_cmd *cmd_lst);
 
 // minishell_util
 int		read_prompt(t_shell *sh);
 void	minishell_init(t_shell *sh, char **envp);
-void	after_oneloop(t_shell *sh);
+void	after_oneloop_cleanup(t_shell *sh);
 void	after_minishell(t_shell *sh);
 
 void	exec_cmd_handler(t_shell *sh);

@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 13:12:13 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/25 13:37:49 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/25 22:03:21 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char **ft_strarr_add(char **arr, char *new_str)
 	res = malloc(sizeof(char *) * (i + 2));
 	if(res == NULL)
 	{
-		ft_free_str_array(arr);
+		free_split(arr);
 		return (NULL);
 	}
 	i = 0;
@@ -35,7 +35,7 @@ char **ft_strarr_add(char **arr, char *new_str)
 	res[i] = ft_strdup(new_str);
 	if(res[i] == NULL)
 	{
-		ft_free_str_array(res);
+		free_split(res);
 		free(arr);
 		return (NULL);
 	}
@@ -73,10 +73,10 @@ char *create_heredoc_filename(void) //呼び出し元でaccessチェック→既
 	res = ft_strjoin("/tmp/.hd_", tty_str);
 	if (res == NULL)
 		return(free_hdfile_info(tty_str, counter_str));
-	res = ft_strjoin_safe(res, "_");
+	res = ft_strjoin_oneptr(res, "_");
 	if (res == NULL)
 		return(free_hdfile_info(tty_str, counter_str));
-	res = ft_strjoin_safe(res, counter_str);
+	res = ft_strjoin_oneptr(res, counter_str);
 	if (res == NULL)
 		return(free_hdfile_info(tty_str, counter_str));
 	free(tty_str);
@@ -134,7 +134,7 @@ char	*ft_heredoc(t_shell *sh, char *eof)
 		free(line);
 	}
 	close(hd_fd);
-	*sh->tmpfiles = ft_strarr_add(*sh->tmpfiles, hd_filename);
+	sh->tmpfiles = ft_strarr_add(sh->tmpfiles, hd_filename);
 	return (hd_filename);
 }
 

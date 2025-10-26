@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 18:58:26 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/10/25 13:38:14 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/26 14:21:13 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ static int	handle_metacharacter(t_shell *sh)
 		new = ft_tokenlst_new(ft_strdup(">"), REDIRECT_OUT, quote_type, 0);
 	else
 		new = ft_tokenlst_new(ft_strdup("<"), REDIRECT_IN, quote_type, 0);
+	// ft_tokenlst_clear(&new);///mallocチェックokメモリリークまだ
+	// new = NULL;///
 	if (!new)
 		malloc_error(sh, NULL);
 	ft_tokenlst_add_back(&sh->token, new);
@@ -43,7 +45,9 @@ int	handle_word(t_shell *sh)
 	int				in_quote;
 	int				word_len;
 	int				is_joined_with_next;
+	const char	*cur_line;
 
+	cur_line = sh->line;
 	prm = sh->line;
 	new = NULL;
 	word_len = 0;
@@ -54,7 +58,8 @@ int	handle_word(t_shell *sh)
 	while (*prm)
 	{
 		if (word_len && !in_quote
-			&& (*prm == ' ' || *prm == '\t' || *prm == '"' || *prm == '\''))
+			&& (*prm == ' ' || *prm == '\t' || *prm == '"' || *prm == '\''
+				|| *prm == '|' || *prm == '<' || *prm == '>'))
 			break ;
 		if ((quote_type != SINGLE && *prm == '"')
 			|| (quote_type != DOUBLE && *prm == '\''))
@@ -62,7 +67,7 @@ int	handle_word(t_shell *sh)
 			if (in_quote)
 			{
 				prm++;
-				sh->line++;//クオート分スキップ
+				cur_line++;//クオート分スキップ
 				break ;
 			}
 			in_quote = 1;
@@ -75,43 +80,51 @@ int	handle_word(t_shell *sh)
 			word_len++;
 		prm++;
 	}
-	if (*prm && *prm != ' ' && *prm != '\t')
+	if (*prm && *prm != ' ' && *prm != '\t'
+		&& *prm != '|' && *prm != '<' && *prm != '>')
 		is_joined_with_next = 1;
 	if (word_len == 0)
 		prm = ft_strdup("");
 	else
-		prm = ft_strndup(sh->line, word_len);
+		prm = ft_strndup(cur_line, word_len);
 	new = ft_tokenlst_new(prm, WORD, quote_type, is_joined_with_next);
+	// new = NULL;//mallocチェックokメモリリークまだ
 	if (new == NULL)
 		malloc_error(sh, NULL);
 	ft_tokenlst_add_back(&sh->token, new);
 	return (ft_strlen(new->str) + in_quote * 2);
 }
 
+// line が進んでしまってfree(line)の時promptの先頭をfreできなくなっていたので修正
+// -> ここが都度挙動が変わってしまう原因だったと思われる
 //current1009 : mallocないで解放してexitするように変更
 void	tokenize_line(t_shell *sh)
 {
-	int len;
+	char	*cursor;
+	char	*original_line;
+	int		len;
 
-	len = 0;
-	while (sh->line)
+	if (!sh || !sh->line)
+		return ;
+	original_line = sh->line;
+	cursor = sh->line;
+	while (cursor && *cursor)
 	{
-		while (*sh->line == ' ' || *sh->line == '\t')
-			sh->line++;
-		if (*sh->line == '\0')
+		while (*cursor == ' ' || *cursor == '\t')
+			cursor++;
+		if (*cursor == '\0')
 			break ;
-		if (*sh->line == '|' || *sh->line == '<' || *sh->line == '>')
-		{
-			len = handle_metacharacter(sh);//↑malloc_errorは処理済み
-			sh->line += len;
-		}
+
+		sh->line = cursor;
+		if (*cursor == '|' || *cursor == '<' || *cursor == '>')
+			len = handle_metacharacter(sh);//malloc_errorは処理済み
 		else
-		{
-			len = handle_word(sh);//↑malloc_errorは処理済み
-			sh->line += len;
-		}
+			len = handle_word(sh);//malloc_errorは処理済み
+		if (len <= 0)
+			cursor++;
+		else
+			cursor += len;
 	}
+	sh->line = original_line;
 	//line = ""の時、""を一つのトークンとする
 }
-
-//要修正 : ca''t'' -e の時、cat-eになってしまう

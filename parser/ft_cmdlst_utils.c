@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 18:55:49 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/10/25 14:12:03 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/25 21:49:19 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,8 @@ void	ft_cmdlst_delone(t_cmd *lst)
 {
 	if (lst)
 	{
-		ft_free_str_array(lst->cmd_args);
-		ft_free_str_array(lst->env_vars);
+		free_split(lst->cmd_args);
+		free_split(lst->env_vars);
 		if (lst->infile)
 			ft_redirectlst_clear(&lst->infile);
 		if (lst->outfile)

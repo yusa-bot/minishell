@@ -6,11 +6,23 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 21:38:45 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/25 13:36:43 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/26 14:08:53 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+// 子（heredocリーダー）
+//static void setup_signals_heredoc(void)
+//{
+//    struct sigaction sa = {0};
+
+//    sa.sa_handler = SIG_DFL;           // SIGINT はデフォルト（= 即終了）でもよい
+//    sigaction(SIGINT, &sa, NULL);
+//    sa.sa_handler = SIG_IGN;           // SIGQUIT は無視
+//    sigaction(SIGQUIT, &sa, NULL);
+//    // rl_catch_signals = 0; // readline使うなら自前制御推奨
+//}
 
 //子プロセス（コマンド実行時など）でシグナルの挙動を「デフォルト」に戻す
 void setup_signals_child(void)
@@ -18,8 +30,6 @@ void setup_signals_child(void)
 	signal(SIGINT, SIG_DFL);
     signal(SIGQUIT, SIG_DFL);
 }
-
-
 
 //Ctrl+C
 void	handler_interactive(int signo)

@@ -44,7 +44,7 @@ char	**set_env_vars(t_token **lst, int var_count)
 		env_vars[i] = ft_strdup((*lst)->str);
 		if (env_vars[i] == NULL)
 		{
-			ft_free_str_array(env_vars);
+			free_split(env_vars);
 			return (NULL);
 		}
 		i++;
@@ -133,7 +133,7 @@ char	**set_cmd_args(t_token *current_lst, int arg_count)
 			cmd_args[i] = ft_strdup(current_lst->str);
 			if (cmd_args[i] == NULL)
 			{
-				ft_free_str_array(cmd_args);
+				free_split(cmd_args);
 				return (NULL);
 			}
 			i++;
@@ -171,6 +171,7 @@ t_cmd	*ft_parse_single_cmd(t_shell *sh, t_token *single_token_lst)
 		if (res->cmd_args == NULL)
 			malloc_error(sh, &single_token_lst);
 	}
+	ft_tokenlst_clear(&single_token_lst);
 	return (res);
 }
 

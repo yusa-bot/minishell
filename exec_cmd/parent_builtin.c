@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 20:24:47 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/25 13:49:07 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/25 18:03:30 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ int exec_parent(t_shell *sh)
     int save_in = -1;
     int save_out = -1;
 
+    printf("exec_parent\n");
     if (fd_save(&save_in, &save_out) < 0)
     {
         perror("dup");

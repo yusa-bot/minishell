@@ -1,18 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_isdelimit.c                                     :+:      :+:    :+:   */
+/*   free_split.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/14 20:43:35 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/23 09:42:45 by ayusa            ###   ########.fr       */
+/*   Created: 2025/10/25 21:49:36 by ayusa             #+#    #+#             */
+/*   Updated: 2025/10/25 21:49:58 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	is_delimiter(char *str)
+void	free_split(char **arr)
 {
-	return (str && (str[0] == '>' || str[0] == '<'));
+	int	i;
+
+	i = 0;
+	if (!arr)
+		return ;
+	while (arr[i])
+		free(arr[i++]);
+	free(arr);
+	arr = NULL;
 }

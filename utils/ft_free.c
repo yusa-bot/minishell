@@ -6,20 +6,17 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 16:30:18 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/25 13:38:21 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/26 10:43:31 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void free_split(char **arr)
+
+void	perror_exit(char *msg)
 {
-	int i = 0;
-	if (!arr)
-		return;
-	while (arr[i])
-		free(arr[i++]);
-	free(arr);
+	perror(msg);
+	exit(EXIT_FAILURE);
 }
 
 void	continue_free(t_shell *sh)
@@ -47,7 +44,7 @@ void	*syntax_error(t_shell *sh, char *unexpected_token)
 	full_msg = ft_strjoin("minishell: syntax error near unexpected token `", unexpected_token);
 	ft_tokenlst_clear(&sh->token);
 	if (full_msg)
-		full_msg = ft_strjoin_safe(full_msg, "'");
+		full_msg = ft_strjoin_oneptr(full_msg, "'");
 	if (full_msg == NULL)
 		malloc_error(sh, NULL);
 	ft_putendl_fd(full_msg, 2);

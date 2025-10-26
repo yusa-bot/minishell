@@ -6,81 +6,88 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 14:45:06 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/25 13:49:22 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/26 12:43:18 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+int	exec_external(t_shell *sh)
+{
+	fprintf(stderr, "exec_external\n");
+	char	*msg;
+	struct stat st;
+
+	char *path = search_external_path(sh->cmd->cmd_args[0], &sh->env);
+	if (!path)
+	{
+		msg = ft_strjoin_oneptr("minishell: ", sh->cmd->cmd_args[0]);
+		msg = ft_strjoin_oneptr(msg, ": command not found\n");
+		ft_putendl_fd(msg, 2);
+		free(msg);
+		return (127); //free(msg);
+	}
+
+	char **envp = env_to_array(sh->env);
+	execve(path, sh->cmd->cmd_args, envp);
+
+	// execve失敗後の処理 各msgを出してstatusでreturn -> 呼び出し元でclean up & exit & sh->statusに保存
+	if (envp)
+		free_split(envp);
+
+	if (stat(path, &st) == 0 && S_ISDIR(st.st_mode))
+	{
+		free(path);
+		msg = ft_strjoin_oneptr("minishell: ", sh->cmd->cmd_args[0]);
+		msg = ft_strjoin_oneptr(msg, ": Is a directory\n");
+		ft_putendl_fd(msg, 2);
+		free(msg);
+		return (126); //free(msg);
+	}
+	free(path);
+
+	msg = ft_strjoin("minishell: ", sh->cmd->cmd_args[0]);
+	perror(msg);
+	free(msg);
+
+	if (errno == EACCES || errno == EISDIR)
+		return (126); // Permission denied / Is a directory
+	else if (errno == ENOENT)
+		return (127); // command not found
+	else
+		return (126); // その他
+}
+
 int	exec_child(t_shell *sh)
 {
+	fprintf(stderr, "exec_child\n");
 	setup_signals_child();
-	sh->status = apply_redirect(sh);
-	if (sh->status != EXIT_SUCCESS)////
-        return sh->status;
-	printf("exec_child called: %s\n", sh->cmd->cmd_args[0]);
+
+	if (sh->cmd->infile || sh->cmd->outfile)
+		sh->status = apply_redirect(sh);
+
 	if (is_builtin_child(sh->cmd->cmd_args))
-		return (run_builtin(sh, &sh->cmd->cmd_args[0]));
+		return (run_builtin(sh, &sh->cmd->cmd_args[0])); //必ず戻ってくる
 	else //external
-	{
-		printf("exec_child external: %s\n", sh->cmd->cmd_args[0]);
-		char *path = search_external_path(sh->cmd->cmd_args[0], &sh->env);
-		if (!path)
-		{
-			write(STDERR_FILENO, "minishell: ", 11);
-			write(STDERR_FILENO, sh->cmd->cmd_args[0], ft_strlen(sh->cmd->cmd_args[0]));
-			write(STDERR_FILENO, ": command not found\n", 20);
-			return (127);
-		}
-		char **envp = env_to_array(sh->env);
-		execve(path, sh->cmd->cmd_args, envp);
-		free(path);
-		if (envp)
-			free_split(envp);
-
-		struct stat st;
-		if (stat(path, &st) == 0 && S_ISDIR(st.st_mode))
-		{
-			write(STDERR_FILENO, "minishell: ", 11);
-			write(STDERR_FILENO, sh->cmd->cmd_args[0], ft_strlen(sh->cmd->cmd_args[0]));
-			write(STDERR_FILENO, ": Is a directory\n", 17);
-			return (126);
-		}
-
-		char *msg = ft_strjoin("minishell: ", sh->cmd->cmd_args[0]);
-		if (!msg)
-		{
-			perror("malloc");
-			exit(EXIT_FAILURE);//?
-		}
-		perror(msg);
-		free(msg);
-
-		if (errno == EACCES || errno == EISDIR)
-			return (126); // Permission denied / Is a directory
-		else if (errno == ENOENT)
-			return (127); // command not found
-		else
-			return (126); // その他
-	}
+		sh->status = exec_external(sh);
+	return (sh->status);
 }
 
 int exec_child_handler(t_shell *sh)
 {
+	fprintf(stderr, "exec_child_handler\n");
     pid_t pid;
 
     pid = fork();
-    if (pid < 0)
-    {
-		perror("fork");
-		exit(EXIT_FAILURE);
-    }
+	if (pid < 0)
+		perror_exit("fork");
+
     if (pid == 0)
 	{
 		sh->status = exec_child(sh);
-		if (sh->status != EXIT_SUCCESS)
-			exit(sh->status);
+		exit(sh->status); //後処理は親
 	}
+
     else//単独コマンドだったらこっちが親
     {
         waitpid(pid, &sh->status, 0); // sh->statusに子プロセスの終了コードを保存

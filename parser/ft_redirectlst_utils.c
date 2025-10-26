@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 15:15:58 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/23 18:31:29 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/25 20:35:08 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ t_redirect *ft_redirectlst_init(void)
 	new_redirect->expanded_arg = NULL;
 	new_redirect->original_arg = NULL;
 	new_redirect->token_type = REDIRECT_IN;
+	new_redirect->next = NULL; //追加
 	return (new_redirect);
 }
 

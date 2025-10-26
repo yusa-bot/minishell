@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/25 13:44:41 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/26 12:41:35 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,24 @@ void	token_debag(t_token *token_lst);
 void	cmd_debag(t_cmd *cmd_lst, int j);
 void	heredoc_debag(char **tmpfiles);
 
+void	exec_cmd_handler(t_shell *sh)
+{
+	fprintf(stderr, "exec_cmd_handler\n");
+	if (sh->cmd && sh->cmd->next)
+		sh->status = exec_pipe(sh);
+	else if (is_builtin_parent(sh->cmd->cmd_args))
+		sh->status = exec_parent(sh);
+	else
+		sh->status = exec_child_handler(sh);
+}
+
 int	prompt_to_struct(t_shell *sh)
 {
 	tokenize_line(sh);//mallocチェックokメモリリークまだ
 	if (!sh->token)
 	{
 		free(sh->line);
+		sh->line = NULL;
 		return (0);
 	}
 	//token_debag(sh.token); //debag
@@ -32,6 +44,7 @@ int	prompt_to_struct(t_shell *sh)
 	{
 		ft_tokenlst_clear(&sh->token);
 		free(sh->line);
+		sh->line = NULL;
 		return (0);
 	}
 	return (1);
@@ -42,7 +55,10 @@ void	minishell_loop(t_shell *sh)
 	while (1)
 	{
 		if (read_prompt(sh))
+		{
+			fprintf(stderr, "exit debag\n");
 			break ;
+		}
 		else if (!sh->line)
 			continue ;
 		if (!prompt_to_struct(sh))
@@ -50,9 +66,13 @@ void	minishell_loop(t_shell *sh)
 		//cmd_debag(sh.cmd, loop_count); //debag
 		//heredoc_debag(tmpfiles); //debag
 		exec_cmd_handler(sh);
-		after_oneloop(sh); // 1loopごとの後処理↓
+		after_oneloop_cleanup(sh); // 1loopごとの後処理↓
 	}
-	after_minishell(sh);
+	after_oneloop_cleanup(sh);
+	rl_clear_history();
+	ft_lst_clear(&sh->env);
+	sh->env = NULL;
+	fprintf(stderr, "exit debag2\n");
 }
 
 int main(int argc, char **argv, char **envp)
@@ -65,6 +85,7 @@ int main(int argc, char **argv, char **envp)
 	g_sig = 0;
 	rl_catch_signals = 0; // シグナルをreadlineではなく自作で制御するため。
 	minishell_loop(&sh);
+	fprintf(stderr, "exit debag3\n");
 	return (sh.status);
 }
 

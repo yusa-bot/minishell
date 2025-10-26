@@ -6,7 +6,7 @@
 #    By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/08 19:14:52 by rinka             #+#    #+#              #
-#    Updated: 2025/10/25 13:54:20 by ayusa            ###   ########.fr        #
+#    Updated: 2025/10/26 11:13:33 by ayusa            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,7 +41,6 @@ SRCS = \
 	tokenizer/ft_tokenlst_utils.c \
 	tokenizer/ft_tokenlst_sort.c \
 	utils/ft_free.c \
-	utils/ft_utils.c \
 	#parser/ft_globbing.c \
 
 OBJS = $(SRCS:.c=.o)

@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/23 09:04:36 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/25 13:37:28 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/26 11:08:21 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,5 +44,7 @@ void		ft_redirectlst_add_back(t_redirect **lst, t_redirect *new);
 //void	ft_globbing(t_token **token_list_ptr, int *arg_count);
 
 char	*ft_heredoc(t_shell *sh, char *eof);
+
+int	is_delimiter(char *str);
 
 #endif
