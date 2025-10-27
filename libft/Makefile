@@ -9,7 +9,7 @@ SOURCES = ft_isalpha.c ft_isdigit.c ft_isalnum.c ft_isascii.c \
 			ft_strtrim.c ft_split.c ft_itoa.c ft_strmapi.c ft_striteri.c \
 			ft_putchar_fd.c ft_putstr_fd.c ft_putendl_fd.c ft_putnbr_fd.c \
 			free_split.c ft_strcmp.c ft_strjoin_oneptr.c \
-			ft_strndup.c ft_strspn.c ft_strtol.c
+			ft_strndup.c ft_strspn.c ft_strtol.c ft_strjoin_safe.c ft_strjoin.c
 
 OBJECTS = $(SOURCES:.c=.o)
 

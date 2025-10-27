@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 10:15:09 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/10/26 14:36:47 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/27 14:17:56 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,5 +61,6 @@ char    *ft_strjoin_oneptr(char *s1, char *s2);
 void    free_split(char **arr);
 size_t  ft_strspn(const char *s, const char *accept);
 long	ft_strtol(const char *nptr, char **endptr, int base);
+char *ft_strjoin_safe(char *s1, char *s2);
 
 #endif
