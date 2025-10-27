@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 17:46:15 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/24 18:06:05 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/27 14:27:22 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ static int	free_filename(t_redirect **infile, t_redirect **outfile, t_redirect *
 }
 
 //リダイレクト＆ファイル名格納
-static int set_filename(t_redirect **new_file, t_token *lst, char ***tmpfiles)
+static int set_filename(t_redirect **new_file, t_token *lst, t_shell *sh)
 {
 	if ((lst->next)->original_str)
 	{
@@ -88,7 +88,7 @@ static int set_filename(t_redirect **new_file, t_token *lst, char ***tmpfiles)
 	}
 	if (lst->token_type == HEREDOC)
 	{
-		(*new_file)->expanded_arg = ft_heredoc((lst->next)->str, NULL, NULL, tmpfiles);//エラー処理いったん仮
+		(*new_file)->expanded_arg = ft_heredoc(sh, (lst->next)->str);//エラー処理いったん仮
 		if ((*new_file)->expanded_arg)
 		{
 			//openfileエラー
@@ -106,11 +106,7 @@ static int set_filename(t_redirect **new_file, t_token *lst, char ***tmpfiles)
 
 
 //呼び出し元でmalloc_errorの処理予定だったけどopenエラーと区別するためその場で解放の方がいいかも
-
-int	set_infile_name(t_shell *sh, t_token *lst, t_redirect **infile, t_redirect **outfile)
-
-// static int	set_redirect_info(t_token *lst, t_redirect **infile, t_redirect **outfile, char ***tmpfiles)
-
+static int	set_redirect_info(t_shell *sh, t_token *lst, t_redirect **infile, t_redirect **outfile)
 {
 	t_redirect *new_file;
 	t_redirect **add_to;
@@ -127,31 +123,8 @@ int	set_infile_name(t_shell *sh, t_token *lst, t_redirect **infile, t_redirect *
 			new_file = ft_redirectlst_init();
 			if (add_to == NULL)
 				return (free_filename(infile, outfile, new_file));
-
-			if ((lst->next)->original_str)
-			{
-				new_file->original_arg = ft_strdup((lst->next)->original_str);
-				if (new_file->original_arg == NULL)
-					return (free_filename(infile, outfile, new_file));
-			}
-			if (lst->token_type == HEREDOC)
-			{
-				new_file->expanded_arg = ft_heredoc(sh, (lst->next)->str);//エラー処理いったん仮
-				//「失敗（SIGINTとか）なら -1 を返して、そのコマンド列全体をスキップ」してる？
-				if (new_file->expanded_arg)
-				{
-					//openfileエラー
-				}
-			}
-			else
-			{
-				new_file->expanded_arg = ft_strdup((lst->next)->str);
-				if (new_file->expanded_arg == NULL)
-					return (free_filename(infile, outfile, new_file));
-			}
-
-// 			if (!set_filename(&new_file, lst, tmpfiles))
-// 				return (free_filename(infile, outfile, new_file));
+			if (!set_filename(&new_file, lst, sh))
+				return (free_filename(infile, outfile, new_file));
 
 			new_file->token_type = lst->token_type;
 			ft_redirectlst_add_back(add_to, new_file);
@@ -208,11 +181,9 @@ t_cmd	*ft_parse_single_cmd(t_shell *sh, t_token *single_token_lst)
 			malloc_error(sh, &single_token_lst);
 	}
 
-	if (set_infile_name(sh, current_lst, &(res->infile), (&res->outfile)))
+	if (set_redirect_info(sh, current_lst, &(res->infile), (&res->outfile)))
 		malloc_error(sh, &single_token_lst);
-// 	if (set_redirect_info(current_lst, &(res->infile), (&res->outfile), tmpfiles))
-// 		malloc_error(&token_lst, &res, &env_lst, &single_token_lst);
-	//ft_globbing(&current_lst, &arg_count);
+	ft_globbing(&current_lst, &arg_count);
 	if (arg_count)
 	{
 		res->cmd_args = set_cmd_args(current_lst, arg_count);
