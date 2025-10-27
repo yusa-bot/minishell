@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   child_builtin.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 14:45:06 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/26 12:43:18 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/27 17:09:41 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ int	exec_child(t_shell *sh)
 	if (sh->cmd->infile || sh->cmd->outfile)
 		sh->status = apply_redirect(sh);
 
-	if (is_builtin_child(sh->cmd->cmd_args))
+	if (is_builtin_parent(sh->cmd->cmd_args) || is_builtin_child(sh->cmd->cmd_args))
 		return (run_builtin(sh, &sh->cmd->cmd_args[0])); //必ず戻ってくる
 	else //external
 		sh->status = exec_external(sh);
