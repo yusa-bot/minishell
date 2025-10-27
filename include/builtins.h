@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:30:53 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/23 09:31:27 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/27 17:21:25 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ char	*ft_get_env(t_env *env_lst, const char *key);
 char	**env_to_array(t_env *env);
 
 int		ft_env(t_env *env_lst, int fd);
-int		ft_export(t_env *env_lst, int fd);
+int		ft_export(int fd, t_shell *sh);
 int		ft_unset(t_env **env_lst, char *delkey);
 int		ft_pwd(t_env *env_lst, int fd);
 int		ft_cd(char **argv, t_env **env_lst);

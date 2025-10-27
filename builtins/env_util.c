@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_util.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:29:18 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/26 11:50:52 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/27 17:23:20 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,31 +77,31 @@ t_env *ft_set_env(char **envp)
 	while (envp[i])
 	{
 		equal = ft_strchr(envp[i], '=');
-        if (!equal)
-        {
-            i++;
-            continue;
-        }
+		if (!equal)
+		{
+			i++;
+			continue;
+		}
 		key = ft_strndup(envp[i], equal - envp[i]);
 		if (!key)
         {
-            ft_lst_clear(&env_lst);
-            exit(EXIT_FAILURE);
-        }
+			ft_lst_clear(&env_lst);
+			exit(EXIT_FAILURE);
+		}
 		value = ft_strdup(ft_strchr(envp[i], '=') + 1);
 		if (!value)
-        {
-            free(key);
-            ft_lst_clear(&env_lst);
-            exit(EXIT_FAILURE);
-        }
+		{
+			free(key);
+			ft_lst_clear(&env_lst);
+			exit(EXIT_FAILURE);
+		}
 		ft_lst_add_back(&env_lst, ft_lst_new(key, value, 1));
 		i++;
 	}
 	return (env_lst);
 }
 
-void ft_add_env(t_env **env_lst, char *str, int is_export)
+void	ft_add_env(t_env **env_lst, char *str, int is_export)//引数にt_shell *sh追加予定
 {
 	char *key;
 	char *value;
@@ -119,29 +119,33 @@ void ft_add_env(t_env **env_lst, char *str, int is_export)
 		key = ft_strndup(str, equal_pos - str);
 		value = ft_strdup(equal_pos + 1);
 	}
-	if (key == NULL || (equal_pos != NULL && value == NULL))
+	if (key == NULL || (equal_pos != NULL && value == NULL))//mallocエラー処理
 	{
 		free(key);
 		free(value);
 		ft_lst_clear(env_lst);
-		return; // error_exit?
+		return; // malloc_error呼び出すように変更予定
 	}
 
 	cur = *env_lst;
 	while (cur)
-    {
-        if (ft_strcmp(cur->key, key) == 0)
-        {
-            free(cur->value);
-            cur->value = value;
-            cur->is_export = is_export;
-            free(key);
-            return;
-        }
-        cur = cur->next;
-    }
-
-	ft_lst_add_front(env_lst, ft_lst_new(key, value, is_export));
+	{
+		if (ft_strcmp(cur->key, key) == 0)// すでに存在する変数を更新する場合
+		{
+			if (equal_pos)//valueの更新を含む場合
+			{
+				free(cur->value);
+				cur->value = value;
+			}
+			cur->is_export = is_export;
+			free(key);
+			return;
+		}
+		cur = cur->next;
+	}
+	if (!equal_pos)//存在しない＆valueがない場合、何もしない
+		return ;
+	ft_lst_add_front(env_lst, ft_lst_new(key, value, is_export));//新しい変数追加の場合
 }
 
 

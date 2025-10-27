@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   buildin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 19:23:08 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/25 13:37:00 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/27 17:23:43 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int run_builtin(t_shell *sh, char **args)
 	if (!ft_strcmp(args[0], "cd"))
 		return (ft_cd(args, &sh->env));
 	else if (!ft_strcmp(args[0], "export"))
-		return (ft_export(sh->env, STDOUT_FILENO));
+		return (ft_export(STDOUT_FILENO, sh));
 	else if (!ft_strcmp(args[0], "unset"))
 		return (ft_unset(&sh->env, args[1]));
 	else if (!ft_strcmp(args[0], "exit"))
