@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 17:46:15 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/27 14:27:22 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/28 00:36:58 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,28 +42,20 @@ void	count_args_vars(t_token *lst,int *arg_count, int *var_count)
 	}
 }
 
-char	**set_env_vars(t_token **lst, int var_count)
+t_env *set_tmp_env(t_token **lst, int var_count)
 {
-	char	**env_vars;
-	int	i;
+	t_env *res;
+	t_token *tmp;
 
-	env_vars = malloc(sizeof(char *) * (var_count + 1));
-	if (env_vars == NULL)
-		return (NULL);
-	i = 0;
-	while (i < var_count)
+	(void)var_count;
+	res = NULL;
+	tmp = *lst;
+	while (tmp && tmp-> token_type == VARIABLE_ASSIGNMENT)
 	{
-		env_vars[i] = ft_strdup((*lst)->str);
-		if (env_vars[i] == NULL)
-		{
-			free_split(env_vars);
-			return (NULL);
-		}
-		i++;
-		*lst = (*lst)->next;
+		ft_add_env(&res, tmp->str, 1);
+		tmp = tmp->next;
 	}
-	env_vars[i] = NULL;
-	return (env_vars);
+	return (res);
 }
 
 static int	free_filename(t_redirect **infile, t_redirect **outfile, t_redirect *new_file)
@@ -174,10 +166,10 @@ t_cmd	*ft_parse_single_cmd(t_shell *sh, t_token *single_token_lst)
 	res = ft_cmdlst_init();
 	current_lst = single_token_lst;
 	count_args_vars(single_token_lst, &arg_count, &var_count);
-	if (var_count)//env_varsに一時的な環境変数の情報格納
+	if (var_count)//tmp_envに一時的な環境変数の情報格納
 	{
-		res->env_vars = set_env_vars(&current_lst, var_count);//current_lst->str);//
-		if (res->env_vars == NULL)
+		res->tmp_env = set_tmp_env(&current_lst, var_count);
+		if (res->tmp_env == NULL)
 			malloc_error(sh, &single_token_lst);
 	}
 
@@ -207,19 +199,6 @@ t_cmd	*ft_parser(t_shell *sh)
 		joined_token_lst = join_expanded_tokens(sh, &current_lst);//
 		if (!joined_token_lst)///syntax_errorのみ
 			return (NULL);
-		// t_token *tmp = joined_token_lst;
-		// while (tmp)/////
-		// {
-		// 	printf("str: %s\n", tmp->str);
-		// 	printf("original_str: %s\n", tmp->original_str);
-		// 	printf("token_type: %d\n", tmp->token_type);
-		// 	printf("quote_type: %d\n", tmp->quote_type);
-		// 	printf("joint_next: %d\n\n", tmp->is_joined_with_next);
-		// 	tmp = tmp->next;
-		// }
-		// printf("\n");
-		// if (tmp == NULL)
-		// 	printf("null tarminated\n");///////
 
 		if (is_delimiter(ft_tokenlst_last(joined_token_lst)->str))
 		{

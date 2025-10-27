@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:30:53 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/27 17:21:25 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/27 23:31:41 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ t_env	*ft_set_env(char **envp);
 char	*ft_get_env(t_env *env_lst, const char *key);
 char	**env_to_array(t_env *env);
 
-int		ft_env(t_env *env_lst, int fd);
+int		ft_env(t_shell *sh, int fd);
 int		ft_export(int fd, t_shell *sh);
 int		ft_unset(t_env **env_lst, char *delkey);
 int		ft_pwd(t_env *env_lst, int fd);

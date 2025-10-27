@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/26 12:41:35 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/28 00:01:37 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void	minishell_loop(t_shell *sh)
 			continue ;
 		if (!prompt_to_struct(sh))
 			continue;
-		//cmd_debag(sh.cmd, loop_count); //debag
+		cmd_debag(sh->cmd, 0); //debag
 		//heredoc_debag(tmpfiles); //debag
 		exec_cmd_handler(sh);
 		after_oneloop_cleanup(sh); // 1loopごとの後処理↓
@@ -124,13 +124,13 @@ void	cmd_debag(t_cmd *cmd_lst, int j)
 			i++;
 		}
 		printf("\n");
-		args = tmp_cmd->env_vars;
+		t_env *tmp_env = tmp_cmd->tmp_env;
 		i = 0;
 		printf("vars:");
-		while (args && args[i])
+		while (tmp_env)
 		{
-			printf(" %s", args[i]);
-			i++;
+			printf("%s=%s\n", tmp_env->key, tmp_env->value);
+			tmp_env = tmp_env->next;
 		}
 		printf("\n\n");
 		printf("files:\n");

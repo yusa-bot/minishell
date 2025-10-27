@@ -65,7 +65,7 @@ typedef struct s_redirect
 typedef struct s_cmd
 {
 	char			**cmd_args;
-	char			**env_vars;//一時的な環境変数
+	t_env		*tmp_env;//一時的な環境変数
 	t_redirect		*infile;
 	t_redirect		*outfile;
 	struct s_cmd	*next;//pipeline用

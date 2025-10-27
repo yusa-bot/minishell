@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cmdlst_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 18:55:49 by rtakayam          #+#    #+#             */
-/*   Updated: 2025/10/25 21:49:19 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/27 23:58:33 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,14 @@ t_cmd *ft_cmdlst_init(void)
 	if (new_cmd == NULL)
 		return (NULL);
 	new_cmd->cmd_args = NULL;
-	new_cmd->env_vars = NULL;
+	new_cmd->tmp_env = NULL;
 	new_cmd->infile = NULL;
 	new_cmd->outfile = NULL;
 	new_cmd->next = NULL;
 	return (new_cmd);
 }
 
-t_cmd	*ft_cmdlst_new(char **cmd_args, char **env_vars, t_redirect *infile, t_redirect *outfile)
+t_cmd	*ft_cmdlst_new(char **cmd_args, t_env *tmp_env, t_redirect *infile, t_redirect *outfile)
 {
 	t_cmd	*new;
 
@@ -36,7 +36,7 @@ t_cmd	*ft_cmdlst_new(char **cmd_args, char **env_vars, t_redirect *infile, t_red
 	if (new == NULL)
 		return (NULL);
 	new->cmd_args = cmd_args;
-	new->env_vars = env_vars;
+	new->tmp_env = tmp_env;
 	new->infile = infile;
 	new->outfile = outfile;
 	return (new);
@@ -47,7 +47,7 @@ void	ft_cmdlst_delone(t_cmd *lst)
 	if (lst)
 	{
 		free_split(lst->cmd_args);
-		free_split(lst->env_vars);
+		ft_lst_clear(&(lst->tmp_env));
 		if (lst->infile)
 			ft_redirectlst_clear(&lst->infile);
 		if (lst->outfile)

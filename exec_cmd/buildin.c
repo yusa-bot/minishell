@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 19:23:08 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/27 17:23:43 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/27 23:54:35 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int run_builtin(t_shell *sh, char **args)
     else if (!ft_strcmp(args[0], "pwd"))
         return (ft_pwd(sh->env, STDOUT_FILENO));
     else if (!ft_strcmp(args[0], "env"))
-        return (ft_env(sh->env, STDOUT_FILENO));
+        return (ft_env(sh, STDOUT_FILENO));
 	else
 		return (sh->status);
 }

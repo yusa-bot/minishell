@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/23 09:04:36 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/27 14:27:47 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/27 23:58:08 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	*ambiguous_redirect_error(t_shell *sh, char *original, t_token *single_toke
 
 //ft_cmdlst_utils.c
 t_cmd	*ft_cmdlst_init(void);
-t_cmd	*ft_cmdlst_new(char **cmd_args, char **env_vars, t_redirect *infile, t_redirect *outfile);
+t_cmd	*ft_cmdlst_new(char **cmd_args, t_env *tmp_env, t_redirect *infile, t_redirect *outfile);
 void	ft_cmdlst_delone(t_cmd *lst);
 void	ft_cmdlst_clear(t_cmd **lst);
 t_cmd	*ft_cmdlst_last(t_cmd *lst);

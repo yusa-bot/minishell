@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_env.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 17:41:21 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/25 17:07:56 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/28 00:19:54 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,18 @@ static int ft_putenv_fd(t_env *env_lst, int fd)
     return (EXIT_SUCCESS);
 }
 
-int ft_env(t_env *env_lst, int fd)
+int ft_env(t_shell *sh, int fd)
 {
     t_env *tmp;
 
-    tmp = env_lst;
+    tmp = sh->cmd->tmp_env;
+    while (tmp)
+    {
+        if (ft_putenv_fd(tmp, fd) == EXIT_FAILURE)
+            return (EXIT_FAILURE);
+        tmp = tmp->next;
+    }
+    tmp = sh->env;
     while (tmp)
     {
         if (tmp->is_export)
