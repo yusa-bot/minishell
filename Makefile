@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+         #
+#    By: rinka <rinka@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/08 19:14:52 by rinka             #+#    #+#              #
-#    Updated: 2025/10/26 11:13:33 by ayusa            ###   ########.fr        #
+#    Updated: 2025/10/27 14:27:03 by rinka            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,7 +41,7 @@ SRCS = \
 	tokenizer/ft_tokenlst_utils.c \
 	tokenizer/ft_tokenlst_sort.c \
 	utils/ft_free.c \
-	#parser/ft_globbing.c \
+	parser/ft_globbing.c \
 
 OBJS = $(SRCS:.c=.o)
 
@@ -56,12 +56,12 @@ LIBFT = $(LIBFT_DIR)/libft.a
 # LDFLAGS = -lreadline
 
 # yusa_mac
-INCLUDE = -I./include -I/opt/homebrew/opt/readline/include
-LDFLAGS = -L/opt/homebrew/opt/readline/lib -lreadline
+# INCLUDE = -I./include -I/opt/homebrew/opt/readline/include
+# LDFLAGS = -L/opt/homebrew/opt/readline/lib -lreadline
 
 # rinka_mac
-# INCLUDE = -I./include -I/usr/local/opt/readline/include
-# LDFLAGS = -L/usr/local/opt/readline/lib -lreadline
+INCLUDE = -I./include -I/usr/local/opt/readline/include
+LDFLAGS = -L/usr/local/opt/readline/lib -lreadline
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
