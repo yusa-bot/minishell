@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/28 09:59:17 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/28 11:18:12 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	exec_cmd_handler(t_shell *sh)
 	if (sh->cmd && sh->cmd->next)
 		sh->status = exec_pipe(sh);
 	else if (!sh->cmd->cmd_args && sh->cmd->tmp_env)
-		add_local_envs(sh);
+		add_local_envs(sh);//malloc_error時はreturn(EXIT_FALURE)でいい？(rinka)
 	else if (is_builtin_parent(sh->cmd->cmd_args))
 		sh->status = exec_parent(sh);
 	else
