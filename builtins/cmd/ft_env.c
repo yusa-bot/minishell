@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 17:41:21 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/28 00:19:54 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/28 11:08:37 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int ft_env(t_shell *sh, int fd)
     tmp = sh->env;
     while (tmp)
     {
-        if (tmp->is_export)
+        if (tmp->is_export && !ft_get_env(sh->cmd->tmp_env, tmp->key))
 		{
             if (ft_putenv_fd(tmp, fd) == EXIT_FAILURE)
 				return (EXIT_FAILURE);
