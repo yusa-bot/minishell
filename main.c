@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 07:50:36 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/28 00:01:37 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/28 09:59:17 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ void	exec_cmd_handler(t_shell *sh)
 	fprintf(stderr, "exec_cmd_handler\n");
 	if (sh->cmd && sh->cmd->next)
 		sh->status = exec_pipe(sh);
+	else if (!sh->cmd->cmd_args && sh->cmd->tmp_env)
+		add_local_envs(sh);
 	else if (is_builtin_parent(sh->cmd->cmd_args))
 		sh->status = exec_parent(sh);
 	else
@@ -63,7 +65,7 @@ void	minishell_loop(t_shell *sh)
 			continue ;
 		if (!prompt_to_struct(sh))
 			continue;
-		cmd_debag(sh->cmd, 0); //debag
+		// cmd_debag(sh->cmd, 0); //debag
 		//heredoc_debag(tmpfiles); //debag
 		exec_cmd_handler(sh);
 		after_oneloop_cleanup(sh); // 1loopごとの後処理↓
