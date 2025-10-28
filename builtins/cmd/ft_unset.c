@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_unset.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:31:10 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/23 08:38:16 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/28 10:49:34 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int ft_unset(t_env **env_lst, char *delkey)
+int ft_unset(t_env **env_lst, char *delkey)//char**args受け取るようにした方が良さそう
 {
 	t_env *dellst;
 	t_env *tmp;
