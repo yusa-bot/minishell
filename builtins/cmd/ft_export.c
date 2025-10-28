@@ -53,7 +53,8 @@ int ft_export(int fd, t_shell *sh)
 		i = 1;
 		while (sh->cmd->cmd_args[i])
 		{
-			ft_add_env(&(sh->env), sh->cmd->cmd_args[i], 1);
+			if (!ft_add_env(&(sh->env), sh->cmd->cmd_args[i], 1))
+				return (EXIT_FAILURE);
 			i++;
 		}
 	}

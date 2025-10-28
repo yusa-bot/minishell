@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 17:46:15 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/28 00:36:58 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/28 10:47:26 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,11 @@ t_env *set_tmp_env(t_token **lst, int var_count)
 	tmp = *lst;
 	while (tmp && tmp-> token_type == VARIABLE_ASSIGNMENT)
 	{
-		ft_add_env(&res, tmp->str, 1);
+		if(!ft_add_env(&res, tmp->str, 1))
+		{
+			ft_lst_clear(&res);
+			return (NULL);
+		}
 		tmp = tmp->next;
 	}
 	return (res);

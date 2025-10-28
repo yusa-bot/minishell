@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 21:47:51 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/26 11:01:17 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/28 10:45:23 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,10 @@ static int  update_pwd_vars(t_env **env_lst, char *oldpwd, char *newpwd)
         free(oldpwd_str);
         return (EXIT_FAILURE);
     }
-    ft_add_env(env_lst, oldpwd_str, 1);
-    ft_add_env(env_lst, newpwd_str, 1);
+    if (!ft_add_env(env_lst, oldpwd_str, 1))//ft_add_env内のmalloc_error処理(rinka)
+        return (EXIT_FAILURE);
+    if (!ft_add_env(env_lst, newpwd_str, 1))//ft_add_env内のmalloc_error処理(rinka)
+        return (EXIT_FAILURE);
     return (EXIT_SUCCESS);
 }
 
