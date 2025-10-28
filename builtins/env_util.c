@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:29:18 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/28 11:16:22 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/28 11:26:06 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,15 +178,16 @@ static t_env *ft_envlst_dup(const t_env *lst)
 }
 
 //readlineがパイプなし＆変数代入のみの時は変数代入をローカル変数に加える
-void	add_local_envs(t_shell *sh)
+int	add_local_envs(t_shell *sh)
 {
 	printf("add_local_envs\n");
 	t_env *tmpenv_cpy;
-	//既存の変数はis_exportそのままでvalueだけ変更
+	//要修正：既存の変数はis_exportそのままでvalueだけ変更
 	tmpenv_cpy = ft_envlst_dup(sh->cmd->tmp_env);
 	if (tmpenv_cpy == NULL)
 		return (EXIT_FAILURE);
 	ft_lst_add_back(&(sh->env), tmpenv_cpy);
+	return (EXIT_SUCCESS);//戻り値これでいい？？(rinka)
 }
 
 
