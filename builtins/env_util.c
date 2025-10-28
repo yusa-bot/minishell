@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:29:18 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/27 17:23:20 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/28 11:16:22 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,13 +95,13 @@ t_env *ft_set_env(char **envp)
 			ft_lst_clear(&env_lst);
 			exit(EXIT_FAILURE);
 		}
-		ft_lst_add_back(&env_lst, ft_lst_new(key, value, 1));
+		ft_lst_add_back(&env_lst, ft_lst_new(key, value, 1));//ft_lst_newのmalloc失敗時の処理を加えた方がいいかも
 		i++;
 	}
 	return (env_lst);
 }
 
-void	ft_add_env(t_env **env_lst, char *str, int is_export)//引数にt_shell *sh追加予定
+int	ft_add_env(t_env **env_lst, char *str, int is_export)
 {
 	char *key;
 	char *value;
@@ -119,12 +119,11 @@ void	ft_add_env(t_env **env_lst, char *str, int is_export)//引数にt_shell *sh
 		key = ft_strndup(str, equal_pos - str);
 		value = ft_strdup(equal_pos + 1);
 	}
-	if (key == NULL || (equal_pos != NULL && value == NULL))//mallocエラー処理
+	if (key == NULL || (equal_pos != NULL && value == NULL))//malloc_error(呼び出し元で処理)
 	{
 		free(key);
 		free(value);
-		ft_lst_clear(env_lst);
-		return; // malloc_error呼び出すように変更予定
+		return(0);
 	}
 
 	cur = *env_lst;
@@ -139,13 +138,55 @@ void	ft_add_env(t_env **env_lst, char *str, int is_export)//引数にt_shell *sh
 			}
 			cur->is_export = is_export;
 			free(key);
-			return;
+			return (1);
 		}
 		cur = cur->next;
 	}
-	if (!equal_pos)//存在しない＆valueがない場合、何もしない
-		return ;
-	ft_lst_add_front(env_lst, ft_lst_new(key, value, is_export));//新しい変数追加の場合
+	if (equal_pos)//存在しない＆valueがない場合、何もしない
+		ft_lst_add_front(env_lst, ft_lst_new(key, value, is_export));//新しい変数追加の場合
+	return (1);
+}
+
+static t_env *ft_envlst_dup(const t_env *lst)
+{
+	t_env *res;
+	t_env *to_add;
+	char    *key_copy;
+	char    *value_copy;
+
+	if (!lst || !lst->key)
+		return (NULL);
+	res = NULL;
+	while (lst)
+	{
+		key_copy = ft_strdup(lst->key);
+		if (!key_copy)
+			return (NULL); //marroc_error
+		value_copy = ft_strdup(lst->value);
+		if (!value_copy)
+			return (NULL); //marroc_error
+		to_add = ft_lst_new(key_copy, value_copy, 0);
+		if (to_add == NULL)
+		{
+			ft_lst_clear(&res);
+			return (NULL); //marroc_error
+		}
+		ft_lst_add_back(&res, to_add);
+		lst = lst->next;
+	}
+	return (res);
+}
+
+//readlineがパイプなし＆変数代入のみの時は変数代入をローカル変数に加える
+void	add_local_envs(t_shell *sh)
+{
+	printf("add_local_envs\n");
+	t_env *tmpenv_cpy;
+	//既存の変数はis_exportそのままでvalueだけ変更
+	tmpenv_cpy = ft_envlst_dup(sh->cmd->tmp_env);
+	if (tmpenv_cpy == NULL)
+		return (EXIT_FAILURE);
+	ft_lst_add_back(&(sh->env), tmpenv_cpy);
 }
 
 

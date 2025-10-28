@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_lst_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 21:53:18 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/23 08:39:49 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/28 11:15:50 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ t_env *ft_lst_new(char *key, char *value, int is_export)
 	{
 		free(key);
 		free(value);
-		exit(EXIT_FAILURE);
+		return (NULL);
 	}
 	new->key = key;
 	new->value = value;
