@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 00:29:18 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/28 11:26:06 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/29 19:26:34 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,12 +53,12 @@ char **env_to_array(t_env *env_lst)
 
 
 // minishellで動的に追加/変更した環境変数の取得用
-char *ft_get_env(t_env *env_lst, const char *key)
+char **ft_get_env(t_env *env_lst, const char *key)
 {
 	while (env_lst)
 	{
 		if (ft_strcmp(env_lst->key, key) == 0)
-			return env_lst->value;
+			return (&env_lst->value);
 		env_lst = env_lst->next;
 	}
 	return NULL;
@@ -147,33 +147,24 @@ int	ft_add_env(t_env **env_lst, char *str, int is_export)
 	return (1);
 }
 
-static t_env *ft_envlst_dup(const t_env *lst)
+static t_env *ft_env_dup(t_env *lst)
 {
 	t_env *res;
-	t_env *to_add;
 	char    *key_copy;
 	char    *value_copy;
 
 	if (!lst || !lst->key)
 		return (NULL);
 	res = NULL;
-	while (lst)
-	{
-		key_copy = ft_strdup(lst->key);
-		if (!key_copy)
-			return (NULL); //marroc_error
-		value_copy = ft_strdup(lst->value);
-		if (!value_copy)
-			return (NULL); //marroc_error
-		to_add = ft_lst_new(key_copy, value_copy, 0);
-		if (to_add == NULL)
-		{
-			ft_lst_clear(&res);
-			return (NULL); //marroc_error
-		}
-		ft_lst_add_back(&res, to_add);
-		lst = lst->next;
-	}
+	key_copy = ft_strdup(lst->key);
+	if (!key_copy)
+		return (NULL); //marroc_error
+	value_copy = ft_strdup(lst->value);
+	if (!value_copy)
+		return (NULL); //marroc_error
+	res = ft_lst_new(key_copy, value_copy, 0);
+	if (res == NULL)
+		return (NULL); //marroc_error
 	return (res);
 }
 
@@ -181,12 +172,29 @@ static t_env *ft_envlst_dup(const t_env *lst)
 int	add_local_envs(t_shell *sh)
 {
 	printf("add_local_envs\n");
-	t_env *tmpenv_cpy;
-	//要修正：既存の変数はis_exportそのままでvalueだけ変更
-	tmpenv_cpy = ft_envlst_dup(sh->cmd->tmp_env);
-	if (tmpenv_cpy == NULL)
-		return (EXIT_FAILURE);
-	ft_lst_add_back(&(sh->env), tmpenv_cpy);
+	t_env *tmp;
+	t_env *cpy;
+	char **ptr_to_change;
+	tmp = sh->cmd->tmp_env;
+	while (tmp)
+	{
+		ptr_to_change = ft_get_env(sh->env, tmp->key);
+		if (ptr_to_change)
+		{
+			free(*ptr_to_change);
+			*ptr_to_change = ft_strdup(tmp->value);
+			if (*ptr_to_change == NULL)
+				return (EXIT_FAILURE);
+		}
+		else
+		{
+			cpy = ft_env_dup(tmp);
+			if (cpy == NULL)
+				return (EXIT_FAILURE);
+			ft_lst_add_back(&(sh->env), cpy);
+		}
+		tmp = tmp->next;
+	}
 	return (EXIT_SUCCESS);//戻り値これでいい？？(rinka)
 }
 
