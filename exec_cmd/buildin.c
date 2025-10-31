@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 19:23:08 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/27 23:54:35 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/31 15:09:50 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int run_builtin(t_shell *sh, char **args)
 	else if (!ft_strcmp(args[0], "export"))
 		return (ft_export(STDOUT_FILENO, sh));
 	else if (!ft_strcmp(args[0], "unset"))
-		return (ft_unset(&sh->env, args[1]));
+		return (ft_unset(&sh->env, args));
 	else if (!ft_strcmp(args[0], "exit"))
 		return (ft_exit(args, sh));
     else if (!ft_strcmp(args[0], "echo"))
