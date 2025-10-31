@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/23 09:03:13 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/25 21:46:20 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/31 16:11:00 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,10 @@
 # include <readline/history.h>
 # include <sys/wait.h>
 # include <limits.h>
-#include <sys/stat.h>
+# include <sys/stat.h>
 # include "../libft/libft.h"
 # include <sys/errno.h>
+# include <dirent.h>
 
 # include "builtins.h"
 # include "tokenizer.h"
@@ -87,6 +88,8 @@ int		read_prompt(t_shell *sh);
 void	minishell_init(t_shell *sh, char **envp);
 void	after_oneloop_cleanup(t_shell *sh);
 void	after_minishell(t_shell *sh);
+
+void ft_handle_unclosed_quote(t_shell *sh);
 
 void	exec_cmd_handler(t_shell *sh);
 

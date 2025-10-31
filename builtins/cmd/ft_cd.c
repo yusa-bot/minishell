@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 21:47:51 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/26 11:01:17 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/29 18:54:27 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,10 @@ static int  update_pwd_vars(t_env **env_lst, char *oldpwd, char *newpwd)
         free(oldpwd_str);
         return (EXIT_FAILURE);
     }
-    ft_add_env(env_lst, oldpwd_str, 1);
-    ft_add_env(env_lst, newpwd_str, 1);
+    if (!ft_add_env(env_lst, oldpwd_str, 1))//ft_add_env内のmalloc_error処理(rinka)
+        return (EXIT_FAILURE);
+    if (!ft_add_env(env_lst, newpwd_str, 1))//ft_add_env内のmalloc_error処理(rinka)
+        return (EXIT_FAILURE);
     return (EXIT_SUCCESS);
 }
 
@@ -64,7 +66,7 @@ int ft_cd(char **argv, t_env **env_lst)
 
     else if (argc == 1) //home
     {
-        path = ft_get_env(*env_lst, "HOME");
+        path = *ft_get_env(*env_lst, "HOME");
 		printf("HOME=%s\n", path);
         if (path == NULL)
         {
@@ -74,7 +76,7 @@ int ft_cd(char **argv, t_env **env_lst)
     }
     else if (ft_strcmp(argv[1], "-") == 0) //oldpwd
     {
-        path = ft_get_env(*env_lst, "OLDPWD");
+        path = *ft_get_env(*env_lst, "OLDPWD");
         if (path == NULL)
         {
             write(2, "minishell: cd: OLDPWD not set\n", 30);
@@ -90,7 +92,7 @@ int ft_cd(char **argv, t_env **env_lst)
     oldpwd = getcwd(NULL, 0);//malloc
     if (oldpwd == NULL)
     {
-        pwd = ft_get_env(*env_lst, "PWD");//*
+        pwd = *ft_get_env(*env_lst, "PWD");//*
         if (pwd)
             oldpwd = ft_strdup(pwd);
         else
@@ -110,7 +112,7 @@ int ft_cd(char **argv, t_env **env_lst)
 	newpwd = getcwd(NULL, 0);//malloc
     if (newpwd == NULL)
     {
-        pwd = ft_get_env(*env_lst, "PWD");
+        pwd = *ft_get_env(*env_lst, "PWD");
         if (pwd)
             newpwd = ft_strdup(pwd);
         else
@@ -145,32 +147,32 @@ int ft_cd(char **argv, t_env **env_lst)
 //    };
 //    t_env *env_lst = ft_set_env(envp);
 
-//    printf("初期PWD: %s\n", ft_get_env(env_lst, "PWD"));
-//    printf("初期OLDPWD: %s\n\n", ft_get_env(env_lst, "OLDPWD"));
+//    printf("初期PWD: %s\n", *ft_get_env(env_lst, "PWD"));
+//    printf("初期OLDPWD: %s\n\n", *ft_get_env(env_lst, "OLDPWD"));
 
 //    // テスト1: 引数なし（HOMEに移動）
 //    printf("テスト1: cd (HOMEに移動)\n");
 //    char *test1[] = {"cd", NULL};
 //    int result1 = ft_cd(test1, &env_lst);
 //    printf("結果: %d\n", result1);
-//    printf("PWD: %s\n", ft_get_env(env_lst, "PWD"));
-//    printf("OLDPWD: %s\n\n", ft_get_env(env_lst, "OLDPWD"));
+//    printf("PWD: %s\n", *ft_get_env(env_lst, "PWD"));
+//    printf("OLDPWD: %s\n\n", *ft_get_env(env_lst, "OLDPWD"));
 
 //    // テスト2: 特定のディレクトリに移動
 //    printf("テスト2: cd /tmp\n");
 //    char *test2[] = {"cd", "/tmp", NULL};
 //    int result2 = ft_cd(test2, &env_lst);
 //    printf("結果: %d\n", result2);
-//    printf("PWD: %s\n", ft_get_env(env_lst, "PWD"));
-//    printf("OLDPWD: %s\n\n", ft_get_env(env_lst, "OLDPWD"));
+//    printf("PWD: %s\n", *ft_get_env(env_lst, "PWD"));
+//    printf("OLDPWD: %s\n\n", *ft_get_env(env_lst, "OLDPWD"));
 
 //    // テスト3: cd - (前のディレクトリに戻る)
 //    printf("テスト3: cd -\n");
 //    char *test3[] = {"cd", "-", NULL};
 //    int result3 = ft_cd(test3, &env_lst);
 //    printf("結果: %d\n", result3);
-//    printf("PWD: %s\n", ft_get_env(env_lst, "PWD"));
-//    printf("OLDPWD: %s\n\n", ft_get_env(env_lst, "OLDPWD"));
+//    printf("PWD: %s\n", *ft_get_env(env_lst, "PWD"));
+//    printf("OLDPWD: %s\n\n", *ft_get_env(env_lst, "OLDPWD"));
 
 //    // テスト4: 存在しないディレクトリ
 //    printf("テスト4: cd /nonexistent\n");

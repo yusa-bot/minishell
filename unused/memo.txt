@@ -41,7 +41,7 @@ echo Hello World | TEST=test | wc -l (この時の出力は0)
 */
 
 /*変数代入の影響範囲(ft_peraer.c)
-・変数代入の情報はt_cmd->env_varsに格納するが、token_lst->strの文字列における変数展開では元のenv_lstが参照されるのでenv_varsは影響しない。
+・変数代入の情報はt_cmd->tmp_envに格納するが、token_lst->strの文字列における変数展開では元のenv_lstが参照されるのでtmp_envは影響しない。
 子プログラムには引き継がれるので、commandを実行する子プロセス内のenvやexport関数の出力には反映される
 */
 

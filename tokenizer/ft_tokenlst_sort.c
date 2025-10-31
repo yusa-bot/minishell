@@ -6,56 +6,64 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 10:59:06 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/09 15:48:56 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/31 18:43:58 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+t_token *get_min(t_token **lst)
+{
+	t_token *res;
+	t_token *tmp;
+
+	tmp = *lst;
+	res = *lst;
+	while (tmp)
+	{
+		if (ft_strcmp(res->str, tmp->str) > 0)
+			res = tmp;
+		tmp = tmp->next;
+	}
+	return (res);
+}
+
 static t_token *get_del_min(t_token **lst)
 {
-	t_token *current_min;
-	t_token *tmp = *lst;
-
-	current_min = *lst;
+	t_token *min;
+	t_token *tmp;
+	
+	tmp = *lst;
 	if (!(*lst)->next)
 	{
 		*lst = NULL;
-		return (current_min);
+		return (tmp);
 	}
-	while (tmp)
-	{
-		if (ft_strcmp(current_min->str, tmp->str) > 0)
-		{
-			current_min = tmp;
-		}
-		tmp = tmp->next;
-	}
-	tmp = *lst;
-	if (tmp == current_min)
+	min = get_min(lst);
+	if (tmp == min)
 	{
 		*lst = (*lst)->next;
-		return (current_min);
+		return (min);
 	}
 	while (tmp->next)
 	{
-		if (tmp->next == current_min)
+		if (tmp->next == min)
 		{
 			tmp->next = tmp->next->next;
 			break ;
 		}
 		tmp = tmp->next;
 	}
-	return (current_min);
+	return (min);
 }
 
-static void add_back(t_token **res, t_token *current_min)
+static void add_back(t_token **res, t_token *min)
 {
 	t_token *tmp = *res;
 
 	if (!tmp)
 	{
-		*res = current_min;
+		*res = min;
 		(*res)->next = NULL;
 		return ;
 	}
@@ -63,7 +71,7 @@ static void add_back(t_token **res, t_token *current_min)
 	{
 		tmp = (tmp)->next;
 	}	
-	tmp->next = current_min;
+	tmp->next = min;
 	tmp = tmp->next;
 	tmp->next = NULL;
 }
@@ -72,12 +80,12 @@ t_token	*ft_tokenlst_sort(t_token* lst)
 {
 	t_token *res = NULL;
 	t_token *tmp = lst;
-	t_token *current_min;
+	t_token *min;
 
 	while (tmp)
 	{
-		current_min = get_del_min(&tmp);
-		add_back(&res, current_min);
+		min = get_del_min(&tmp);
+		add_back(&res, min);
 	}
 	return (res);
 }
