@@ -6,7 +6,7 @@
 /*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/23 09:03:13 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/27 14:28:24 by rinka            ###   ########.fr       */
+/*   Updated: 2025/10/31 16:11:00 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,8 @@ int		read_prompt(t_shell *sh);
 void	minishell_init(t_shell *sh, char **envp);
 void	after_oneloop_cleanup(t_shell *sh);
 void	after_minishell(t_shell *sh);
+
+void ft_handle_unclosed_quote(t_shell *sh);
 
 void	exec_cmd_handler(t_shell *sh);
 

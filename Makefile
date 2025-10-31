@@ -6,7 +6,7 @@
 #    By: rinka <rinka@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/08 19:14:52 by rinka             #+#    #+#              #
-#    Updated: 2025/10/27 14:27:03 by rinka            ###   ########.fr        #
+#    Updated: 2025/10/31 16:11:26 by rinka            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,11 +37,12 @@ SRCS = \
 	parser/ft_parser.c \
 	parser/ft_redirectlst_utils.c \
 	parser/ft_heredoc.c \
+	parser/ft_globbing.c \
 	tokenizer/ft_tokenizer.c \
 	tokenizer/ft_tokenlst_utils.c \
 	tokenizer/ft_tokenlst_sort.c \
 	utils/ft_free.c \
-	parser/ft_globbing.c \
+	utils/ft_handle_unclosed_quote.c \
 
 OBJS = $(SRCS:.c=.o)
 

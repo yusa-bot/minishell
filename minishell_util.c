@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_util.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: rinka <rinka@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 16:18:40 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/26 12:41:40 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/31 16:07:02 by rinka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ int	read_prompt(t_shell *sh)
 	setup_signals_interactive();
 	g_sig = 0;
 	sh->line = readline("minishell$ ");
+	ft_handle_unclosed_quote(sh);
 	if (!sh->line || (ft_strcmp(sh->line, "exit") == 0)) //EOF(Ctrl-D)
 	{
 		write(1, "exit\n", 5);
