@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 16:30:18 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/26 10:43:31 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/26 18:51:51 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ void	*syntax_error(t_shell *sh, char *unexpected_token)
 
 	full_msg = ft_strjoin("minishell: syntax error near unexpected token `", unexpected_token);
 	ft_tokenlst_clear(&sh->token);
+	ft_cmdlst_clear(&sh->cmd);
 	if (full_msg)
 		full_msg = ft_strjoin_oneptr(full_msg, "'");
 	if (full_msg == NULL)

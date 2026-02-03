@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 13:12:13 by rinka             #+#    #+#             */
-/*   Updated: 2025/10/25 22:03:21 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/26 18:19:35 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,3 +139,37 @@ char	*ft_heredoc(t_shell *sh, char *eof)
 }
 
 //current: makeできるが実行チェックまだ
+
+// 子プロセスver
+int read_heredoc(const char *delim, bool expand, int *out_fd, t_shell *sh) {
+    int pfd[2];
+    if (pipe(pfd) == -1) return -1;
+
+    pid_t pid = fork();
+    if (pid == 0) { // child
+        set_signals_heredoc();
+        close(pfd[0]); // 読み端は子で不要
+        for (;;) {
+            char *ln = readline("> ");
+            if (!ln) _exit(0);                   // EOF (Ctrl-D)
+            if (ft_streq(ln, delim)) { free(ln); break; }
+            if (expand) expand_env_in_place(&ln, sh->env);
+            dprintf(pfd[1], "%s\n", ln);
+            free(ln);
+        }
+        _exit(0);
+    }
+    // parent
+    close(pfd[1]);              // 書き端は親で不要
+    int st; waitpid(pid, &st, 0);
+    if (WIFSIGNALED(st) && WTERMSIG(st) == SIGINT) {
+        close(pfd[0]);          // 破棄
+        sh->exit_status = 130;  // ここが肝
+        return -1;              // 行をキャンセルさせる
+    }
+    if (WIFEXITED(st) && WEXITSTATUS(st) == 130) {
+        close(pfd[0]); sh->exit_status = 130; return -1;
+    }
+    *out_fd = pfd[0];           // 以降、このFDを `< <(here)` の stdin に使う
+    return 0;
+}

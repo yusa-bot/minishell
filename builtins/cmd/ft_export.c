@@ -42,7 +42,7 @@ static int ft_putexport_fd(t_env *env_lst, int fd)
     return (EXIT_SUCCESS);
 }
 
-int ft_export(t_env *env_lst, int fd)
+int ft_export(t_env *env_lst, int fd) //sh 渡す
 {
     char    *prev_key;
     t_env   *env_to_put;

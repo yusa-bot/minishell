@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 19:23:08 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/25 13:37:00 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/26 18:35:15 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int run_builtin(t_shell *sh, char **args)
 		return (sh->status);
 	if (!ft_strcmp(args[0], "cd"))
 		return (ft_cd(args, &sh->env));
-	else if (!ft_strcmp(args[0], "export"))
+	else if (!ft_strcmp(args[0], "export")) //sh 渡す
 		return (ft_export(sh->env, STDOUT_FILENO));
 	else if (!ft_strcmp(args[0], "unset"))
 		return (ft_unset(&sh->env, args[1]));

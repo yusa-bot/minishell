@@ -6,7 +6,7 @@
 /*   By: ayusa <ayusa@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 16:57:55 by ayusa             #+#    #+#             */
-/*   Updated: 2025/10/26 13:10:25 by ayusa            ###   ########.fr       */
+/*   Updated: 2025/10/26 18:56:08 by ayusa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ int handle_redirect(t_shell *sh, const t_redirect *rdr, int target_fd, int oflag
     fprintf(stderr, "handle_redirect\n");
     int fd = -1;
 
+    // ececuve実行直前にワールドカードの展開をした方が良さそう glob_single_token(rdr->expanded_arg);
+    // rdr->expanded_arg が  ambiguous redirect(original_arg) ではないか
 	if (rdr->token_type == INFILE)
         fd = open(rdr->expanded_arg, O_RDONLY);
 	else //OUTFILE
